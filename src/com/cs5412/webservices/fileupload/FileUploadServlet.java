@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadBase.FileSizeLimitExceededException;
 import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -25,6 +26,7 @@ import com.cs5412.filesystem.impl.FileSystemImpl;
 import com.cs5412.utils.HTTPConstants;
 import com.cs5412.utils.ServerConstants;
  
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -155,10 +157,14 @@ public class FileUploadServlet extends HttpServlet {
             response.setContentType("application/json");
             
            
-        } catch (Exception ex) {
+        } catch (FileSizeLimitExceededException e) {
             request.setAttribute("message",
+                    "There was an error: " + e.getMessage());
+            LOG.error("Error",e.getFieldName());
+        }catch(Exception ex){
+        	request.setAttribute("message",
                     "There was an error: " + ex.getMessage());
-            LOG.error("Error",ex);
+            LOG.error("Error",ex.toString());
         }
         finally{
         	writer.write(result.toString());
@@ -224,7 +230,7 @@ public class FileUploadServlet extends HttpServlet {
         jsono.put("size", item.getSize());
         jsono.put("type", item.getContentType());
         jsono.put("url", ServerConstants.SERVER_URL+"FileUpload?getfile=" + item.getName());
-        jsono.put("thumbnailUrl", "http://localhost/uifork/js/jquery-upload/img/document_thumbnail.PNG");
+        jsono.put("thumbnailUrl", "js/jquery-upload/img/document_thumbnail.PNG");
         jsono.put("deleteUrl", ServerConstants.SERVER_URL+"FileUpload?"+HTTPConstants.DELETE_DATASET+"=" + item.getName());
         jsono.put("deleteType", "DELETE");
         return jsono;
@@ -277,7 +283,7 @@ public class FileUploadServlet extends HttpServlet {
 	         jsono.put("size", file.length());
 	         jsono.put("type", "file");
 	         jsono.put("url", ServerConstants.SERVER_URL+"FileUpload?getfile=" + file.getName());
-	         jsono.put("thumbnailUrl", "http://localhost/uifork/js/jquery-upload/img/document_thumbnail.PNG");
+	         jsono.put("thumbnailUrl", "js/jquery-upload/img/document_thumbnail.PNG");
 	         jsono.put("deleteUrl", ServerConstants.SERVER_URL+"FileUpload?"+HTTPConstants.DELETE_DATASET+"=" + file.getName());
 	         jsono.put("deleteType", "DELETE");
 	         filesJSONArray.put(jsono);

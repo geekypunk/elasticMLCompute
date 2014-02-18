@@ -380,7 +380,7 @@
 	<script type="text/javascript" charset="utf-8">
 		$(function(){
 			
-			$.getJSON("http://localhost:8080/cs5412/KMeansParameters?getDatasets=",{id: $(this).val(), ajax: 'true'}, function(j){
+			$.getJSON("http://localhost:8080/elasticMLCompute/KMeansParameters?getDatasets=",{id: $(this).val(), ajax: 'true'}, function(j){
 		 		var $subType = $("#e1");
 				$subType.empty();
 				$.each(j, function () {

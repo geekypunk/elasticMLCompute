@@ -18,7 +18,7 @@ $(function () {
     $('#fileupload').fileupload({
         // Uncomment the following to send cross-domain cookies:
         //xhrFields: {withCredentials: true},
-        url: 'http://localhost:8080/cs5412/FileUpload'
+        url: 'http://localhost:8080/elasticMLCompute/FileUpload'
     });
 
     // Enable iframe cross-domain access via redirect option:
@@ -37,7 +37,7 @@ $(function () {
 	$.ajax({
 		// Uncomment the following to send cross-domain cookies:
 		//xhrFields: {withCredentials: true},
-		url: 'http://localhost:8080/cs5412/FileUpload',
+		url: 'http://localhost:8080/elasticMLCompute/FileUpload',
 		dataType: 'json',
 		context: $('#fileupload')[0]
 	}).always(function () {

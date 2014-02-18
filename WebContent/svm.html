@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<meta charset="utf-8">
+	<title>Elastic ML Cloud Admin | DashBoard</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<!-- STYLESHEETS --><!--[if lt IE 9]><script src="js/flot/excanvas.min.js"></script><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script><![endif]-->
+	<link rel="stylesheet" type="text/css" href="css/cloud-admin.css" >
+	<link rel="stylesheet" type="text/css"  href="css/themes/default.css" id="skin-switcher" >
+	<link rel="stylesheet" type="text/css"  href="css/responsive.css" >
+	
+	<link href="font-awesome/css/font-awesome.min.css" rel="stylesheet">
+	<!-- DATE RANGE PICKER -->
+	<link rel="stylesheet" type="text/css" href="js/bootstrap-daterangepicker/daterangepicker-bs3.css" />
+	<!-- TYPEAHEAD -->
+	<link rel="stylesheet" type="text/css" href="js/typeahead/typeahead.css" />
+	<!-- SELECT2 -->
+	<link rel="stylesheet" type="text/css" href="js/select2/select2.min.css" />
+	<!-- UNIFORM -->
+	<link rel="stylesheet" type="text/css" href="js/uniform/css/uniform.default.min.css" />
+
+
+	<!-- FONTS -->
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
+</head>
+<body>
+	<!-- HEADER -->
+	<header class="navbar clearfix" id="header">
+		<div class="container">
+				<div class="navbar-brand">
+					<!-- COMPANY LOGO -->
+					<a href="index.html">
+						<img src="img/logo/logo.png" alt="Cloud Admin Logo" class="img-responsive" height="30" width="120">
+					</a>
+					<!-- /COMPANY LOGO -->
+					<div id="sidebar-collapse" class="sidebar-collapse btn">
+						<i class="fa fa-bars" 
+							data-icon1="fa fa-bars" 
+							data-icon2="fa fa-bars" ></i>
+					</div>
+					<!-- /SIDEBAR COLLAPSE -->
+				</div>
+				<!-- NAVBAR LEFT -->
+				
+				<!-- /NAVBAR LEFT -->
+				<!-- BEGIN TOP NAVIGATION MENU -->					
+				<ul class="nav navbar-nav pull-right">
+					
+					<!-- BEGIN USER LOGIN DROPDOWN -->
+					<li class="dropdown user" id="header-user">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+							<img alt="" src="img/avatars/avatar3.jpg" />
+							<span class="username">John Doe</span>
+							<i class="fa fa-angle-down"></i>
+						</a>
+						<ul class="dropdown-menu">
+							<li><a href="#"><i class="fa fa-user"></i> My Profile</a></li>
+							<li><a href="#"><i class="fa fa-cog"></i> Account Settings</a></li>
+							<li><a href="#"><i class="fa fa-eye"></i> Privacy Settings</a></li>
+							<li><a href="login.html"><i class="fa fa-power-off"></i> Log Out</a></li>
+						</ul>
+					</li>
+					<!-- END USER LOGIN DROPDOWN -->
+				</ul>
+				<!-- END TOP NAVIGATION MENU -->
+		</div>
+		
+		
+	</header>
+	<!--/HEADER -->
+	
+	<!-- PAGE -->
+	<section id="page">
+				<!-- SIDEBAR -->
+				<div id="sidebar" class="sidebar">
+					<div class="sidebar-menu nav-collapse">
+						<div class="divide-20"></div>
+						<!-- SEARCH BAR -->
+						<div id="search-bar">
+							<input class="search" type="text" placeholder="Search"><i class="fa fa-search search-icon"></i>
+						</div>
+						<!-- /SEARCH BAR -->
+						
+						<!-- SIDEBAR MENU -->
+						<ul>
+						
+							<!-- DATASETS -->
+							<li><a class="" href="upload.html"><i class="fa fa-pencil-square-o fa-fw"></i> <span class="menu-text">DataSets</span></a></li>
+							<!-- /DATASETS -->
+							
+							<!-- ML ALGORITHMS MENU -->
+							<li class="has-sub">
+								<a href="javascript:;" class="">
+								<i class="fa fa-briefcase fa-fw"></i> <span class="menu-text">Algorithms</span>
+								<span class="arrow"></span>
+								</a>
+								<ul class="sub">
+									<li><a class="" href="kmeans.html"><span class="sub-menu-text">K-Means</span></a></li>
+								</ul>
+							</li>
+							<!-- /ML ALGORITHM MENU -->
+							
+							<!-- REPORTS MENU -->
+							<li class="has-sub">
+								<a href="javascript:;" class="">
+								<i class="fa fa-bar-chart-o fa-fw"></i> <span class="menu-text">Reports</span>
+								<span class="arrow"></span>
+								</a>
+								<ul class="sub">
+									<li><a class="" href="flot_charts.html"><span class="sub-menu-text">Flot Charts</span></a></li>
+									<li><a class="" href="xcharts.html"><span class="sub-menu-text">xCharts</span></a></li>
+									
+									<li><a class="" href="others.html"><span class="sub-menu-text">Others</span></a></li>
+								</ul>
+							</li>
+							<!-- /REPORTS MENU -->
+							
+							<!-- FAQ -->
+							<li><a class="" href="faq.html"><i class="fa fa-picture-o fa-fw"></i> <span class="menu-text">FAQ</span></a></li>
+							<!-- /FAQ -->
+						</ul>
+						<!-- /SIDEBAR MENU -->
+					</div>
+				</div>
+				<!-- /SIDEBAR -->
+		<div id="main-content">
+			<div class="container">
+				<div class="row">
+					<div id="content" class="col-lg-12">
+						<!-- PAGE HEADER-->
+						<!-- ADVANCED -->
+						<div class="row">
+							<div class="col-md-12">
+								<!-- BOX -->
+								<div class="box border green">
+									<div class="box-title">
+										<h4><i class="fa fa-bars"></i>Parameters</h4>
+										
+									</div>
+									<div class="box-body">
+										<form id="svmForm" class="form-horizontal">
+										  <div class="form-group">
+											 <label class="col-md-2 control-label" for="e1">Training Data<span class="required"></span></label> 
+											 <div class="col-md-10">
+												<select id="e1" name="trainingDataset" class="col-md-12">
+																				
+												</select>												
+											 </div>
+										  </div>
+										  <div class="form-group">
+											 <label class="col-md-2 control-label" for="e2">Test Data<span class="required"></span></label> 
+											 <div class="col-md-10">
+												<select id="e2" name="testDataset" class="col-md-12">
+												   								   
+												</select>												
+											 </div>
+										  </div>
+										  <button type="submit" id="btn-load-complete" class="btn btn-success" data-complete-text="Run again!" data-loading-text="Running...">Run!</button>
+										  
+									   </form>
+									   <br/>
+									   <button id="btn-load-model" class="btn btn-success" data-complete-text="Create again!" data-loading-text="Creating...">Create Model!</button>
+									  
+									  
+										
+									</div>
+								</div>
+								<!-- /BOX -->
+							</div>
+						</div>
+						<!-- /ADVANCED -->
+						<!-- /PAGE HEADER -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!--/PAGE -->
+	<!-- JAVASCRIPTS -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<!-- JQUERY -->
+	<script src="js/jquery/jquery-2.0.3.min.js"></script>
+	<!-- JQUERY UI-->
+	<script src="js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+	<!-- BOOTSTRAP -->
+	<script src="bootstrap-dist/js/bootstrap.min.js"></script>
+	
+	<!-- SLIMSCROLL -->
+	<script type="text/javascript" src="js/jQuery-slimScroll-1.3.0/jquery.slimscroll.min.js"></script><script type="text/javascript" src="js/jQuery-slimScroll-1.3.0/slimScrollHorizontal.min.js"></script>
+	<!-- BLOCK UI -->
+	<script type="text/javascript" src="js/jQuery-BlockUI/jquery.blockUI.min.js"></script>
+	<!-- TYPEHEAD -->
+	<script type="text/javascript" src="js/typeahead/typeahead.min.js"></script>
+	<!-- AUTOSIZE -->
+	<script type="text/javascript" src="js/autosize/jquery.autosize.min.js"></script>
+	<!-- COUNTABLE -->
+	<script type="text/javascript" src="js/countable/jquery.simplyCountable.min.js"></script>
+	<!-- INPUT MASK -->
+	<script type="text/javascript" src="js/bootstrap-inputmask/bootstrap-inputmask.min.js"></script>
+	<!-- SELECT2 -->
+	<script type="text/javascript" src="js/select2/select2.min.js"></script>
+	<!-- UNIFORM -->
+	<script type="text/javascript" src="js/uniform/jquery.uniform.min.js"></script>
+	<!-- COOKIE -->
+	<script type="text/javascript" src="js/jQuery-Cookie/jquery.cookie.min.js"></script>
+	<!-- WIZARD -->
+	<script src="js/bootstrap-wizard/jquery.bootstrap.wizard.min.js"></script>
+	<!-- WIZARD -->
+	<script src="js/jquery-validate/jquery.validate.min.js"></script>
+	<script src="js/jquery-validate/additional-methods.min.js"></script>
+	<!-- CUSTOM SCRIPT -->
+	<script src="js/script.js"></script>
+	<script type="text/javascript" charset="utf-8">
+		$(function(){
+			
+			$.getJSON("http://localhost:8080/elasticMLCompute/SVMParameters",{id: $(this).val(), ajax: 'true'}, function(j){
+		 		var $subType = $("#e1");
+				$subType.empty();
+				$.each(j, function () {
+					$subType.append($('<option></option>').attr("value", this.optionValue).text(this.optionDisplay));
+				});
+			});
+			$.getJSON("http://localhost:8080/elasticMLCompute/SVMParameters",{id: $(this).val(), ajax: 'true'}, function(j){
+		 		var $subType = $("#e2");
+				$subType.empty();
+				$.each(j, function () {
+					$subType.append($('<option></option>').attr("value", this.optionValue).text(this.optionDisplay));
+				});
+			});
+			
+		
+		})
+	</script>
+	<script>
+	
+		$("#svmForm").submit(function(event) {
+
+			  /* stop form from submitting normally */
+			event.preventDefault();
+
+			var a=$('#btn-load-complete');
+			a.button("loading");
+			var trainingDataset = $('#e1').val();
+			if(trainingDataset.trim().length > 0 && trainingDataset.trim().indexOf(".train")!=-1){	
+				$.ajax({
+					type: "POST",
+					data:{ 
+						trainingDataset: trainingDataset, 
+						testDataset: $('#e2').val() 
+					},
+					dataType: "text",
+					url: "http://localhost:8080/elasticMLCompute/ml/svm/crossvalidation/createfiles",
+					success: function (d) {
+						a.button("complete");
+					},
+					error: function (d) {
+		
+					},
+					complete: function (d) {
+						$('#btn-load-complete').button("complete");
+						
+					}
+				});
+			}else{
+				alert("Choose a training dataset!");
+				$('#btn-load-complete').button("reset");
+			}
+		
+		});
+		
+
+		/*
+		$("#btn-load-run").on("click",function(){
+			var a=$(this);
+			a.button("loading");
+			setTimeout(function() { 
+				$.ajax({
+					type: "POST",
+					dataType: "text",
+					url: "http://localhost:8080/elasticMLCompute/ml/svm/crossvalidation/createfiles",
+					success: function (d) {
+						a.button("complete");
+					}
+				})
+				},500)
+		});
+		*/
+		$("#btn-load-model").on("click",function(){
+			var a=$(this);
+			a.button("loading");
+			setTimeout(function() { 
+				$.ajax({
+					type: "GET",
+					dataType: "text",
+					url: "http://localhost:8080/elasticMLCompute/ml/svm/crossvalidation/createmodel/0/1",
+					success: function (d) {
+						a.button("complete");
+					}
+				})
+				},500)
+		});
+		/*				   
+		$("#btn-load").click(function(){
+			$("#loading").show();
+			$.ajax({
+					type: "GET",
+					dataType: "text",
+					url: "http://localhost:8080/elasticMLCompute/ml/svm/crossvalidation/createmodel/0/1",
+					success: function (d) {
+						$("#loading").hide();
+					},
+					error: function (d) {
+						console.log("EMLError"+d)
+					},
+					complete: function (d) {
+						$("#loading").hide();
+					}
+			});
+		});
+		*/
+		/*
+		$(function () {
+			$("#loading").ajaxStart(function () {
+				$(this).show();
+			});
+
+			$("#loading").ajaxStop(function () {
+				$(this).hide();
+			});
+
+			$("#startAjaxRequest").click(function () {
+				
+			  // run ajax request
+				$.ajax({
+					type: "GET",
+					dataType: "json",
+					url: "http://localhost:8080/elasticMLCompute/ml/svm/crossvalidation/createmodel/0/1",
+					success: function (d) {
+						
+					}
+				});
+													
+					
+				
+			});
+		});*/
+	</script>
+	<script>
+		jQuery(document).ready(function() {		
+			App.setPage("forms");  //Set current page
+			App.init(); //Initialise plugins and elements
+		});
+	</script>
+	<!-- /JAVASCRIPTS -->
+</body>
+</html>
