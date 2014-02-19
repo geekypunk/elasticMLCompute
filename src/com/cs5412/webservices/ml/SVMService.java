@@ -21,7 +21,7 @@ import com.cs5412.utils.ServerConstants;
 import com.cs5412.webservices.fileupload.FileUploadServlet;
 
 @Path("/svm")
-public class V1_SVMService{
+public class SVMService{
 	static final Logger LOG = LoggerFactory.getLogger(FileUploadServlet.class);
 	private void writeFile(byte[] content, String filename) throws IOException 
 	{
@@ -67,15 +67,37 @@ public class V1_SVMService{
 			
 			) throws Exception {
 		LOG.debug("Using "+trainingDataset+" dataset for SVM");
-		CrossValidationFiles.createFiles(ServerConstants.UPLOAD_DIRECTORY+File.separator+trainingDataset, MyListener.crossvalidation);
+		CrossValidationFiles.createFiles(ServerConstants.UPLOAD_DIRECTORY_TRAIN+File.separator+trainingDataset, MyListener.crossvalidation);
 		return Response.status(200).entity("Hello").build();
 	}
 	
-	@Path("/getDataSets")
+	@Path("/getTrainingDataSets")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getDataSets() throws Exception {
-		Collection<File> files = fs.getUploadedDatasets();
+	public Response getTrainingDataSets() throws Exception {
+		Collection<File> files = fs.getUploadedTrainingDatasets();
+		JSONArray filesJson = new JSONArray();
+		JSONObject jsonFile;
+		for(File file : files){
+			try {
+				jsonFile = new JSONObject();
+				jsonFile.put("optionValue", file.getName());
+				jsonFile.put("optionDisplay", file.getName());
+				filesJson.put(jsonFile);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		return Response.status(200).entity(filesJson.toString()).build();
+	}
+	
+	@Path("/getTestDataSets")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getTestDataSets() throws Exception {
+		Collection<File> files = fs.getUploadedTestDatasets();
 		JSONArray filesJson = new JSONArray();
 		JSONObject jsonFile;
 		for(File file : files){

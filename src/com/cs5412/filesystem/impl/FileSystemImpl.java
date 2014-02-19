@@ -45,18 +45,52 @@ public class FileSystemImpl implements IFileSystem{
 	@Override
 	public boolean deleteFile(String fileName) throws IOException {
 		// TODO Auto-generated method stub
-		Path p1 = Paths.get(ServerConstants.UPLOAD_DIRECTORY+File.separator+fileName);
+		Path p1 = Paths.get(getFilePath(fileName)+File.separator+fileName);
 		return Files.deleteIfExists(p1);
 	}
 
 	@Override
-	public Collection<File> getUploadedDatasets() {
+	public Collection<File> getAllUploaded() {
 
-		Collection<File> dir = FileUtils.listFiles(new File(ServerConstants.UPLOAD_DIRECTORY),
+		Collection<File> dir = FileUtils.listFiles(new File(ServerConstants.UPLOAD_DIRECTORY_ROOT),
 		        TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
 		return dir;
 		
 	}
+	@Override
+	public Collection<File> getUploadedTrainingDatasets() {
+		
+		Collection<File> dir = FileUtils.listFiles(new File(ServerConstants.UPLOAD_DIRECTORY_TRAIN),
+				TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
+		return dir;
+		
+	}
+	@Override
+	public Collection<File> getUploadedTestDatasets() {
+		
+		Collection<File> dir = FileUtils.listFiles(new File(ServerConstants.UPLOAD_DIRECTORY_TEST),
+				TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
+		return dir;
+		
+	}
+
+	@Override
+	public String getFilePath(String fileName) {
+		// TODO Auto-generated method stub
+		String path = null;
+		if(fileName.contains(".train")){
+			path = ServerConstants.UPLOAD_DIRECTORY_TRAIN+File.separator+fileName;
+		}
+		else if(fileName.contains(".train")){
+			path = ServerConstants.UPLOAD_DIRECTORY_TEST+File.separator+fileName;
+		}
+		else{
+			path = ServerConstants.UPLOAD_DIRECTORY_OTHER+File.separator+fileName;
+		}
+			
+		return path;
+	}
+
 
 
 	

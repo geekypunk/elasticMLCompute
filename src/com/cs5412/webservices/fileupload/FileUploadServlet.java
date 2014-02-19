@@ -107,15 +107,6 @@ public class FileUploadServlet extends HttpServlet {
         upload.setSizeMax(ServerConstants.MAX_REQUEST_SIZE);
         upload.setProgressListener(progressListener);
  
-        // constructs the directory path to store upload file
-        // this path is relative to application's directory
-        String uploadPath = ServerConstants.UPLOAD_DIRECTORY;
-         
-        // creates the directory if it does not exist
-        File uploadDir = new File(uploadPath);
-        if (!uploadDir.exists()) {
-            uploadDir.mkdir();
-        }
         JSONObject result = new JSONObject();
         try {
             List<FileItem> formItems = upload.parseRequest(request);
@@ -139,7 +130,14 @@ public class FileUploadServlet extends HttpServlet {
  	                    	array.put(jsono);
  	                    	result.put("files", array);
                         } else{
-	                        String filePath = uploadPath + File.separator + fileName;
+                        	String filePath = null;
+                        	if(fileName.contains(".test")){
+                        		filePath = ServerConstants.UPLOAD_DIRECTORY_TEST + File.separator + fileName;
+                        	}else if(fileName.contains(".train")){
+                        		filePath = ServerConstants.UPLOAD_DIRECTORY_TRAIN + File.separator + fileName;
+                        	}else{
+                        		filePath = ServerConstants.UPLOAD_DIRECTORY_OTHER + File.separator + fileName;
+                        	}
 	                        jsono = createJsonObj(item);
 	                        InputStream uploadedStream = item.getInputStream();
 	                        fs.createFile(uploadedStream, filePath);
@@ -274,7 +272,7 @@ public class FileUploadServlet extends HttpServlet {
     
     private JSONArray createJsonArrayForUploads() throws JSONException{
 		 
-		 Collection<File> dir = fs.getUploadedDatasets();
+		 Collection<File> dir = fs.getAllUploaded();
 		 JSONArray filesJSONArray = new JSONArray();
 		 JSONObject jsono;
 		 for(File file:dir){

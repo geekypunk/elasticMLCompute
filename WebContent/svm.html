@@ -216,14 +216,14 @@
 	<script type="text/javascript" charset="utf-8">
 		$(function(){
 			
-			$.getJSON("http://localhost:8080/elasticMLCompute/SVMParameters",{id: $(this).val(), ajax: 'true'}, function(j){
+			$.getJSON("http://localhost:8080/elasticMLCompute/ml/svm/getTrainingDataSets",{id: $(this).val(), ajax: 'true'}, function(j){
 		 		var $subType = $("#e1");
 				$subType.empty();
 				$.each(j, function () {
 					$subType.append($('<option></option>').attr("value", this.optionValue).text(this.optionDisplay));
 				});
 			});
-			$.getJSON("http://localhost:8080/elasticMLCompute/SVMParameters",{id: $(this).val(), ajax: 'true'}, function(j){
+			$.getJSON("http://localhost:8080/elasticMLCompute/ml/svm/getTestDataSets",{id: $(this).val(), ajax: 'true'}, function(j){
 		 		var $subType = $("#e2");
 				$subType.empty();
 				$.each(j, function () {

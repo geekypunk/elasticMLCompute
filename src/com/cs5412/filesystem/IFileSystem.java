@@ -6,7 +6,10 @@ import java.io.InputStream;
 import java.util.Collection;
 
 public interface IFileSystem {
-	public void createFile(InputStream is,String fileName) throws IOException;
+	void createFile(InputStream is,String fileName) throws IOException;
 	boolean deleteFile(String fileName) throws IOException;
-	public Collection<File> getUploadedDatasets();
+	String getFilePath(String fileName);
+	Collection<File> getAllUploaded();
+	Collection<File> getUploadedTrainingDatasets();
+	Collection<File> getUploadedTestDatasets();
 }
