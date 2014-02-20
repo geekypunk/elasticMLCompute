@@ -130,8 +130,7 @@ public class SVMService{
 				jsonFile.put("optionDisplay", file.getName());
 				filesJson.put(jsonFile);
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOG.error("Error", e);
 			}
 			
 		}
@@ -152,8 +151,7 @@ public class SVMService{
 				jsonFile.put("optionDisplay", file.getName());
 				filesJson.put(jsonFile);
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOG.error("Error", e);
 			}
 			
 		}
