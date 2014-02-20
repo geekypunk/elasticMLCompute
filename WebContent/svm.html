@@ -162,7 +162,8 @@
 										  
 									   </form>
 									   <br/>
-									   <button id="btn-load-model" class="btn btn-success" data-complete-text="Create again!" data-loading-text="Creating...">Create Model!</button>
+									   <!--
+									   <button id="btn-load-model" class="btn btn-success" data-complete-text="Create again!" data-loading-text="Creating...">Create Model!</button>-->
 									  
 									  
 										
@@ -252,7 +253,7 @@
 						testDataset: $('#e2').val() 
 					},
 					dataType: "text",
-					url: "http://localhost:8080/elasticMLCompute/ml/svm/crossvalidation/createfiles",
+					url: "http://localhost:8080/elasticMLCompute/ml/svm/runService",
 					success: function (d) {
 						a.button("complete");
 					},

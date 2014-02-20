@@ -6,8 +6,6 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
-import org.apache.commons.io.FileUtils;
-
 @WebListener
 public class MyListener implements ServletContextListener {
 	public static String workPath = "F:"+File.separator;
