@@ -1,7 +1,13 @@
 package com.cs5412.webservices.ml;
 
 import java.io.File;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -13,6 +19,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.codehaus.jackson.map.AnnotationIntrospector.Pair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,9 +45,9 @@ public class SVMService{
 			
 			) throws Exception {
 		LOG.debug("Using "+trainingDataset+" dataset for SVM");
-		CrossValidationFiles.createFiles(ServerConstants.UPLOAD_DIRECTORY_TRAIN+File.separator+trainingDataset, MyListener.crossvalidation);
+		//CrossValidationFiles.createFiles(ServerConstants.UPLOAD_DIRECTORY_TRAIN+File.separator+trainingDataset, MyListener.crossvalidation);
 		LOG.debug("Creating Models");
-		//ExecutorService es = Executors.newCachedThreadPool();
+		//ExecutorService es = Executors.newFixedThreadPool(2);
 		try{
 			for(int i=1;i<=NUM_MODELS;i++){
 				for(int j=0;j<=6;j++) {
@@ -49,7 +56,7 @@ public class SVMService{
 					//es.execute(modelThread);
 					LOG.debug("Creating Model"+i+j);
 					//modelThread.start();
-					modelThread.run();
+					//modelThread.run();
 				}
 			}
 			/*es.shutdown();
@@ -71,10 +78,54 @@ public class SVMService{
 		String bestC = Classifier.valClassifyCaller(MyListener.model, MyListener.crossvalidation, MyListener.output + "testOutput.txt");
 		LOG.debug("bestC="+bestC.split(" ")[0]);
 		TestClassification.testClassify(Integer.parseInt(bestC.split(" ")[0]), "0", ServerConstants.UPLOAD_DIRECTORY_TRAIN+File.separator+trainingDataset, MyListener.output + "cv.txt", ServerConstants.UPLOAD_DIRECTORY_TEST+File.separator+testDataset);
+		ArrayList<ArrayList<Double>> yVal = Classifier.valAccuracies;
+		ArrayList<Double> avgValAccuracies = Classifier.avgValAccuracies;
+		double xVal[] = TestClassification.C;
+		JSONArray result = new JSONArray();
+		JSONArray dataPoints;
+		JSONArray dataPoint;
+		int i=0;
+		DecimalFormat df = new DecimalFormat("#");
+        df.setMaximumFractionDigits(8);
+       // String xValFormatted;
+		for(List<Double> yList:yVal){
+			dataPoints = new JSONArray();
+			for(Double val:yList){
+				dataPoint = new JSONArray();
+				//xValFormatted = df.format(xVal[i]);
+				dataPoint.put(Math.log(10000*xVal[i]));
+				dataPoint.put(val);
+				dataPoints.put(dataPoint);
+				i++;		
+				
+			}
+			result.put(dataPoints);
+			i=0;
+		}
+		i=0;
+		dataPoints = new JSONArray();
+		for(Double yList:avgValAccuracies){
+			dataPoint = new JSONArray();
+			dataPoint.put(Math.log(10000*xVal[i]));
+			dataPoint.put(yList);
+			dataPoints.put(dataPoint);
+			i++;		
+		}
+		result.put(dataPoints);
+		fs.createFile(result.toString(),ServerConstants.REPORTS_DIRECTORY+File.separator+ trainingDataset+"-"+testDataset+IFileSystem.CHART_DATA_FORMAT);
 		LOG.debug("FINISHED SVM EXECUTION for"+trainingDataset+"|"+testDataset);
-		return Response.status(200).entity("Hello").build();
+		return Response.status(200).entity(result.toString()).build();
 	}
 	
+	@Path("/getReport/{reportId}")
+	@GET
+	public Response getReportData(
+			@PathParam("reportId") String reportId
+			) throws Exception {
+		LOG.debug("Reading report"+reportId);
+		String path = ServerConstants.REPORTS_DIRECTORY+File.separator+reportId;
+		return Response.status(200).entity(fs.readFileToString(path)).build();
+	}
 	
 	@Path("/crossvalidation/createfiles")
 	@POST

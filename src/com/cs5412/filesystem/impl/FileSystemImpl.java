@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
@@ -41,7 +42,14 @@ public class FileSystemImpl implements IFileSystem{
          os.close();
         
 	}
-
+	
+	@Override
+	public void createFile(String text,String fileName) throws IOException {
+		PrintWriter out = new PrintWriter(fileName);
+		out.println(text);
+		out.close();
+	}
+	
 	@Override
 	public boolean deleteFile(String fileName) throws IOException {
 		// TODO Auto-generated method stub
@@ -91,6 +99,11 @@ public class FileSystemImpl implements IFileSystem{
 		return path;
 	}
 
+	@Override
+	public String readFileToString(String filePath) throws IOException {
+		// TODO Auto-generated method stub
+		return FileUtils.readFileToString(new File(filePath));
+	}
 
 
 	

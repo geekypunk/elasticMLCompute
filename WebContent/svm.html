@@ -162,8 +162,9 @@
 										  
 									   </form>
 									   <br/>
-									   <!--
-									   <button id="btn-load-model" class="btn btn-success" data-complete-text="Create again!" data-loading-text="Creating...">Create Model!</button>-->
+									   <button id="btn-chart" class="btn btn-success" data-complete-text="Refresh" data-loading-text="Refresh...">Display Chart</button>
+									   <br/>
+									 
 									  
 									  
 										
@@ -171,6 +172,34 @@
 								</div>
 								<!-- /BOX -->
 							</div>
+							<!-- SVM CHART -->
+							<div class="col-md-12" id="svmChart" style="display:none;">
+								<!-- BOX -->
+								<div class="box border blue" style="width:90%">
+									<div class="box-title">
+										<h4><i class="fa fa-signal"></i>Interactive Chart</h4>
+										<div class="tools">
+											<a href="#box-config" data-toggle="modal" class="config">
+												<i class="fa fa-cog"></i>
+											</a>
+											<a href="javascript:;" class="reload">
+												<i class="fa fa-refresh"></i>
+											</a>
+											<a href="javascript:;" class="collapse">
+												<i class="fa fa-chevron-up"></i>
+											</a>
+											<a href="javascript:;" class="remove">
+												<i class="fa fa-times"></i>
+											</a>
+										</div>
+									</div>
+									<div class="box-body">
+										<div id="chart_2" class="chart"></div>
+									</div>
+								</div>
+								<!-- /BOX -->
+							</div>
+							<!-- /SVM CHART -->
 						</div>
 						<!-- /ADVANCED -->
 						<!-- /PAGE HEADER -->
@@ -205,6 +234,14 @@
 	<script type="text/javascript" src="js/select2/select2.min.js"></script>
 	<!-- UNIFORM -->
 	<script type="text/javascript" src="js/uniform/jquery.uniform.min.js"></script>
+	<!-- FLOT CHARTS -->
+	<script src="js/flot/jquery.flot.min.js"></script>
+	<script src="js/flot/jquery.flot.time.min.js"></script>
+    <script src="js/flot/jquery.flot.selection.min.js"></script>
+	<script src="js/flot/jquery.flot.resize.min.js"></script>
+    <script src="js/flot/jquery.flot.pie.min.js"></script>
+    <script src="js/flot/jquery.flot.stack.min.js"></script>
+    <script src="js/flot/jquery.flot.crosshair.min.js"></script>
 	<!-- COOKIE -->
 	<script type="text/javascript" src="js/jQuery-Cookie/jquery.cookie.min.js"></script>
 	<!-- WIZARD -->
@@ -214,145 +251,13 @@
 	<script src="js/jquery-validate/additional-methods.min.js"></script>
 	<!-- CUSTOM SCRIPT -->
 	<script src="js/script.js"></script>
-	<script type="text/javascript" charset="utf-8">
-		$(function(){
-			
-			$.getJSON("http://localhost:8080/elasticMLCompute/ml/svm/getTrainingDataSets",{id: $(this).val(), ajax: 'true'}, function(j){
-		 		var $subType = $("#e1");
-				$subType.empty();
-				$.each(j, function () {
-					$subType.append($('<option></option>').attr("value", this.optionValue).text(this.optionDisplay));
-				});
-			});
-			$.getJSON("http://localhost:8080/elasticMLCompute/ml/svm/getTestDataSets",{id: $(this).val(), ajax: 'true'}, function(j){
-		 		var $subType = $("#e2");
-				$subType.empty();
-				$.each(j, function () {
-					$subType.append($('<option></option>').attr("value", this.optionValue).text(this.optionDisplay));
-				});
-			});
-			
-		
-		})
-	</script>
-	<script>
-	
-		$("#svmForm").submit(function(event) {
-
-			  /* stop form from submitting normally */
-			event.preventDefault();
-
-			var a=$('#btn-load-complete');
-			a.button("loading");
-			var trainingDataset = $('#e1').val();
-			if(trainingDataset.trim().length > 0 && trainingDataset.trim().indexOf(".train")!=-1){	
-				$.ajax({
-					type: "POST",
-					data:{ 
-						trainingDataset: trainingDataset, 
-						testDataset: $('#e2').val() 
-					},
-					dataType: "text",
-					url: "http://localhost:8080/elasticMLCompute/ml/svm/runService",
-					success: function (d) {
-						a.button("complete");
-					},
-					error: function (d) {
-		
-					},
-					complete: function (d) {
-						$('#btn-load-complete').button("complete");
-						
-					}
-				});
-			}else{
-				alert("Choose a training dataset!");
-				$('#btn-load-complete').button("reset");
-			}
-		
-		});
-		
-
-		/*
-		$("#btn-load-run").on("click",function(){
-			var a=$(this);
-			a.button("loading");
-			setTimeout(function() { 
-				$.ajax({
-					type: "POST",
-					dataType: "text",
-					url: "http://localhost:8080/elasticMLCompute/ml/svm/crossvalidation/createfiles",
-					success: function (d) {
-						a.button("complete");
-					}
-				})
-				},500)
-		});
-		*/
-		$("#btn-load-model").on("click",function(){
-			var a=$(this);
-			a.button("loading");
-			setTimeout(function() { 
-				$.ajax({
-					type: "GET",
-					dataType: "text",
-					url: "http://localhost:8080/elasticMLCompute/ml/svm/crossvalidation/createmodel/0/1",
-					success: function (d) {
-						a.button("complete");
-					}
-				})
-				},500)
-		});
-		/*				   
-		$("#btn-load").click(function(){
-			$("#loading").show();
-			$.ajax({
-					type: "GET",
-					dataType: "text",
-					url: "http://localhost:8080/elasticMLCompute/ml/svm/crossvalidation/createmodel/0/1",
-					success: function (d) {
-						$("#loading").hide();
-					},
-					error: function (d) {
-						console.log("EMLError"+d)
-					},
-					complete: function (d) {
-						$("#loading").hide();
-					}
-			});
-		});
-		*/
-		/*
-		$(function () {
-			$("#loading").ajaxStart(function () {
-				$(this).show();
-			});
-
-			$("#loading").ajaxStop(function () {
-				$(this).hide();
-			});
-
-			$("#startAjaxRequest").click(function () {
-				
-			  // run ajax request
-				$.ajax({
-					type: "GET",
-					dataType: "json",
-					url: "http://localhost:8080/elasticMLCompute/ml/svm/crossvalidation/createmodel/0/1",
-					success: function (d) {
-						
-					}
-				});
-													
-					
-				
-			});
-		});*/
-	</script>
+	<script src="js/svm.charts.js"></script>
+	<script src="js/svm.js"></script>
 	<script>
 		jQuery(document).ready(function() {		
 			App.setPage("forms");  //Set current page
 			App.init(); //Initialise plugins and elements
+			
 		});
 	</script>
 	<!-- /JAVASCRIPTS -->

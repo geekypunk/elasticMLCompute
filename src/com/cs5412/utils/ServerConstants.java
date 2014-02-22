@@ -10,6 +10,7 @@ public class ServerConstants {
 	public static final String UPLOAD_DIRECTORY_TRAIN = "C:"+File.separator+"upload"+File.separator+"train";
 	public static final String UPLOAD_DIRECTORY_TEST = "C:"+File.separator+"upload"+File.separator+"test";
 	public static final String UPLOAD_DIRECTORY_OTHER = "C:"+File.separator+"upload"+File.separator+"other";
+	public static final String REPORTS_DIRECTORY = "C:"+File.separator+"reports";
 	public static final String TMP_DIRECTORY = "C:"+File.separator+"tmp";
 	public static final int MEMORY_THRESHOLD   = 1024 * 1024 * 100;  // 500MB
 	public static final int UPLOAD_BUFFER   = 1024 * 1024 * 5;  // 5MB
