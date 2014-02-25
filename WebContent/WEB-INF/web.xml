@@ -18,7 +18,7 @@
     <url-pattern>/ml/*</url-pattern>
   </servlet-mapping>
   <listener>
-   	<listener-class>com.cs5412.webservices.ml.MyListener</listener-class>
+   	<listener-class>com.cs5412.webservices.ml.WebAppListener</listener-class>
   </listener>
   <filter>
     <filter-name>CORS</filter-name>

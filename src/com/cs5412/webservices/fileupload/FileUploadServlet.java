@@ -1,12 +1,13 @@
 package com.cs5412.webservices.fileupload;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Collection;
 import java.util.List;
 
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -18,17 +19,17 @@ import org.apache.commons.fileupload.FileUploadBase.FileSizeLimitExceededExcepti
 import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.hadoop.fs.FileStatus;
+import org.apache.hadoop.fs.LocatedFileStatus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.cs5412.filesystem.impl.FileSystemImpl;
-import com.cs5412.utils.HTTPConstants;
-import com.cs5412.utils.ServerConstants;
- 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.cs5412.filesystem.IFileSystem;
+import com.cs5412.utils.HTTPConstants;
+import com.cs5412.utils.ServerConstants;
 
 /**
  * A Java servlet that handles file upload from client.
@@ -39,14 +40,10 @@ import org.slf4j.LoggerFactory;
 public class FileUploadServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     static final Logger LOG = LoggerFactory.getLogger(FileUploadServlet.class);
-     
-    // upload settings
-  
     
     //In-memory object-Maintains list of files on server
     JSONObject filesJSONobj = new JSONObject();
     JSONArray filesJSONArray = new JSONArray();
-    FileSystemImpl fs = new FileSystemImpl();
     ProgressListener progressListener = new ProgressListener(){
     	   public void update(long pBytesRead, long pContentLength, int pItems) {
     	       LOG.info("We are currently reading item " + pItems);
@@ -60,17 +57,9 @@ public class FileUploadServlet extends HttpServlet {
     };
     public void init(ServletConfig config)
             throws ServletException{
-    	try {
-    		
-			filesJSONArray = createJsonArrayForUploads();
-    		filesJSONobj.put("files", filesJSONArray);
-    		LOG.info("SERVER UP!");
-			
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-    		LOG.error("Error",e);
-
-		}
+    	super.init(config);
+    	
+    	
     	
     }
     /**
@@ -79,6 +68,10 @@ public class FileUploadServlet extends HttpServlet {
      */
     protected void doPost(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
+    	//hard-coded
+    	String username = "admin";
+    	ServletContext ctx= getServletContext();  
+    	IFileSystem fs = (IFileSystem) ctx.getAttribute("fileSystem");
         // checks if the request actually contains upload file
         if (!ServletFileUpload.isMultipartContent(request)) {
             // if not, we stop here
@@ -96,7 +89,7 @@ public class FileUploadServlet extends HttpServlet {
         // sets memory threshold - beyond which files are stored in disk, controls in-memory storage 
         factory.setSizeThreshold(ServerConstants.MEMORY_THRESHOLD);
         // sets temporary location to store files
-        factory.setRepository(new File(ServerConstants.TMP_DIRECTORY));
+        factory.setRepository(new File(ServerConstants.getUploadDirTmp()));
  
         ServletFileUpload upload = new ServletFileUpload(factory);
          
@@ -130,16 +123,9 @@ public class FileUploadServlet extends HttpServlet {
  	                    	array.put(jsono);
  	                    	result.put("files", array);
                         } else{
-                        	String filePath = null;
-                        	if(fileName.contains(".test")){
-                        		filePath = ServerConstants.UPLOAD_DIRECTORY_TEST + File.separator + fileName;
-                        	}else if(fileName.contains(".train")){
-                        		filePath = ServerConstants.UPLOAD_DIRECTORY_TRAIN + File.separator + fileName;
-                        	}else{
-                        		filePath = ServerConstants.UPLOAD_DIRECTORY_OTHER + File.separator + fileName;
-                        	}
-	                        jsono = createJsonObj(item);
+                        	jsono = createJsonObj(item);
 	                        InputStream uploadedStream = item.getInputStream();
+	                        String filePath = fs.getFilePathForUploads(fileName, username);
 	                        fs.createFile(uploadedStream, filePath);
 	                        request.setAttribute("message",
 	                            "Upload has been done successfully!");
@@ -172,12 +158,15 @@ public class FileUploadServlet extends HttpServlet {
     }
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
 	        throws ServletException, IOException{
+    	String username = "admin";
+    	ServletContext ctx=getServletContext();  
+    	IFileSystem fs = (IFileSystem) ctx.getAttribute("fileSystem");
     	PrintWriter writer = response.getWriter();
     	response.setContentType("application/json");
     	String delFileName = request.getParameter(HTTPConstants.DELETE_DATASET);
     	JSONObject responseJson = null;
     	try{
-    		boolean flag = fs.deleteFile(delFileName);
+    		boolean flag = fs.deleteFile(delFileName,username);
     		if(flag){
     			removeFromInMemoryJson(delFileName);
     			responseJson = createDeleteFileJson(delFileName,flag);
@@ -195,7 +184,20 @@ public class FileUploadServlet extends HttpServlet {
     }
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
 	        throws ServletException, IOException{
-    	
+    	ServletContext ctx=getServletContext();  
+    	IFileSystem fs = (IFileSystem) ctx.getAttribute("fileSystem");
+    	String username="admin";
+    	try {
+    		
+			filesJSONArray = createJsonArrayForUploads(fs,username);
+    		filesJSONobj.put("files", filesJSONArray);
+    		LOG.info("SERVER UP!");
+			
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+    		LOG.error("Error",e);
+
+		}
     	PrintWriter writer = response.getWriter();
     	response.setContentType("application/json");
     	try{
@@ -270,22 +272,26 @@ public class FileUploadServlet extends HttpServlet {
     	}
     }
     
-    private JSONArray createJsonArrayForUploads() throws JSONException{
+    private JSONArray createJsonArrayForUploads(IFileSystem fs,String username) throws JSONException, FileNotFoundException, IOException{
 		 
-		 Collection<File> dir = fs.getAllUploaded();
-		 JSONArray filesJSONArray = new JSONArray();
-		 JSONObject jsono;
-		 for(File file:dir){
-			 jsono = new JSONObject();
-			 jsono.put("name", file.getName());
-	         jsono.put("size", file.length());
-	         jsono.put("type", "file");
-	         jsono.put("url", ServerConstants.SERVER_URL+"FileUpload?getfile=" + file.getName());
-	         jsono.put("thumbnailUrl", "js/jquery-upload/img/document_thumbnail.PNG");
-	         jsono.put("deleteUrl", ServerConstants.SERVER_URL+"FileUpload?"+HTTPConstants.DELETE_DATASET+"=" + file.getName());
-	         jsono.put("deleteType", "DELETE");
-	         filesJSONArray.put(jsono);
-		 }
-		 return filesJSONArray;
+    	 
+    	List<LocatedFileStatus> dir = (List<LocatedFileStatus>) fs.getAllUploaded(username);
+		JSONArray filesJSONArray = new JSONArray();
+		JSONObject jsono;
+		
+		for(FileStatus file:dir){
+			if(file.isFile()){
+				jsono = new JSONObject();
+				jsono.put("name", file.getPath().getName());
+		        jsono.put("size", file.getLen());
+		        jsono.put("type", "file");
+		        jsono.put("url", ServerConstants.SERVER_URL+"FileUpload?getfile=" + file.getPath().getName());
+		        jsono.put("thumbnailUrl", "js/jquery-upload/img/document_thumbnail.PNG");
+		        jsono.put("deleteUrl", ServerConstants.SERVER_URL+"FileUpload?"+HTTPConstants.DELETE_DATASET+"=" + file.getPath().getName());
+		        jsono.put("deleteType", "DELETE");
+		        filesJSONArray.put(jsono);
+			}
+		}
+		return filesJSONArray;
 	 }
 }

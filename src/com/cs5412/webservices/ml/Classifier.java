@@ -1,24 +1,32 @@
 package com.cs5412.webservices.ml;
 
 import jnisvmlight.*;
+
 import java.io.*;
 import java.util.*;
+
+import com.cs5412.filesystem.IFileSystem;
 
 public class Classifier {
 	public static ArrayList<ArrayList<Double>> valAccuracies = new ArrayList<ArrayList<Double>>();
 	public static ArrayList<Double> avgValAccuracies = new ArrayList<Double>();
-	private static void valClassify(int fileNum, String modelPath, String crossvalidation, String of){
+	private static void valClassify(int fileNum, String modelPath, String crossvalidation, String of,IFileSystem fs){
 		try{
 			String modelFile = modelPath + "Model" + fileNum;
-			String testFile = crossvalidation + "SVM";
+			String testFile = crossvalidation + File.separator+"SVM";
 			ArrayList<Double> acc = null;
 			testFile += fileNum + ".val";
-			LabeledFeatureVector[] fvVectors = GetFeatureVector.readFileToFV(testFile);
+			InputStream fin = (InputStream) fs.readFile(testFile);
+			
+			BufferedReader in = new BufferedReader(new InputStreamReader(fin));
+			LabeledFeatureVector[] fvVectors = GetFeatureVector.readFileToFV(in);
 			//BufferedWriter bw = new BufferedWriter(new FileWriter(of, true));
 			acc = new ArrayList<Double>();
 			for(int i=1;i<=7;i++){
 				String mf = modelFile + i + ".model";
-				SVMLightModel model = SVMLightModel.readSVMLightModelFromURL(new File(mf));				
+				fin = (InputStream) fs.readFile(mf);
+				in = new BufferedReader(new InputStreamReader(fin));
+				SVMLightModel model = SVMLightModel.readSVMLightModelFromHDFS(in);				
 				double total = 0.0, match = 0.0;
 				for(LabeledFeatureVector fvVector : fvVectors){
 					int label = (int)fvVector.getLabel();
@@ -44,16 +52,17 @@ public class Classifier {
 		}
 	}
 	
-	public static String valClassifyCaller(String modelPath, String crossvalidation, String of){
-		valClassify(1, modelPath, crossvalidation, of);
-		valClassify(2, modelPath, crossvalidation, of);
-		valClassify(3, modelPath, crossvalidation, of);
-		valClassify(4, modelPath, crossvalidation, of);
-		valClassify(5, modelPath, crossvalidation, of);
+	public static String valClassifyCaller(IFileSystem fs,String crossvalidation, String modelPath,String of){
+		of = crossvalidation+File.separator+"output"+File.separator+of;
+		valClassify(1, modelPath, crossvalidation, of,fs);
+		valClassify(2, modelPath, crossvalidation, of,fs);
+		valClassify(3, modelPath, crossvalidation, of,fs);
+		valClassify(4, modelPath, crossvalidation, of,fs);
+		valClassify(5, modelPath, crossvalidation, of,fs);
 		double max = -1.0;
 		int maxIndex = -1;
 		try{
-			BufferedWriter bw = new BufferedWriter(new FileWriter(of, true));
+			BufferedWriter bw =(BufferedWriter) fs.createFileToWrite(of);
 			bw.newLine();
 			double acc1 = (valAccuracies.get(0).get(0) + valAccuracies.get(1).get(0) + valAccuracies.get(2).get(0)+ valAccuracies.get(3).get(0)+ valAccuracies.get(4).get(0))/5.0;
 			if(acc1 > max) {

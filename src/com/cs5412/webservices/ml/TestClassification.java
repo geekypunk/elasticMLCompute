@@ -3,6 +3,8 @@ package com.cs5412.webservices.ml;
 import java.io.*;
 import java.util.ArrayList;
 
+import com.cs5412.filesystem.IFileSystem;
+
 import jnisvmlight.LabeledFeatureVector;
 import jnisvmlight.SVMLightInterface;
 import jnisvmlight.SVMLightModel;
@@ -46,8 +48,8 @@ public class TestClassification {
 		return fvarray;
 	}
 	
-	private static SVMLightModel create(String fName, int tradeOffNum, String kernel){
-		LabeledFeatureVector[] fvVector = GetFeatureVector.readFileToFV(fName);
+	private static SVMLightModel create(BufferedReader trainFilein, int tradeOffNum, String kernel){
+		LabeledFeatureVector[] fvVector = GetFeatureVector.readFileToFV(trainFilein);
 		String[] args = new String[4];
 		args[0] = "-c";
 		args[1] = (new Double(C[tradeOffNum])).toString();
@@ -58,11 +60,20 @@ public class TestClassification {
 		return model;
 	}
 	
-	public static void testClassify(int tradeOffNum, String kernel, String trainFile, String testOutputFile, String testFile){
+	public static void testClassify(int tradeOffNum, String kernel, IFileSystem fs, String username,String trainFile, String testOutputFile, String testFile){
 		try{
-			SVMLightModel mainModel = create(trainFile, tradeOffNum, kernel);
+			String trainFilePath = fs.getFilePathForUploads(trainFile, username);
+			String testFilePath = fs.getFilePathForUploads(testFile, username);
+			
+			InputStream fin = (InputStream) fs.readFile(trainFilePath);
+			BufferedReader in = new BufferedReader(new InputStreamReader(fin));
+			SVMLightModel mainModel = create(in, tradeOffNum, kernel);
 			BufferedWriter bw = new BufferedWriter(new FileWriter(testOutputFile));
+			
+			fin = (InputStream) fs.readFile(testFilePath);
+			in = new BufferedReader(new InputStreamReader(fin));
 			LabeledFeatureVector[] testFV = readFileToFV(testFile);
+			
 			for(LabeledFeatureVector fvVector : testFV){
 				double prediction = -1.0;
 				if(fvVector.getDimAt(fvVector.getDims().length-1) > 60830) {

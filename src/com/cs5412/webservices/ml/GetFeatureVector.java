@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import jnisvmlight.LabeledFeatureVector;
 
 public class GetFeatureVector {
-	public static LabeledFeatureVector[] readFileToFV(String filePath){
+	public static LabeledFeatureVector[] readFileToFV(BufferedReader trainFilein){
 		ArrayList<LabeledFeatureVector> fvList = new ArrayList<LabeledFeatureVector>();
 		try{
-			BufferedReader br = new BufferedReader(new FileReader(filePath));
+			BufferedReader br = trainFilein;
 			String line = br.readLine();
 			while(line != null){
 				LabeledFeatureVector fv = new LabeledFeatureVector();
@@ -47,15 +47,5 @@ public class GetFeatureVector {
 		for(int i=0;i<fvList.size();i++) fvarray[i] = fvList.get(i);
 		return fvarray;
 	}
-	public static void main(String[] args){
-		String filePath = "E:\\crossvalidation\\SVM1.train";
-		LabeledFeatureVector[] fvArray = readFileToFV(filePath);
-		for(LabeledFeatureVector fv : fvArray){
-			System.out.print(fv.getLabel() + " ");
-			for(int i=0;i<fv.getDims().length;i++) {
-				System.out.print(fv.getDimAt(i) + ":" + fv.getValueAt(i) + " ");
-			}
-			System.out.println();
-		}
-	}
+	
 }

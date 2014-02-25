@@ -3,39 +3,50 @@ package com.cs5412.webservices.ml;
 import java.util.*;
 import java.io.*;
 
+import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FSDataOutputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.cs5412.filesystem.IFileSystem;
+import com.cs5412.utils.ServerConstants;
+import com.cs5412.webservices.fileupload.FileUploadServlet;
+
 public class CrossValidationFiles {
-	private static void getAllTrain(ArrayList<String> allTrain, String file) {
+	static final Logger LOG = LoggerFactory.getLogger(FileUploadServlet.class);
+	private static void getAllTrain(ArrayList<String> allTrain, String file,IFileSystem fs) {
 		try {
-			BufferedReader br = new BufferedReader(new FileReader(file));
-			String line = br.readLine();
+			InputStream fin = (InputStream) fs.readFile(file);
+			BufferedReader in = new BufferedReader(new InputStreamReader(fin));
+			String line = in.readLine();
 			while(line != null) {
 				if(line.length()!=2) {
 					if(line.startsWith("0")) allTrain.add("-1 " + line.substring(2, line.length()));
 					else allTrain.add(line);
 				}
-				line = br.readLine();
+				line = in.readLine();
 			}
-			br.close();
+			in.close();
 		}catch(Exception e) {	
-			System.out.println("Exception caught: " + e.getLocalizedMessage());
+			LOG.debug("Exception caught: " + e.getLocalizedMessage());
 		}
 	}
 	
-	private static void AddToFile(String file, ArrayList<String> Content) {
+	private static void AddToFile(String file, ArrayList<String> Content,IFileSystem fs) {
 		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+			BufferedWriter bw =(BufferedWriter) fs.createFileToWrite(file);
 			for(String str : Content) {
 				bw.append(str);bw.newLine();
 			}
 			bw.close();
 		}catch(Exception e) {
-			System.out.println("Exception caught: " + e.getLocalizedMessage());
+			LOG.debug("Exception caught: " + e.getLocalizedMessage());
 		}
 	}
 	
-	public static void createFiles(String trainFile, String crossvalidation) {
+	public static void createFiles(String trainingDataset, IFileSystem fs, String crossvalidation) {
 		ArrayList<String> allTrain = new ArrayList<String>();
-		getAllTrain(allTrain, trainFile);
+		getAllTrain(allTrain, trainingDataset,fs);
 		Collections.shuffle(allTrain);
 		List<String> fold1 = allTrain.subList(0, 1421);
 		List<String> fold2 = allTrain.subList(1422, 2843);
@@ -59,7 +70,15 @@ public class CrossValidationFiles {
 		train5.addAll(fold5);train5.addAll(fold1);train5.addAll(fold2);train5.addAll(fold3);
 		val1.addAll(fold5);val2.addAll(fold1);val3.addAll(fold2);val4.addAll(fold3);val5.addAll(fold4);
 		
-		AddToFile(crossvalidation + "SVM1.train", train1);AddToFile(crossvalidation + "SVM2.train", train2);AddToFile(crossvalidation + "SVM3.train", train3);AddToFile(crossvalidation + "SVM4.train", train4);AddToFile(crossvalidation + "SVM5.train", train5);
-		AddToFile(crossvalidation + "SVM1.val", val1);AddToFile(crossvalidation + "SVM2.val", val2);AddToFile(crossvalidation + "SVM3.val", val3);AddToFile(crossvalidation + "SVM4.val", val4);AddToFile(crossvalidation + "SVM5.val", val5);
+		AddToFile(crossvalidation + File.separator+"SVM1.train", train1,fs);
+		AddToFile(crossvalidation + File.separator+"SVM2.train", train2,fs);
+		AddToFile(crossvalidation + File.separator+"SVM3.train", train3,fs);
+		AddToFile(crossvalidation + File.separator+"SVM4.train", train4,fs);
+		AddToFile(crossvalidation + File.separator+"SVM5.train", train5,fs);
+		AddToFile(crossvalidation + File.separator+"SVM1.val", val1,fs);
+		AddToFile(crossvalidation + File.separator+"SVM2.val", val2,fs);
+		AddToFile(crossvalidation + File.separator+"SVM3.val", val3,fs);
+		AddToFile(crossvalidation + File.separator+"SVM4.val", val4,fs);
+		AddToFile(crossvalidation + File.separator+"SVM5.val", val5,fs);
 	}
 }
