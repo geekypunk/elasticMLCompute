@@ -50,7 +50,8 @@ public class SVMService{
 		String crossvalidation = fs.getUserPath(username)+File.separator+"work"+File.separator+"crossvalidation";
 		String modelPath = crossvalidation+File.separator+"model"+File.separator;
 		String trainFile = fs.getFilePathForUploads(trainingDataset, username);
-		//CrossValidationFiles.createFiles(trainFile, fs,crossvalidation);
+		String testFile = fs.getFilePathForUploads(testDataset, username);
+		CrossValidationFiles.createFiles(trainFile, fs,crossvalidation);
 		LOG.debug("Creating Models");
 		//ExecutorService es = Executors.newFixedThreadPool(2);
 		try{
@@ -61,7 +62,7 @@ public class SVMService{
 					//es.execute(modelThread);
 					LOG.debug("Creating Model"+i+j);
 					//modelThread.start();
-					//modelThread.run();
+					modelThread.run();
 				}
 			}
 			/*es.shutdown();
@@ -80,9 +81,11 @@ public class SVMService{
 		}
 		
 		LOG.debug("Calculating bestC");
-		String bestC = Classifier.valClassifyCaller(fs,crossvalidation,modelPath,"testOutput.txt");
+		String bestC;
+		bestC = Classifier.valClassifyCaller(fs,crossvalidation,modelPath,"testOutput.txt");
+		bestC = "3 0";
 		LOG.debug("bestC="+bestC.split(" ")[0]);
-		TestClassification.testClassify(Integer.parseInt(bestC.split(" ")[0]), "0", fs,username,trainingDataset,"cv.txt",testDataset);
+		TestClassification.testClassify(Integer.parseInt(bestC.split(" ")[0]), "0", fs,username,trainFile,"cv.txt",testFile);
 		ArrayList<ArrayList<Double>> yVal = Classifier.valAccuracies;
 		ArrayList<Double> avgValAccuracies = Classifier.avgValAccuracies;
 		double xVal[] = TestClassification.C;

@@ -7,10 +7,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FSDataOutputStream;
@@ -92,9 +94,12 @@ public class HDFSFileSystemImpl implements IFileSystem{
 	}
 
 	@Override
-	public String readFileToString(String fileName) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+	public String readFileToString(String filePath) throws IOException {
+		InputStream in  = readFile(filePath);
+		StringWriter writer = new StringWriter();
+		IOUtils.copy(in, writer);
+		String theString = writer.toString();
+		return theString;
 	}
 	@Override
 	public InputStream readFile(String filePath) throws IOException {

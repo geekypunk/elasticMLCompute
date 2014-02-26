@@ -12,10 +12,9 @@ import jnisvmlight.SVMLightModel;
 public class TestClassification {
 	public static double C[] = {0.0001,0.0005,0.001,0.005,0.01,0.05,0.1};
 	
-	private static LabeledFeatureVector[] readFileToFV(String filePath){
+	private static LabeledFeatureVector[] readFileToFV(BufferedReader br){
 		ArrayList<LabeledFeatureVector> fvList = new ArrayList<LabeledFeatureVector>();
 		try{
-			BufferedReader br = new BufferedReader(new FileReader(filePath));
 			String line = br.readLine();
 			while(line != null){
 				if(line.equals("")){
@@ -62,17 +61,15 @@ public class TestClassification {
 	
 	public static void testClassify(int tradeOffNum, String kernel, IFileSystem fs, String username,String trainFile, String testOutputFile, String testFile){
 		try{
-			String trainFilePath = fs.getFilePathForUploads(trainFile, username);
-			String testFilePath = fs.getFilePathForUploads(testFile, username);
-			
-			InputStream fin = (InputStream) fs.readFile(trainFilePath);
+		
+			InputStream fin = (InputStream) fs.readFile(trainFile);
 			BufferedReader in = new BufferedReader(new InputStreamReader(fin));
 			SVMLightModel mainModel = create(in, tradeOffNum, kernel);
 			BufferedWriter bw = new BufferedWriter(new FileWriter(testOutputFile));
 			
-			fin = (InputStream) fs.readFile(testFilePath);
+			fin = (InputStream) fs.readFile(testFile);
 			in = new BufferedReader(new InputStreamReader(fin));
-			LabeledFeatureVector[] testFV = readFileToFV(testFile);
+			LabeledFeatureVector[] testFV = readFileToFV(in);
 			
 			for(LabeledFeatureVector fvVector : testFV){
 				double prediction = -1.0;
