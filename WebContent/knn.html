@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 	<meta charset="utf-8">
-	<title>Elastic ML Cloud Admin | Dropzone File Upload</title>
+	<title>Elastic ML Cloud Admin | DashBoard</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
 	<meta name="description" content="">
 	<meta name="author" content="">
@@ -15,8 +15,14 @@
 	<link href="font-awesome/css/font-awesome.min.css" rel="stylesheet">
 	<!-- DATE RANGE PICKER -->
 	<link rel="stylesheet" type="text/css" href="js/bootstrap-daterangepicker/daterangepicker-bs3.css" />
-	<!-- DROPZONE -->
-	<link rel="stylesheet" type="text/css" href="js/dropzone/dropzone.min.css" />
+	<!-- TYPEAHEAD -->
+	<link rel="stylesheet" type="text/css" href="js/typeahead/typeahead.css" />
+	<!-- SELECT2 -->
+	<link rel="stylesheet" type="text/css" href="js/select2/select2.min.css" />
+	<!-- UNIFORM -->
+	<link rel="stylesheet" type="text/css" href="js/uniform/css/uniform.default.min.css" />
+
+
 	<!-- FONTS -->
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
 </head>
@@ -30,8 +36,6 @@
 						<img src="img/logo/logo.png" alt="Cloud Admin Logo" class="img-responsive" height="30" width="120">
 					</a>
 					<!-- /COMPANY LOGO -->
-		
-					<!-- SIDEBAR COLLAPSE -->
 					<div id="sidebar-collapse" class="sidebar-collapse btn">
 						<i class="fa fa-bars" 
 							data-icon1="fa fa-bars" 
@@ -39,7 +43,9 @@
 					</div>
 					<!-- /SIDEBAR COLLAPSE -->
 				</div>
+				<!-- NAVBAR LEFT -->
 				
+				<!-- /NAVBAR LEFT -->
 				<!-- BEGIN TOP NAVIGATION MENU -->					
 				<ul class="nav navbar-nav pull-right">
 					
@@ -62,7 +68,7 @@
 				<!-- END TOP NAVIGATION MENU -->
 		</div>
 		
-	
+		
 	</header>
 	<!--/HEADER -->
 	
@@ -81,18 +87,24 @@
 						<!-- SIDEBAR MENU -->
 						<ul>
 						
+							<!-- DATASETS -->
+							<li><a class="" href="upload.html"><i class="fa fa-pencil-square-o fa-fw"></i> <span class="menu-text">DataSets</span></a></li>
+							<!-- /DATASETS -->
 							
+							<!-- ML ALGORITHMS MENU -->
 							<li class="has-sub">
 								<a href="javascript:;" class="">
-								<i class="fa fa-pencil-square-o fa-fw"></i> <span class="menu-text">Data Sources</span>
+								<i class="fa fa-briefcase fa-fw"></i> <span class="menu-text">Algorithms</span>
 								<span class="arrow"></span>
 								</a>
 								<ul class="sub">
-									<!-- <li><a class="" href="forms.html"><span class="sub-menu-text">Custom URL</span></a></li> -->
-									<li><a class="" href="dropzone_file_upload.html"><span class="sub-menu-text">Dropzone File Upload</span></a></li>
+									<li><a class="" href="knn.html"><span class="sub-menu-text">KNN</span></a></li>
+									<li><a class="" href="svm.html"><span class="sub-menu-text">SVM</span></a></li>
 								</ul>
 							</li>
+							<!-- /ML ALGORITHM MENU -->
 							
+							<!-- REPORTS MENU -->
 							<li class="has-sub">
 								<a href="javascript:;" class="">
 								<i class="fa fa-bar-chart-o fa-fw"></i> <span class="menu-text">Reports</span>
@@ -104,7 +116,8 @@
 									
 									<li><a class="" href="others.html"><span class="sub-menu-text">Others</span></a></li>
 								</ul>
-							</li>		
+							</li>
+							<!-- /REPORTS MENU -->
 							
 							<!-- FAQ -->
 							<li><a class="" href="faq.html"><i class="fa fa-picture-o fa-fw"></i> <span class="menu-text">FAQ</span></a></li>
@@ -115,50 +128,58 @@
 				</div>
 				<!-- /SIDEBAR -->
 		<div id="main-content">
-			<!-- SAMPLE BOX CONFIGURATION MODAL FORM-->
-			<div class="modal fade" id="box-config" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-				<div class="modal-dialog">
-				  <div class="modal-content">
-					<div class="modal-header">
-					  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					  <h4 class="modal-title">Box Settings</h4>
-					</div>
-					<div class="modal-body">
-					  Here goes box setting content.
-					</div>
-					<div class="modal-footer">
-					  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-					  <button type="button" class="btn btn-primary">Save changes</button>
-					</div>
-				  </div>
-				</div>
-			  </div>
-			<!-- /SAMPLE BOX CONFIGURATION MODAL FORM-->
 			<div class="container">
 				<div class="row">
 					<div id="content" class="col-lg-12">
 						<!-- PAGE HEADER-->
-						<div class="row">
-							<div class="col-sm-12">
-								<div class="page-header">
-								
-									
-									<div class="clearfix">
-										<h3 class="content-title pull-left">Dropzone File Upload</h3>
-									</div>
-									<div class="description">Drop-file Upload Manager</div>
-								</div>
-							</div>
-						</div>
-						<!-- /PAGE HEADER -->
-						<!-- DROPZONE -->
+						<!-- ADVANCED -->
 						<div class="row">
 							<div class="col-md-12">
 								<!-- BOX -->
-								<div class="box border blue">
+								<div class="box border green">
 									<div class="box-title">
-										<h4><i class="fa fa-cloud-download"></i>Cloud Upload Manager</h4>
-										<div class="tools hidden-xs">
+										<h4><i class="fa fa-bars"></i>Parameters</h4>
+										
+									</div>
+									<div class="box-body">
+										<form id="svmForm" class="form-horizontal">
+										  <div class="form-group">
+											 <label class="col-md-2 control-label" for="e1">Training Data<span class="required"></span></label> 
+											 <div class="col-md-10">
+												<select id="e1" name="trainingDataset" class="col-md-12">
+																				
+												</select>												
+											 </div>
+										  </div>
+										  <div class="form-group">
+											 <label class="col-md-2 control-label" for="e2">Test Data<span class="required"></span></label> 
+											 <div class="col-md-10">
+												<select id="e2" name="testDataset" class="col-md-12">
+												   								   
+												</select>												
+											 </div>
+										  </div>
+										  <button type="submit" id="btn-load-complete" class="btn btn-success" data-complete-text="Run again!" data-loading-text="Running...">Run!</button>
+										  
+									   </form>
+									   <br/>
+									   <button id="btn-chart" class="btn btn-success" data-complete-text="Refresh" data-loading-text="Refresh...">Display Chart</button>
+									   <br/>
+									 
+									  
+									  
+										
+									</div>
+								</div>
+								<!-- /BOX -->
+							</div>
+							<!-- SVM CHART -->
+							<div class="col-md-12" id="svmChart" style="display:none;">
+								<!-- BOX -->
+								<div class="box border blue" style="width:90%">
+									<div class="box-title">
+										<h4><i class="fa fa-signal"></i>Interactive Chart</h4>
+										<div class="tools">
 											<a href="#box-config" data-toggle="modal" class="config">
 												<i class="fa fa-cog"></i>
 											</a>
@@ -173,26 +194,17 @@
 											</a>
 										</div>
 									</div>
-									<!-- File upload form-->
 									<div class="box-body">
-										<form method="POST" enctype="multipart/form-data" action="http://localhost:8080/elasticMLCompute/FileUpload"  class="dropzone"       
-		  							    id="my-awesome-dropzone">
-											<div class="fallback">
-												<input name="file" type="file" multiple="" />
-											</div>
-										  </form>
+										<div id="chart_2" class="chart"></div>
 									</div>
 								</div>
 								<!-- /BOX -->
 							</div>
+							<!-- /SVM CHART -->
 						</div>
-						<!-- /DROPZONE -->
-						<div class="footer-tools">
-							<span class="go-top">
-								<i class="fa fa-chevron-up"></i> Top
-							</span>
-						</div>
-					</div><!-- /CONTENT-->
+						<!-- /ADVANCED -->
+						<!-- /PAGE HEADER -->
+					</div>
 				</div>
 			</div>
 		</div>
@@ -207,25 +219,46 @@
 	<!-- BOOTSTRAP -->
 	<script src="bootstrap-dist/js/bootstrap.min.js"></script>
 	
-		
-	<!-- DATE RANGE PICKER -->
-	<script src="js/bootstrap-daterangepicker/moment.min.js"></script>
-	
-	<script src="js/bootstrap-daterangepicker/daterangepicker.min.js"></script>
 	<!-- SLIMSCROLL -->
 	<script type="text/javascript" src="js/jQuery-slimScroll-1.3.0/jquery.slimscroll.min.js"></script><script type="text/javascript" src="js/jQuery-slimScroll-1.3.0/slimScrollHorizontal.min.js"></script>
 	<!-- BLOCK UI -->
 	<script type="text/javascript" src="js/jQuery-BlockUI/jquery.blockUI.min.js"></script>
-	<!-- DROPZONE -->
-	<script type="text/javascript" src="js/dropzone/dropzone.min.js"></script>
+	<!-- TYPEHEAD -->
+	<script type="text/javascript" src="js/typeahead/typeahead.min.js"></script>
+	<!-- AUTOSIZE -->
+	<script type="text/javascript" src="js/autosize/jquery.autosize.min.js"></script>
+	<!-- COUNTABLE -->
+	<script type="text/javascript" src="js/countable/jquery.simplyCountable.min.js"></script>
+	<!-- INPUT MASK -->
+	<script type="text/javascript" src="js/bootstrap-inputmask/bootstrap-inputmask.min.js"></script>
+	<!-- SELECT2 -->
+	<script type="text/javascript" src="js/select2/select2.min.js"></script>
+	<!-- UNIFORM -->
+	<script type="text/javascript" src="js/uniform/jquery.uniform.min.js"></script>
+	<!-- FLOT CHARTS -->
+	<script src="js/flot/jquery.flot.min.js"></script>
+	<script src="js/flot/jquery.flot.time.min.js"></script>
+    <script src="js/flot/jquery.flot.selection.min.js"></script>
+	<script src="js/flot/jquery.flot.resize.min.js"></script>
+    <script src="js/flot/jquery.flot.pie.min.js"></script>
+    <script src="js/flot/jquery.flot.stack.min.js"></script>
+    <script src="js/flot/jquery.flot.crosshair.min.js"></script>
 	<!-- COOKIE -->
 	<script type="text/javascript" src="js/jQuery-Cookie/jquery.cookie.min.js"></script>
+	<!-- WIZARD -->
+	<script src="js/bootstrap-wizard/jquery.bootstrap.wizard.min.js"></script>
+	<!-- WIZARD -->
+	<script src="js/jquery-validate/jquery.validate.min.js"></script>
+	<script src="js/jquery-validate/additional-methods.min.js"></script>
 	<!-- CUSTOM SCRIPT -->
 	<script src="js/script.js"></script>
+	<script src="js/svm.charts.js"></script>
+	<script src="js/knn.js"></script>
 	<script>
 		jQuery(document).ready(function() {		
-			App.setPage("dropzone_file_upload");  //Set current page
+			App.setPage("forms");  //Set current page
 			App.init(); //Initialise plugins and elements
+			
 		});
 	</script>
 	<!-- /JAVASCRIPTS -->

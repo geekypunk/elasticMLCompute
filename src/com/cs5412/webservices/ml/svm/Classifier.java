@@ -1,4 +1,4 @@
-package com.cs5412.webservices.ml;
+package com.cs5412.webservices.ml.svm;
 
 import jnisvmlight.*;
 
@@ -62,7 +62,7 @@ public class Classifier {
 		double max = -1.0;
 		int maxIndex = -1;
 		try{
-			BufferedWriter bw =(BufferedWriter) fs.createFileToWrite(of);
+			BufferedWriter bw =(BufferedWriter) fs.createFileToWrite(of,true);
 			bw.newLine();
 			double acc1 = (valAccuracies.get(0).get(0) + valAccuracies.get(1).get(0) + valAccuracies.get(2).get(0)+ valAccuracies.get(3).get(0)+ valAccuracies.get(4).get(0))/5.0;
 			if(acc1 > max) {

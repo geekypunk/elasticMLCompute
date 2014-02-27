@@ -105,7 +105,7 @@ public class LocalFileSystemImpl implements IFileSystem{
 	}
 
 	@Override
-	public BufferedWriter createFileToWrite(String filePath)
+	public BufferedWriter createFileToWrite(String filePath,boolean overWrite)
 			throws IOException {
 		// TODO Auto-generated method stub
 		return null;
@@ -119,6 +119,11 @@ public class LocalFileSystemImpl implements IFileSystem{
 
 	@Override
 	public InputStream readFile(String filePath) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public BufferedWriter appendToFile(String resultFile) throws IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}

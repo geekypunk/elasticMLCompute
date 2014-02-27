@@ -1,4 +1,4 @@
-package com.cs5412.webservices.ml;
+package com.cs5412.webservices.ml.svm;
 
 import java.io.*;
 import java.util.ArrayList;

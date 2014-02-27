@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.net.URI;
@@ -83,13 +84,31 @@ public class HDFSFileSystemImpl implements IFileSystem{
 
 	@Override
 	/* 
-	 ** @return FSDataOutputStream
+	 ** 
 	 * */
-	public BufferedWriter createFileToWrite(String filePath) throws IOException {
+	public BufferedWriter createFileToWrite(String filePath,boolean overWrite) throws IOException {
 		Path path = new Path(filePath);
-		FSDataOutputStream fos = hdfs.create(path, true); 
+		FSDataOutputStream fos = hdfs.create(path, overWrite); 
+		OutputStream os = fos.getWrappedStream();
+		BufferedWriter bw =new BufferedWriter(new OutputStreamWriter(os));
+		return bw;
+		
+	}
+	
+	public FSDataOutputStream createHDFSFile(String filePath,boolean overWrite) throws IOException {
+		Path path = new Path(filePath);
+		FSDataOutputStream fos = hdfs.create(path, overWrite); 
+		return fos;
+		
+	}
+	
+	@Override
+	public BufferedWriter appendToFile(String filePath) throws IOException {
+		Path path = new Path(filePath);
+		FSDataOutputStream fos = hdfs.append(path); 
 		BufferedWriter bw =new BufferedWriter(new OutputStreamWriter(fos));
 		return bw;
+		
 		
 	}
 

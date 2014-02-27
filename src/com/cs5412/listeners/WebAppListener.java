@@ -1,6 +1,5 @@
-package com.cs5412.webservices.ml;
+package com.cs5412.listeners;
 
-import java.io.File;
 import java.io.IOException;
 
 import javax.servlet.ServletContext;
@@ -16,7 +15,6 @@ import com.cs5412.filesystem.IFileSystem;
 import com.cs5412.filesystem.impl.HDFSFileSystemImpl;
 import com.cs5412.filesystem.impl.LocalFileSystemImpl;
 import com.cs5412.utils.ServerConstants;
-import com.cs5412.webservices.fileupload.FileUploadServlet;
 
 @WebListener
 public class WebAppListener implements ServletContextListener {

@@ -26,6 +26,10 @@ public class ServerConstants {
 	public static final int MAX_FILE_SIZE      = 1024 * 1024 * 1024; // 500MB
 	public static final int MAX_REQUEST_SIZE   = 1024 * 1024 * 1024; // 500MB
 	
+	public static final String KNN_CV_BASE_DIR = "knn"+File.separator
+	            +"crossvalidation"+File.separator;
+	public static final String KNN_CV_RES_FILE = "knnCV.res";
+
 	public static String getUploadDirTmp(){
 		
 		if(SystemUtils.IS_OS_WINDOWS){

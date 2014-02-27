@@ -1,4 +1,4 @@
-package com.cs5412.webservices.ml;
+package com.cs5412.webservices.ml.svm;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -24,7 +24,7 @@ public class Model {
 		SVMLightInterface svmInterface = new SVMLightInterface();
 		SVMLightModel model = svmInterface.trainModel(fvVector, args);
 		String path = modelPath + "Model" + fileNum + "" + (tradeOffNum + 1) + ".model";
-		BufferedWriter bw =  fs.createFileToWrite(path);
+		BufferedWriter bw =  fs.createFileToWrite(path,true);
 		model.writeModelToHDFSFile(bw);
 	}
 	

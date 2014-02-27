@@ -1,15 +1,18 @@
-package com.cs5412.webservices.ml;
+package com.cs5412.webservices.ml.svm;
 
-import java.util.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-import org.apache.hadoop.fs.FSDataInputStream;
-import org.apache.hadoop.fs.FSDataOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cs5412.filesystem.IFileSystem;
-import com.cs5412.utils.ServerConstants;
 import com.cs5412.webservices.fileupload.FileUploadServlet;
 
 public class CrossValidationFiles {
@@ -34,7 +37,7 @@ public class CrossValidationFiles {
 	
 	private static void AddToFile(String file, ArrayList<String> Content,IFileSystem fs) {
 		try {
-			BufferedWriter bw =(BufferedWriter) fs.createFileToWrite(file);
+			BufferedWriter bw =(BufferedWriter) fs.createFileToWrite(file,true);
 			for(String str : Content) {
 				bw.append(str);bw.newLine();
 			}

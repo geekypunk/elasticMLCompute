@@ -1,4 +1,4 @@
-package com.cs5412.webservices.ml;
+package com.cs5412.webservices.ml.svm;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -121,7 +121,7 @@ public class SVMService{
 		}
 		result.put(dataPoints);
 		String filePath = fs.getUserPath(username)+File.separator+"reports"+File.separator+ trainingDataset+"-"+testDataset+IFileSystem.CHART_DATA_FORMAT;
-		BufferedWriter bw = fs.createFileToWrite(filePath);
+		BufferedWriter bw = fs.createFileToWrite(filePath,true);
 		bw.write(result.toString());
 		bw.close();
 		LOG.debug("FINISHED SVM EXECUTION for"+trainingDataset+"|"+testDataset);

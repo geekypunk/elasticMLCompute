@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.Path;
 
 public interface IFileSystem {
@@ -16,9 +17,10 @@ public interface IFileSystem {
 	Object getAllUploaded(String userName) throws FileNotFoundException, IOException;
 	Object getUploadedTrainingDatasets(String userName) throws FileNotFoundException, IOException;
 	Object getUploadedTestDatasets(String userName) throws FileNotFoundException, IOException;
-	BufferedWriter createFileToWrite(String filePath) throws IOException;
+	BufferedWriter createFileToWrite(String filePath,boolean overWrite) throws IOException;
 	String readFileToString(String fileName) throws IOException;
 	void close() throws IOException;
 	Object getUserPath(String username);
 	InputStream readFile(String filePath) throws IOException;
+	BufferedWriter appendToFile(String resultFile) throws IOException;
 }
