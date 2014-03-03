@@ -1,3 +1,5 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,12 +29,28 @@
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
 </head>
 <body>
+<%
+//allow access only if session exists
+String user = null;
+if(session.getAttribute("user") == null){
+    response.sendRedirect("login.jsp");
+}else user = (String) session.getAttribute("user");
+String userName = null;
+String sessionID = null;
+Cookie[] cookies = request.getCookies();
+if(cookies !=null){
+for(Cookie cookie : cookies){
+    if(cookie.getName().equals("user")) userName = cookie.getValue();
+    if(cookie.getName().equals("JSESSIONID")) sessionID = cookie.getValue();
+}
+}
+%>
 	<!-- HEADER -->
 	<header class="navbar clearfix" id="header">
 		<div class="container">
 				<div class="navbar-brand">
 					<!-- COMPANY LOGO -->
-					<a href="index.html">
+					<a href="index.jsp">
 						<img src="img/logo/logo.png" alt="Cloud Admin Logo" class="img-responsive" height="30" width="120">
 					</a>
 					<!-- /COMPANY LOGO -->
@@ -60,7 +78,7 @@
 							<li><a href="#"><i class="fa fa-user"></i> My Profile</a></li>
 							<li><a href="#"><i class="fa fa-cog"></i> Account Settings</a></li>
 							<li><a href="#"><i class="fa fa-eye"></i> Privacy Settings</a></li>
-							<li><a href="login.html"><i class="fa fa-power-off"></i> Log Out</a></li>
+							<li><a href="user/auth/logout"><i class="fa fa-power-off"></i> Log Out</a></li>
 						</ul>
 					</li>
 					<!-- END USER LOGIN DROPDOWN -->
@@ -88,7 +106,7 @@
 						<ul>
 						
 							<!-- DATASETS -->
-							<li><a class="" href="upload.html"><i class="fa fa-pencil-square-o fa-fw"></i> <span class="menu-text">DataSets</span></a></li>
+							<li><a class="" href="upload.jsp"><i class="fa fa-pencil-square-o fa-fw"></i> <span class="menu-text">DataSets</span></a></li>
 							<!-- /DATASETS -->
 							
 							<!-- ML ALGORITHMS MENU -->
@@ -98,8 +116,8 @@
 								<span class="arrow"></span>
 								</a>
 								<ul class="sub">
-									<li><a class="" href="knn.html"><span class="sub-menu-text">KNN</span></a></li>
-									<li><a class="" href="svm.html"><span class="sub-menu-text">SVM</span></a></li>
+									<li><a class="" href="knn.jsp"><span class="sub-menu-text">KNN</span></a></li>
+									<li><a class="" href="svm.jsp"><span class="sub-menu-text">SVM</span></a></li>
 								</ul>
 							</li>
 							<!-- /ML ALGORITHM MENU -->
@@ -253,7 +271,7 @@
 	<!-- CUSTOM SCRIPT -->
 	<script src="js/script.js"></script>
 	<script src="js/svm.charts.js"></script>
-	<script src="js/knn.js"></script>
+	<script src="js/svm.js"></script>
 	<script>
 		jQuery(document).ready(function() {		
 			App.setPage("forms");  //Set current page

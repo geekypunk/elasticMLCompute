@@ -1,3 +1,5 @@
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,24 +17,32 @@
 	<link href="font-awesome/css/font-awesome.min.css" rel="stylesheet">
 	<!-- DATE RANGE PICKER -->
 	<link rel="stylesheet" type="text/css" href="js/bootstrap-daterangepicker/daterangepicker-bs3.css" />
-	<!-- TYPEAHEAD -->
-	<link rel="stylesheet" type="text/css" href="js/typeahead/typeahead.css" />
-	<!-- SELECT2 -->
-	<link rel="stylesheet" type="text/css" href="js/select2/select2.min.css" />
-	<!-- UNIFORM -->
-	<link rel="stylesheet" type="text/css" href="js/uniform/css/uniform.default.min.css" />
-
-
 	<!-- FONTS -->
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
 </head>
 <body>
-	<!-- HEADER -->
+<%
+//allow access only if session exists
+String user = null;
+if(session.getAttribute("user") == null){
+    response.sendRedirect("login.jsp");
+}else user = (String) session.getAttribute("user");
+String userName = null;
+String sessionID = null;
+Cookie[] cookies = request.getCookies();
+if(cookies !=null){
+for(Cookie cookie : cookies){
+    if(cookie.getName().equals("user")) userName = cookie.getValue();
+    if(cookie.getName().equals("JSESSIONID")) sessionID = cookie.getValue();
+}
+}
+%>
+<!-- HEADER -->
 	<header class="navbar clearfix" id="header">
 		<div class="container">
 				<div class="navbar-brand">
 					<!-- COMPANY LOGO -->
-					<a href="index.html">
+					<a href="index.jsp">
 						<img src="img/logo/logo.png" alt="Cloud Admin Logo" class="img-responsive" height="30" width="120">
 					</a>
 					<!-- /COMPANY LOGO -->
@@ -60,7 +70,7 @@
 							<li><a href="#"><i class="fa fa-user"></i> My Profile</a></li>
 							<li><a href="#"><i class="fa fa-cog"></i> Account Settings</a></li>
 							<li><a href="#"><i class="fa fa-eye"></i> Privacy Settings</a></li>
-							<li><a href="login.html"><i class="fa fa-power-off"></i> Log Out</a></li>
+							<li><a href="user/auth/logout"><i class="fa fa-power-off"></i> Log Out</a></li>
 						</ul>
 					</li>
 					<!-- END USER LOGIN DROPDOWN -->
@@ -88,7 +98,7 @@
 						<ul>
 						
 							<!-- DATASETS -->
-							<li><a class="" href="upload.html"><i class="fa fa-pencil-square-o fa-fw"></i> <span class="menu-text">DataSets</span></a></li>
+							<li><a class="" href="upload.jsp"><i class="fa fa-pencil-square-o fa-fw"></i> <span class="menu-text">DataSets</span></a></li>
 							<!-- /DATASETS -->
 							
 							<!-- ML ALGORITHMS MENU -->
@@ -98,8 +108,8 @@
 								<span class="arrow"></span>
 								</a>
 								<ul class="sub">
-									<li><a class="" href="knn.html"><span class="sub-menu-text">KNN</span></a></li>
-									<li><a class="" href="svm.html"><span class="sub-menu-text">SVM</span></a></li>
+									<li><a class="" href="knn.jsp"><span class="sub-menu-text">KNN</span></a></li>
+									<li><a class="" href="svm.jsp"><span class="sub-menu-text">SVM</span></a></li>
 								</ul>
 							</li>
 							<!-- /ML ALGORITHM MENU -->
@@ -132,77 +142,17 @@
 				<div class="row">
 					<div id="content" class="col-lg-12">
 						<!-- PAGE HEADER-->
-						<!-- ADVANCED -->
 						<div class="row">
-							<div class="col-md-12">
-								<!-- BOX -->
-								<div class="box border green">
-									<div class="box-title">
-										<h4><i class="fa fa-bars"></i>Parameters</h4>
-										
+							<div class="col-sm-12">
+								<div class="page-header">
+									
+									<div class="clearfix">
+										<h3 class="content-title pull-left">ML Compute DashBoard</h3>
 									</div>
-									<div class="box-body">
-										<form id="svmForm" class="form-horizontal">
-										  <div class="form-group">
-											 <label class="col-md-2 control-label" for="e1">Training Data<span class="required"></span></label> 
-											 <div class="col-md-10">
-												<select id="e1" name="trainingDataset" class="col-md-12">
-																				
-												</select>												
-											 </div>
-										  </div>
-										  <div class="form-group">
-											 <label class="col-md-2 control-label" for="e2">Test Data<span class="required"></span></label> 
-											 <div class="col-md-10">
-												<select id="e2" name="testDataset" class="col-md-12">
-												   								   
-												</select>												
-											 </div>
-										  </div>
-										  <button type="submit" id="btn-load-complete" class="btn btn-success" data-complete-text="Run again!" data-loading-text="Running...">Run!</button>
-										  
-									   </form>
-									   <br/>
-									   <button id="btn-chart" class="btn btn-success" data-complete-text="Refresh" data-loading-text="Refresh...">Display Chart</button>
-									   <br/>
-									 
-									  
-									  
-										
-									</div>
+									<!-- <div class="description">Blank Page</div> -->
 								</div>
-								<!-- /BOX -->
 							</div>
-							<!-- SVM CHART -->
-							<div class="col-md-12" id="svmChart" style="display:none;">
-								<!-- BOX -->
-								<div class="box border blue" style="width:90%">
-									<div class="box-title">
-										<h4><i class="fa fa-signal"></i>Interactive Chart</h4>
-										<div class="tools">
-											<a href="#box-config" data-toggle="modal" class="config">
-												<i class="fa fa-cog"></i>
-											</a>
-											<a href="javascript:;" class="reload">
-												<i class="fa fa-refresh"></i>
-											</a>
-											<a href="javascript:;" class="collapse">
-												<i class="fa fa-chevron-up"></i>
-											</a>
-											<a href="javascript:;" class="remove">
-												<i class="fa fa-times"></i>
-											</a>
-										</div>
-									</div>
-									<div class="box-body">
-										<div id="chart_2" class="chart"></div>
-									</div>
-								</div>
-								<!-- /BOX -->
-							</div>
-							<!-- /SVM CHART -->
 						</div>
-						<!-- /ADVANCED -->
 						<!-- /PAGE HEADER -->
 					</div>
 				</div>
@@ -219,46 +169,21 @@
 	<!-- BOOTSTRAP -->
 	<script src="bootstrap-dist/js/bootstrap.min.js"></script>
 	
+		
+	<!-- DATE RANGE PICKER -->
+	<script src="js/bootstrap-daterangepicker/moment.min.js"></script>
+	
+	<script src="js/bootstrap-daterangepicker/daterangepicker.min.js"></script>
 	<!-- SLIMSCROLL -->
 	<script type="text/javascript" src="js/jQuery-slimScroll-1.3.0/jquery.slimscroll.min.js"></script><script type="text/javascript" src="js/jQuery-slimScroll-1.3.0/slimScrollHorizontal.min.js"></script>
-	<!-- BLOCK UI -->
-	<script type="text/javascript" src="js/jQuery-BlockUI/jquery.blockUI.min.js"></script>
-	<!-- TYPEHEAD -->
-	<script type="text/javascript" src="js/typeahead/typeahead.min.js"></script>
-	<!-- AUTOSIZE -->
-	<script type="text/javascript" src="js/autosize/jquery.autosize.min.js"></script>
-	<!-- COUNTABLE -->
-	<script type="text/javascript" src="js/countable/jquery.simplyCountable.min.js"></script>
-	<!-- INPUT MASK -->
-	<script type="text/javascript" src="js/bootstrap-inputmask/bootstrap-inputmask.min.js"></script>
-	<!-- SELECT2 -->
-	<script type="text/javascript" src="js/select2/select2.min.js"></script>
-	<!-- UNIFORM -->
-	<script type="text/javascript" src="js/uniform/jquery.uniform.min.js"></script>
-	<!-- FLOT CHARTS -->
-	<script src="js/flot/jquery.flot.min.js"></script>
-	<script src="js/flot/jquery.flot.time.min.js"></script>
-    <script src="js/flot/jquery.flot.selection.min.js"></script>
-	<script src="js/flot/jquery.flot.resize.min.js"></script>
-    <script src="js/flot/jquery.flot.pie.min.js"></script>
-    <script src="js/flot/jquery.flot.stack.min.js"></script>
-    <script src="js/flot/jquery.flot.crosshair.min.js"></script>
 	<!-- COOKIE -->
 	<script type="text/javascript" src="js/jQuery-Cookie/jquery.cookie.min.js"></script>
-	<!-- WIZARD -->
-	<script src="js/bootstrap-wizard/jquery.bootstrap.wizard.min.js"></script>
-	<!-- WIZARD -->
-	<script src="js/jquery-validate/jquery.validate.min.js"></script>
-	<script src="js/jquery-validate/additional-methods.min.js"></script>
 	<!-- CUSTOM SCRIPT -->
 	<script src="js/script.js"></script>
-	<script src="js/svm.charts.js"></script>
-	<script src="js/svm.js"></script>
 	<script>
 		jQuery(document).ready(function() {		
-			App.setPage("forms");  //Set current page
+			App.setPage("widgets_box");  //Set current page
 			App.init(); //Initialise plugins and elements
-			
 		});
 	</script>
 	<!-- /JAVASCRIPTS -->

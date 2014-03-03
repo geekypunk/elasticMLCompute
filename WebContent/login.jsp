@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -20,8 +23,22 @@
 	<!-- FONTS -->
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
 </head>
-<body class="login">	
-	<!-- PAGE -->
+<body class="login">
+<%
+//allow access only if session exists
+if(session.getAttribute("user") != null){
+    response.sendRedirect("index.jsp");
+}
+String userName = null;
+String sessionID = null;
+Cookie[] cookies = request.getCookies();
+if(cookies !=null){
+for(Cookie cookie : cookies){
+    if(cookie.getName().equals("user")) userName = cookie.getValue();
+}
+}
+%>
+<!-- PAGE -->
 	<section id="page">
 			<!-- HEADER -->
 			<header>
@@ -46,40 +63,22 @@
 							<div class="login-box-plain">
 								<h2 class="bigintro">Sign In</h2>
 								<div class="divide-40"></div>
-								<form role="form">
+								<form id="loginForm" role="form" >
 								  <div class="form-group">
-									<label for="exampleInputEmail1">Email address</label>
-									<i class="fa fa-envelope"></i>
-									<input type="email" class="form-control" id="exampleInputEmail1" >
+									<label for="loginUsername">Username</label>
+									<i class="fa fa-user"></i>
+									<input name="user" type="text" class="form-control" id="loginUsername" >
 								  </div>
 								  <div class="form-group"> 
-									<label for="exampleInputPassword1">Password</label>
+									<label for="loginPassword">Password</label>
 									<i class="fa fa-lock"></i>
-									<input type="password" class="form-control" id="exampleInputPassword1" >
+									<input name="pwd" type="password" class="form-control" id="loginPassword" >
 								  </div>
 								  <div class="form-actions">
 									<label class="checkbox"> <input type="checkbox" class="uniform" value=""> Remember me</label>
 									<button type="submit" class="btn btn-danger">Submit</button>
 								  </div>
 								</form>
-								<!-- SOCIAL LOGIN -->
-								<div class="divide-20"></div>
-								<div class="center">
-									<strong>Or login using your social account</strong>
-								</div>
-								<div class="divide-20"></div>
-								<div class="social-login center">
-									<a class="btn btn-primary btn-lg">
-										<i class="fa fa-facebook"></i>
-									</a>
-									<a class="btn btn-info btn-lg">
-										<i class="fa fa-twitter"></i>
-									</a>
-									<a class="btn btn-danger btn-lg">
-										<i class="fa fa-google-plus"></i>
-									</a>
-								</div>
-								<!-- /SOCIAL LOGIN -->
 								<div class="login-helpers">
 									<a href="#" onclick="swapScreen('forgot');return false;">Forgot Password?</a> <br>
 									Don't have an account with us? <a href="#" onclick="swapScreen('register');return false;">Register
@@ -99,55 +98,39 @@
 							<div class="login-box-plain">
 								<h2 class="bigintro">Register</h2>
 								<div class="divide-40"></div>
-								<form role="form">
+								<form id="registerForm" role="form" action="user/auth/register" method="POST">
 								  <div class="form-group">
-									<label for="exampleInputName">Full Name</label>
+									<label for="registerFullName">Full Name</label>
 									<i class="fa fa-font"></i>
-									<input type="text" class="form-control" id="exampleInputName" >
+									<input type="text" name="fullName" class="form-control" id="registerFullName" >
 								  </div>
 								  <div class="form-group">
-									<label for="exampleInputUsername">Username</label>
+									<label for="registerUsername">Username</label>
 									<i class="fa fa-user"></i>
-									<input type="text" class="form-control" id="exampleInputUsername" >
+									<input type="text" name="username" class="form-control" id="registerUsername" >
 								  </div>
 								  <div class="form-group">
-									<label for="exampleInputEmail1">Email address</label>
+									<label for="registerEmail">Email address</label>
 									<i class="fa fa-envelope"></i>
-									<input type="email" class="form-control" id="exampleInputEmail1" >
+									<input type="email" name="email" class="form-control" id="registerEmail" >
 								  </div>
 								  <div class="form-group"> 
-									<label for="exampleInputPassword1">Password</label>
+									<label for="registerPassword">Password</label>
 									<i class="fa fa-lock"></i>
-									<input type="password" class="form-control" id="exampleInputPassword1" >
+									<input type="password" name="password" class="form-control" id="registerPassword" >
 								  </div>
+								  <!--
 								  <div class="form-group"> 
-									<label for="exampleInputPassword2">Repeat Password</label>
+									<label for="password2">Repeat Password</label>
 									<i class="fa fa-check-square-o"></i>
-									<input type="password" class="form-control" id="exampleInputPassword2" >
+									<input type="password" name="password" class="form-control" id="password2" >
 								  </div>
+								  -->
 								  <div class="form-actions">
 									<label class="checkbox"> <input type="checkbox" class="uniform" value=""> I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
 									<button type="submit" class="btn btn-success">Sign Up</button>
 								  </div>
 								</form>
-								<!-- SOCIAL REGISTER -->
-								<div class="divide-20"></div>
-								<div class="center">
-									<strong>Or register using your social account</strong>
-								</div>
-								<div class="divide-20"></div>
-								<div class="social-login center">
-									<a class="btn btn-primary btn-lg">
-										<i class="fa fa-facebook"></i>
-									</a>
-									<a class="btn btn-info btn-lg">
-										<i class="fa fa-twitter"></i>
-									</a>
-									<a class="btn btn-danger btn-lg">
-										<i class="fa fa-google-plus"></i>
-									</a>
-								</div>
-								<!-- /SOCIAL REGISTER -->
 								<div class="login-helpers">
 									<a href="#" onclick="swapScreen('login');return false;"> Back to Login</a> <br>
 								</div>
@@ -211,6 +194,57 @@
 			jQuery('.visible').removeClass('visible animated fadeInUp');
 			jQuery('#'+id).addClass('visible animated fadeInUp');
 		}
+	</script>
+
+	<script type="text/javascript">
+	$("#loginForm").submit(function(event) {
+		event.preventDefault();
+		$.ajax({
+		    url : "user/auth/login",
+		    type: "POST",
+		    dataType : "text",
+		    data : {
+		    	username : $('#loginUsername').val().trim(),
+		    	password : $('#loginPassword').val().trim()
+
+		    },
+		    success: function(data, textStatus, jqXHR)
+		    {
+		        if(data==="success")
+		        	window.location.replace("index.jsp");
+		        else
+		        	alert("Incorrect username/password");
+		    },
+		    error: function (jqXHR, textStatus, errorThrown)
+		    {
+		 		alert(errorThrown);
+		    }
+		});
+	});
+
+	$("#registerForm").submit(function(event) {
+		event.preventDefault();
+		$.ajax({
+		    url : "user/auth/register",
+		    type: "POST",
+		    dataType : "text",
+		    data : {
+		    	fullName : $('#registerFullName').val().trim(),
+		    	email : $('#registerEmail').val().trim(),
+		    	username : $('#registerUsername').val().trim(),
+		    	password : $('#registerPassword').val().trim()
+
+		    },
+		    success: function(data, textStatus, jqXHR)
+		    {
+		        window.location.replace("index.jsp");
+		    },
+		    error: function (jqXHR, textStatus, errorThrown)
+		    {
+		 		alert(errorThrown);
+		    }
+		});
+	});
 	</script>
 	<!-- /JAVASCRIPTS -->
 </body>

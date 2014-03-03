@@ -1,6 +1,5 @@
 package com.cs5412.filesystem.impl;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -158,6 +157,16 @@ public class HDFSFileSystemImpl implements IFileSystem{
 			}
 		}
 		return filesList;
+	}
+
+	@Override
+	public void createUserSpace(String username) throws IOException {
+		// TODO Auto-generated method stub
+		Path path= getUserPath(username);
+		boolean isPresent = hdfs.exists(path);
+		if(!isPresent)
+			hdfs.create(path);
+		
 	}
 
 }

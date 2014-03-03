@@ -6,10 +6,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Calendar;
 import java.util.List;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -30,7 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cs5412.filesystem.IFileSystem;
-import com.cs5412.filesystem.impl.HDFSFileSystemImpl;
 import com.cs5412.utils.ServerConstants;
 import com.cs5412.webservices.fileupload.FileUploadServlet;
 
@@ -57,6 +56,7 @@ public class KNNService{
 		KNN knnService = new KNN(trainFile, testFile, resultFile,workDir, fs);
 		knnService.runKNN();
 		String result=getCrossValidationResults(fs,resultFile);
+		
 		return Response.status(200).entity(result).build();
 	}
 

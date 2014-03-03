@@ -275,7 +275,8 @@ public class FileUploadServlet extends HttpServlet {
     private JSONArray createJsonArrayForUploads(IFileSystem fs,String username) throws JSONException, FileNotFoundException, IOException{
 		 
     	 
-    	List<LocatedFileStatus> dir = (List<LocatedFileStatus>) fs.getAllUploaded(username);
+    	List<LocatedFileStatus> dir = (List<LocatedFileStatus>) fs.getUploadedTrainingDatasets(username);
+    	dir.addAll((List<LocatedFileStatus>)fs.getUploadedTestDatasets(username));
 		JSONArray filesJSONArray = new JSONArray();
 		JSONObject jsono;
 		

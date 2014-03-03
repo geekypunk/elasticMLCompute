@@ -15,6 +15,7 @@ import com.cs5412.filesystem.IFileSystem;
 import com.cs5412.filesystem.impl.HDFSFileSystemImpl;
 import com.cs5412.filesystem.impl.LocalFileSystemImpl;
 import com.cs5412.utils.ServerConstants;
+import com.mongodb.MongoClient;
 
 @WebListener
 public class WebAppListener implements ServletContextListener {
@@ -30,12 +31,13 @@ public class WebAppListener implements ServletContextListener {
     	 * */
 		try{
 			ServletContext application = sce.getServletContext();
-			application.setAttribute("isLinux", SystemUtils.IS_OS_LINUX);
-			if(SystemUtils.IS_OS_LINUX){
-				application.setAttribute("fileSystem", new HDFSFileSystemImpl(ServerConstants.HDFS_URI));	
-			}else{
-				application.setAttribute("fileSystem", new LocalFileSystemImpl());	
-			}
+			HDFSFileSystemImpl fs = new HDFSFileSystemImpl(ServerConstants.HDFS_URI);
+			fs.createUserSpace("admin");
+			application.setAttribute("fileSystem", fs);	
+			//Can user multiple client config for replication
+			MongoClient mongoClient = new MongoClient( "localhost" , 27017 );
+			application.setAttribute("mongoClient", mongoClient);	
+			
 			
 		}catch(Exception e){
 			LOG.error("Error", e);
@@ -53,6 +55,5 @@ public class WebAppListener implements ServletContextListener {
 			LOG.error("Error", e);
 		}
     }
-    
 	
 }
