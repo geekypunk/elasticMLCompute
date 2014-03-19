@@ -18,10 +18,10 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.cs5412.database.mongodb.UserManager;
-import com.cs5412.database.mongodb.UserManagerImpl;
+import com.couchbase.client.CouchbaseClient;
+import com.cs5412.user.UserManager;
+import com.cs5412.user.UserManagerImpl;
 import com.google.common.collect.Maps;
-import com.mongodb.MongoClient;
 
 @Path("/auth")
 public class UserAuthService {
@@ -41,13 +41,13 @@ public class UserAuthService {
 			@Context HttpServletResponse response
 			) throws Exception {
 		
-		MongoClient mongoClient = (MongoClient) context.getAttribute("mongoClient");
+		CouchbaseClient couchBaseClient = (CouchbaseClient) context.getAttribute("couchbaseClient");
 		Map<String,String> params = Maps.newHashMap();
 		params.put("fullName", name);
 		params.put("email", email);
 		params.put("username", username);
 		params.put("password", password);
-		UserManager um = new UserManagerImpl(mongoClient);
+		UserManager um = new UserManagerImpl(couchBaseClient);
 		um.createUser(params);
 	
 		//Create session and login the user
@@ -77,8 +77,9 @@ public class UserAuthService {
 			@Context ServletContext context
 			) throws Exception {
 				
-		MongoClient mongoClient = (MongoClient) context.getAttribute("mongoClient"); 
-		UserManager um = new UserManagerImpl(mongoClient);
+		CouchbaseClient couchbaseClient = (CouchbaseClient) context.getAttribute("couchbaseClient"); 
+		
+		UserManager um = new UserManagerImpl(couchbaseClient);
 		if(um.authenticateUser(username, password)){
 			 HttpSession session = request.getSession();
 		     session.setAttribute("user", username);

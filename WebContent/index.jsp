@@ -58,6 +58,22 @@ for(Cookie cookie : cookies){
 				<!-- /NAVBAR LEFT -->
 				<!-- BEGIN TOP NAVIGATION MENU -->					
 				<ul class="nav navbar-nav pull-right">
+					<!-- BEGIN NOTIFICATION DROPDOWN -->	
+					<li class="dropdown" id="header-notification">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+							<i class="fa fa-bell"></i>
+						</a>
+						<ul class="dropdown-menu notification">
+							<li class="dropdown-title">
+								
+							</li>
+							
+							
+							<li class="footer">
+								<a href="#">See all notifications <i class="fa fa-arrow-circle-right"></i></a>
+							</li>
+						</ul>
+					</li>
 					
 					<!-- BEGIN USER LOGIN DROPDOWN -->
 					<li class="dropdown user" id="header-user">
@@ -185,6 +201,47 @@ for(Cookie cookie : cookies){
 			App.setPage("widgets_box");  //Set current page
 			App.init(); //Initialise plugins and elements
 		});
+	</script>
+	<!-- Notification Script-->
+	<script>
+	var newNotificationsFromBackEnd= 1/*Get them by a RESTful service(only 10 at a time)*/
+	if(newNotificationsFromBackEnd>0){
+		$('#header-notification').find(".dropdown-menu.notification").find(".dropdown-title").append('<span><i class="fa fa-bell"></i></span>');
+		$('#header-notification').find(".dropdown-menu.notification").find(".dropdown-title").find("span").text(newNotificationsFromBackEnd+" Notifications");
+		//$('#header-notification').find(".badge").text(newNotificationsFromBackEnd);
+		addRedPopup(newNotificationsFromBackEnd);
+		functionAddNotif(1,"Bitch!","Just Now!");
+
+	}else{
+		$('#header-notification').find(".badge").empty();
+		$('#header-notification').find('.dropdown-menu.notification:not(:last)').empty();
+	}
+	/*If user clicks on bell icon, show new notifications, remove red popup number*/
+	$( "#header-notification" ).click(function() {
+		$('#header-notification').find(".badge").empty();
+		/*
+		Sent a GET request to notificationHandler to set the "seen" flag on the notifications
+		*/
+
+	});
+
+	function functionAddNotif(status,message,timeStamp){
+		var notifListDiv =  $('#header-notification').find('.dropdown-menu.notification').find('.footer');
+		var labelHTML;
+		if(status ===1){
+			labelHTML = '<li><a href="#"><span class="label label-success"><i class="fa fa-check-square-o"></i></span>';
+		}else{
+			labelHTML = '<span class="label label-success"><i class="fa fa-exclamation-triangle"></i></span>';	
+		}
+		var messageHTML='<span class="body"><span class="message">'+message+'.</span>';
+		messageHTML+='<span class="time"><i class="fa fa-clock-o"></i><span> '+timeStamp+'</span></span></span></a></li>';
+		notifListDiv.before(labelHTML+messageHTML);
+	}
+	function addRedPopup(count){
+		var div =  $('#header-notification').find('.fa.fa-bell');
+		div.after('<span class="badge">'+count+'</span>');
+	}
+	
 	</script>
 	<!-- /JAVASCRIPTS -->
 </body>
