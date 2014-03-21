@@ -2,34 +2,45 @@ package com.cs5412.dataobjects;
 
 import java.util.List;
 
+import com.cs5412.taskmanager.TaskStatus;
 import com.google.common.collect.Lists;
 
 public class TaskDao {
-	private String usedId;
+	private String userId;
 	private String taskName;
+	private String taskDescription;
 	private String reportUrl;
-	private boolean isFinished;
+	private TaskStatus status;
 	private boolean isSeen;
 	private int taskId;
 	List<TaskDao> subTasks = Lists.newArrayList();
+	
+	public TaskDao(String userId,String taskName,String reportUrl,TaskStatus status,boolean isSeen){
+		
+		this.userId = userId;
+		this.taskName = taskName;
+		this.reportUrl = reportUrl;
+		this.status = status;
+		this.isSeen = isSeen;
+		this.taskId = (this.userId+this.taskName).hashCode();
+	
+	}
+	
 	public int getTaskId(){
 		return taskId;
 	}
-	public void setTaskId(int id){
-		
-		taskId = id;
-	}
+	
 	/**
 	 * @return the usedId
 	 */
-	public String getUsedId() {
-		return usedId;
+	public String getUserId() {
+		return userId;
 	}
 	/**
 	 * @param usedId the usedId to set
 	 */
 	public void setUsedId(String usedId) {
-		this.usedId = usedId;
+		this.userId = usedId;
 	}
 	/**
 	 * @return the taskName
@@ -55,17 +66,27 @@ public class TaskDao {
 	public void setReportUrl(String reportUrl) {
 		this.reportUrl = reportUrl;
 	}
+	
 	/**
-	 * @return the isFinished
+	 * Return task status. If sub-tasks are present, check all their status too.
+	 * @return the status.
 	 */
-	public boolean isFinished() {
-		return isFinished;
+	public TaskStatus getStatus() {
+		if(this.subTasks.size() ==0)
+			return status;
+		else{
+			for(TaskDao task: this.subTasks){
+				if(task.status == TaskStatus.FAILURE)
+					return TaskStatus.FAILURE;
+			}
+			return TaskStatus.SUCCESS;
+		}
 	}
 	/**
-	 * @param isFinished the isFinished to set
+	 * @param status the status to set
 	 */
-	public void setFinished(boolean isFinished) {
-		this.isFinished = isFinished;
+	public void setStatus(TaskStatus status) {
+		this.status = status;
 	}
 	
 	public void addSubTask(TaskDao task){
@@ -98,4 +119,20 @@ public class TaskDao {
 	public void setSeen(boolean isSeen) {
 		this.isSeen = isSeen;
 	}
+
+	/**
+	 * @return the taskDescription
+	 */
+	public String getTaskDescription() {
+		return taskDescription;
+	}
+
+	/**
+	 * @param taskDescription the taskDescription to set
+	 */
+	public void setTaskDescription(String taskDescription) {
+		this.taskDescription = taskDescription;
+	}
+
+	
 }

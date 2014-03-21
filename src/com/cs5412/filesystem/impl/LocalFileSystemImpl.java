@@ -127,8 +127,10 @@ public class LocalFileSystemImpl implements IFileSystem{
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
 	@Override
-	public void createUserSpace(String username) throws IOException {
+	public void createDir(String filePath, boolean overWrite)
+			throws IOException {
 		// TODO Auto-generated method stub
 		
 	}

@@ -79,7 +79,7 @@ for(Cookie cookie : cookies){
 					<li class="dropdown user" id="header-user">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
 							<img alt="" src="img/avatars/avatar3.jpg" />
-							<span class="username">John Doe</span>
+							<span class="username"><%=session.getAttribute("user")%></span>
 							<i class="fa fa-angle-down"></i>
 						</a>
 						<ul class="dropdown-menu">
@@ -203,46 +203,43 @@ for(Cookie cookie : cookies){
 		});
 	</script>
 	<!-- Notification Script-->
+	<script src="js/notifications.js"></script>
 	<script>
-	var newNotificationsFromBackEnd= 1/*Get them by a RESTful service(only 10 at a time)*/
-	if(newNotificationsFromBackEnd>0){
-		$('#header-notification').find(".dropdown-menu.notification").find(".dropdown-title").append('<span><i class="fa fa-bell"></i></span>');
-		$('#header-notification').find(".dropdown-menu.notification").find(".dropdown-title").find("span").text(newNotificationsFromBackEnd+" Notifications");
-		//$('#header-notification').find(".badge").text(newNotificationsFromBackEnd);
-		addRedPopup(newNotificationsFromBackEnd);
-		functionAddNotif(1,"Bitch!","Just Now!");
-
-	}else{
-		$('#header-notification').find(".badge").empty();
-		$('#header-notification').find('.dropdown-menu.notification:not(:last)').empty();
-	}
-	/*If user clicks on bell icon, show new notifications, remove red popup number*/
-	$( "#header-notification" ).click(function() {
-		$('#header-notification').find(".badge").empty();
-		/*
-		Sent a GET request to notificationHandler to set the "seen" flag on the notifications
-		*/
-
+	$.ajax({
+	    url : "task/notifications/getFinishedTasks",
+	    type: "GET",
+	    dataType : "json",
+	    data : {
+	    	
+	    },
+	    success: function(data, textStatus, jqXHR)
+	    {
+	    	handleNewNotifications(data);
+	    },
+	    error: function (jqXHR, textStatus, errorThrown)
+	    {
+	 			console.log(errorThrown);
+	    }
 	});
-
-	function functionAddNotif(status,message,timeStamp){
-		var notifListDiv =  $('#header-notification').find('.dropdown-menu.notification').find('.footer');
-		var labelHTML;
-		if(status ===1){
-			labelHTML = '<li><a href="#"><span class="label label-success"><i class="fa fa-check-square-o"></i></span>';
-		}else{
-			labelHTML = '<span class="label label-success"><i class="fa fa-exclamation-triangle"></i></span>';	
-		}
-		var messageHTML='<span class="body"><span class="message">'+message+'.</span>';
-		messageHTML+='<span class="time"><i class="fa fa-clock-o"></i><span> '+timeStamp+'</span></span></span></a></li>';
-		notifListDiv.before(labelHTML+messageHTML);
-	}
-	function addRedPopup(count){
-		var div =  $('#header-notification').find('.fa.fa-bell');
-		div.after('<span class="badge">'+count+'</span>');
-	}
-	
+	$( "#header-notification" ).click(function() {
+  		$.ajax({
+		    url : "task/notifications/markAllAsSeen",
+		    type: "GET",
+		    data : {
+		    	
+		    },
+		    success: function(data, textStatus, jqXHR)
+		    {
+		    	
+		    },
+		    error: function (jqXHR, textStatus, errorThrown)
+		    {
+		 			console.log(errorThrown);
+		    }
+		});
+	});
 	</script>
+	<!-- END Notification Script-->
 	<!-- /JAVASCRIPTS -->
 </body>
 </html>

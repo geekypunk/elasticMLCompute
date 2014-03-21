@@ -2,6 +2,7 @@ package com.cs5412.webservices.auth;
 
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.couchbase.client.CouchbaseClient;
+import com.cs5412.filesystem.IFileSystem;
 import com.cs5412.user.UserManager;
 import com.cs5412.user.UserManagerImpl;
 import com.google.common.collect.Maps;
@@ -27,6 +29,18 @@ import com.google.common.collect.Maps;
 public class UserAuthService {
 
 	static final Logger LOG = LoggerFactory.getLogger(UserAuthService.class);
+	@Context ServletContext context;
+	CouchbaseClient couchBaseClient;
+	IFileSystem fs;
+	UserManager userManager;
+	@PostConstruct
+    void initialize() {
+		couchBaseClient = (CouchbaseClient) context.getAttribute("couchbaseClient");
+		fs = (IFileSystem) context.getAttribute("fileSystem");
+		userManager = new UserManagerImpl(couchBaseClient);
+
+
+    }
 	
 	@Path("/register")
 	@POST
@@ -36,20 +50,18 @@ public class UserAuthService {
 			@FormParam("email") String email,
 			@FormParam("username") String username,
 			@FormParam("password") String password,
-			@Context ServletContext context,
 			@Context HttpServletRequest request,
 			@Context HttpServletResponse response
 			) throws Exception {
 		
-		CouchbaseClient couchBaseClient = (CouchbaseClient) context.getAttribute("couchbaseClient");
 		Map<String,String> params = Maps.newHashMap();
 		params.put("fullName", name);
 		params.put("email", email);
 		params.put("username", username);
 		params.put("password", password);
-		UserManager um = new UserManagerImpl(couchBaseClient);
-		um.createUser(params);
-	
+		userManager.createUser(params);
+		userManager.createHDFSNamespace(fs,username);
+		userManager.createEmptyTaskList(username);
 		//Create session and login the user
 		HttpSession session = request.getSession();
 	    session.setAttribute("user", username);
@@ -73,14 +85,10 @@ public class UserAuthService {
 			@FormParam("username") String username,
 			@FormParam("password") String password,
 			@Context HttpServletRequest request,
-			@Context HttpServletResponse response,
-			@Context ServletContext context
+			@Context HttpServletResponse response
 			) throws Exception {
 				
-		CouchbaseClient couchbaseClient = (CouchbaseClient) context.getAttribute("couchbaseClient"); 
-		
-		UserManager um = new UserManagerImpl(couchbaseClient);
-		if(um.authenticateUser(username, password)){
+		if(userManager.authenticateUser(username, password)){
 			 HttpSession session = request.getSession();
 		     session.setAttribute("user", username);
 		     //setting session to expiry in 30 mins
@@ -103,8 +111,7 @@ public class UserAuthService {
 	@Consumes("application/x-www-form-urlencoded")
 	public void logout(
 			@Context HttpServletRequest request,
-			@Context HttpServletResponse response,
-			@Context ServletContext context
+			@Context HttpServletResponse response
 			) throws Exception {
 				
 		response.setContentType("text/html");

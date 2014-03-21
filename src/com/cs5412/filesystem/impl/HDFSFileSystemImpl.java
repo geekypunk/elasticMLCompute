@@ -94,6 +94,13 @@ public class HDFSFileSystemImpl implements IFileSystem{
 		
 	}
 	
+	@Override
+	public void createDir(String filePath,boolean overWrite) throws IOException {
+		Path path = new Path(filePath);
+		hdfs.mkdirs(path); 
+		
+		
+	}
 	public FSDataOutputStream createHDFSFile(String filePath,boolean overWrite) throws IOException {
 		Path path = new Path(filePath);
 		FSDataOutputStream fos = hdfs.create(path, overWrite); 
@@ -147,26 +154,23 @@ public class HDFSFileSystemImpl implements IFileSystem{
 		
 	}
 	private List<LocatedFileStatus> getFilesInPath(Path path) throws IOException{
-		RemoteIterator<LocatedFileStatus> files = hdfs.listFiles(path, true);
 		List<LocatedFileStatus> filesList = Lists.newArrayList();
-		LocatedFileStatus f;
-		while(files.hasNext()){
-			f = files.next();
-			if(f.isFile()){
-				filesList.add(f);
+		try{
+		
+			RemoteIterator<LocatedFileStatus> files = hdfs.listFiles(path, true);
+			LocatedFileStatus f;
+			while(files.hasNext()){
+				f = files.next();
+				if(f.isFile()){
+					filesList.add(f);
+				}
 			}
+		}catch(Exception e){
+			e.printStackTrace();
 		}
 		return filesList;
 	}
 
-	@Override
-	public void createUserSpace(String username) throws IOException {
-		// TODO Auto-generated method stub
-		Path path= getUserPath(username);
-		boolean isPresent = hdfs.exists(path);
-		if(!isPresent)
-			hdfs.create(path);
-		
-	}
+	
 
 }

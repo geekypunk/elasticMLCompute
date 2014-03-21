@@ -23,5 +23,5 @@ public interface IFileSystem {
 	Object getUserPath(String username);
 	InputStream readFile(String filePath) throws IOException;
 	BufferedWriter appendToFile(String resultFile) throws IOException;
-	void createUserSpace(String username) throws IOException;
+	void createDir(String filePath, boolean overWrite) throws IOException;
 }

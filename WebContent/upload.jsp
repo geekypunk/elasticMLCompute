@@ -60,12 +60,28 @@ for(Cookie cookie : cookies){
 				<!-- /NAVBAR LEFT -->
 				<!-- BEGIN TOP NAVIGATION MENU -->					
 				<ul class="nav navbar-nav pull-right">
+					<!-- BEGIN NOTIFICATION DROPDOWN -->	
+					<li class="dropdown" id="header-notification">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+							<i class="fa fa-bell"></i>
+						</a>
+						<ul class="dropdown-menu notification">
+							<li class="dropdown-title">
+								
+							</li>
+							
+							
+							<li class="footer">
+								<a href="#">See all notifications <i class="fa fa-arrow-circle-right"></i></a>
+							</li>
+						</ul>
+					</li>
 					
 					<!-- BEGIN USER LOGIN DROPDOWN -->
 					<li class="dropdown user" id="header-user">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
 							<img alt="" src="img/avatars/avatar3.jpg" />
-							<span class="username">John Doe</span>
+							<span class="username"><%=userName%></span>
 							<i class="fa fa-angle-down"></i>
 						</a>
 						<ul class="dropdown-menu">
@@ -347,6 +363,44 @@ for(Cookie cookie : cookies){
 			App.init(); //Initialise plugins and elements
 		});
 	</script>
+	<!-- Notification Script-->
+	<script src="js/notifications.js"></script>
+	<script>
+	$.ajax({
+	    url : "task/notifications/getFinishedTasks",
+	    type: "GET",
+	    dataType : "json",
+	    data : {
+	    	
+	    },
+	    success: function(data, textStatus, jqXHR)
+	    {
+	    	handleNewNotifications(data);
+	    },
+	    error: function (jqXHR, textStatus, errorThrown)
+	    {
+	 			console.log(errorThrown);
+	    }
+	});
+	$( "#header-notification" ).click(function() {
+  		$.ajax({
+		    url : "task/notifications/markAllAsSeen",
+		    type: "GET",
+		    data : {
+		    	
+		    },
+		    success: function(data, textStatus, jqXHR)
+		    {
+		    	
+		    },
+		    error: function (jqXHR, textStatus, errorThrown)
+		    {
+		 			console.log(errorThrown);
+		    }
+		});
+	});
+	</script>
+	<!-- END Notification Script-->
 	<!-- /JAVASCRIPTS -->
 </body>
 </html>

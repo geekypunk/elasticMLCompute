@@ -38,7 +38,6 @@ public class WebAppListener implements ServletContextListener {
 		try{
 			ServletContext application = sce.getServletContext();
 			HDFSFileSystemImpl fs = new HDFSFileSystemImpl(ServerConstants.HDFS_URI);
-			fs.createUserSpace("admin");
 			application.setAttribute("fileSystem", fs);	
 			//List of couchbase nodes
 			List<URI> hosts = Arrays.asList(
