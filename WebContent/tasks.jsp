@@ -23,6 +23,7 @@
 	<link rel="stylesheet" type="text/css" href="js/datatables/extras/TableTools/media/css/TableTools.min.css" />
 	<!-- FONTS -->
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
+	<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
 </head>
 <body>
 <%
@@ -83,7 +84,7 @@ for(Cookie cookie : cookies){
 					<li class="dropdown user" id="header-user">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
 							<img alt="" src="img/avatars/avatar3.jpg" />
-							<span class="username"><%=userName%></span>
+							<span class="username"><%=session.getAttribute("user")%></span>
 							<i class="fa fa-angle-down"></i>
 						</a>
 						<ul class="dropdown-menu">
@@ -304,7 +305,7 @@ for(Cookie cookie : cookies){
 	            var length_sel = datatable.closest('.dataTables_wrapper').find('div[id$=_length] select');
 	            length_sel.addClass('form-control input-sm');
 	        });
- 			//$('#datatable1>tbody').html(r.join('')); 
+ 			
 	    },
 	    error: function (jqXHR, textStatus, errorThrown)
 	    {

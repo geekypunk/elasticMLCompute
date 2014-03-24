@@ -6,7 +6,10 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -27,13 +30,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cs5412.filesystem.IFileSystem;
-import com.cs5412.utils.ServerConstants;
 import com.cs5412.webservices.fileupload.FileUploadServlet;
 
 @Path("/svm")
 public class SVMService{
 	static final Logger LOG = LoggerFactory.getLogger(FileUploadServlet.class);
 	static final int NUM_MODELS = 5;
+	@Context ServletContext context;
+	IFileSystem fs;
+	
+	@PostConstruct
+    void initialize() {
+		fs = (IFileSystem) context.getAttribute("fileSystem");
+    }
 	
 	@Path("/runService")
 	@POST
@@ -41,12 +50,12 @@ public class SVMService{
 	public Response runService(
 			@FormParam("trainingDataset") String trainingDataset,
 			@FormParam("testDataset") String testDataset,
-			@Context ServletContext context
+			@Context HttpServletRequest request
 			) throws Exception {
 		
-		IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
 		LOG.debug("Using "+trainingDataset+" dataset for SVM");
-		String username="admin";
+		HttpSession session = request.getSession(false);
+		String username = (String) session.getAttribute("user");
 		String crossvalidation = fs.getUserPath(username)+File.separator+"work"+File.separator+"crossvalidation";
 		String modelPath = crossvalidation+File.separator+"model"+File.separator;
 		String trainFile = fs.getFilePathForUploads(trainingDataset, username);
@@ -132,10 +141,10 @@ public class SVMService{
 	@GET
 	public Response getReportData(
 			@PathParam("reportId") String reportId,
-			@Context ServletContext context
+			@Context HttpServletRequest request
 			) throws Exception {
-		IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
-		String username="admin";
+		HttpSession session = request.getSession(false);
+		String username = (String) session.getAttribute("user");
 		LOG.debug("Reading report"+reportId);
 		String path = fs.getUserPath(username)+File.separator+"reports"+File.separator+reportId;
 		return Response.status(200).entity(fs.readFileToString(path)).build();
@@ -147,11 +156,11 @@ public class SVMService{
 	public Response createSVMFiles(
 			@FormParam("trainingDataset") String trainingDataset,
 			@FormParam("testDataset") String testDataset,
-			@Context ServletContext context
+			@Context HttpServletRequest request
 			
 			) throws Exception {
-		IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
-		String username="admin";
+		HttpSession session = request.getSession(false);
+		String username = (String) session.getAttribute("user");
 		LOG.debug("Using "+trainingDataset+" dataset for SVM");
 		CrossValidationFiles.createFiles(trainingDataset, fs,username);
 		return Response.status(200).entity("Hello").build();
@@ -192,10 +201,10 @@ public class SVMService{
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getTrainingDataSets(
-			@Context ServletContext context
+			@Context HttpServletRequest request
 			) throws Exception {
-		IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
-		String username="admin";
+		HttpSession session = request.getSession(false);
+		String username = (String) session.getAttribute("user");
 		List<LocatedFileStatus> files = (List<LocatedFileStatus>) fs.getUploadedTrainingDatasets(username);
 		JSONArray filesJson = new JSONArray();
 		JSONObject jsonFile;
@@ -217,10 +226,10 @@ public class SVMService{
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getTestDataSets(
-			@Context ServletContext context
+			@Context HttpServletRequest request
 			) throws Exception {
-		IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
-		String username="admin";
+		HttpSession session = request.getSession(false);
+		String username = (String) session.getAttribute("user");
 		List<LocatedFileStatus> files = (List<LocatedFileStatus>) fs.getUploadedTestDatasets(username);
 		JSONArray filesJson = new JSONArray();
 		JSONObject jsonFile;
