@@ -22,6 +22,7 @@
 	<link rel="stylesheet" type="text/css" href="css/animatecss/animate.min.css" />
 	<!-- FONTS -->
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
+	<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
 </head>
 <body class="login">
 <%
@@ -47,7 +48,7 @@ for(Cookie cookie : cookies){
 					<div class="row">
 						<div class="col-md-4 col-md-offset-4">
 							<div id="logo">
-								<a href="index.html"><img src="img/logo/logo-alt.png" height="40" alt="logo name" /></a>
+								<a href="index.html"><img src="img/logo/logo.gif" alt="logo name" /></a>
 							</div>
 						</div>
 					</div>

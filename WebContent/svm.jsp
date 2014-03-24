@@ -5,7 +5,7 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 	<meta charset="utf-8">
-	<title>Elastic ML Cloud Admin | DashBoard</title>
+	<title>Elastic ML Cloud Admin | SVM</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
 	<meta name="description" content="">
 	<meta name="author" content="">
@@ -123,23 +123,12 @@ for(Cookie cookie : cookies){
 							<!-- /ML ALGORITHM MENU -->
 							
 							<!-- REPORTS MENU -->
-							<li class="has-sub">
-								<a href="javascript:;" class="">
-								<i class="fa fa-bar-chart-o fa-fw"></i> <span class="menu-text">Reports</span>
-								<span class="arrow"></span>
-								</a>
-								<ul class="sub">
-									<li><a class="" href="flot_charts.html"><span class="sub-menu-text">Flot Charts</span></a></li>
-									<li><a class="" href="xcharts.html"><span class="sub-menu-text">xCharts</span></a></li>
-									
-									<li><a class="" href="others.html"><span class="sub-menu-text">Others</span></a></li>
-								</ul>
-							</li>
+							<li><a class="" href="reports.jsp"><i class="fa fa-bar-chart-o fa-fw"></i> <span class="menu-text">Reports</span></a></li>
 							<!-- /REPORTS MENU -->
 							
-							<!-- FAQ -->
-							<li><a class="" href="faq.html"><i class="fa fa-picture-o fa-fw"></i> <span class="menu-text">FAQ</span></a></li>
-							<!-- /FAQ -->
+							<!-- TASKS -->
+							<li><a class="" href="tasks.jsp"><i class="fa fa-tasks fa-fw"></i> <span class="menu-text">Tasks</span></a></li>
+							<!-- /TASKS -->
 						</ul>
 						<!-- /SIDEBAR MENU -->
 					</div>

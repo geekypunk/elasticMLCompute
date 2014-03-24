@@ -153,7 +153,8 @@ public class HDFSFileSystemImpl implements IFileSystem{
 		return file;
 		
 	}
-	private List<LocatedFileStatus> getFilesInPath(Path path) throws IOException{
+	@Override
+	public List<LocatedFileStatus> getFilesInPath(Path path) throws IOException{
 		List<LocatedFileStatus> filesList = Lists.newArrayList();
 		try{
 		

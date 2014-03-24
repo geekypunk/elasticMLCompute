@@ -1,6 +1,7 @@
 package com.cs5412.taskmanager;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -34,11 +35,17 @@ public class TaskManager implements ITaskManager{
 	}
 
 	@Override
-	public void getTaskById(int id) {
-		// TODO Auto-generated method stub
+	public TaskDao getTaskById(int id,String username) {
+		Map<Integer,TaskDao> tasks = getUserTasksMap(username);
+		return tasks.get(id);
 		
 	}
 
+	@Override
+	public List<TaskDao> getAllTasksForUser(String username){
+		
+		return new ArrayList<TaskDao>(getUserTasksMap(username).values());
+	}
 	@Override
 	public void setTaskStatus(TaskDao task,TaskStatus status) throws InterruptedException, ExecutionException {
 		

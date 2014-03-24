@@ -4,8 +4,10 @@ import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import org.apache.hadoop.fs.FSDataOutputStream;
+import org.apache.hadoop.fs.LocatedFileStatus;
 import org.apache.hadoop.fs.Path;
 
 public interface IFileSystem {
@@ -24,4 +26,5 @@ public interface IFileSystem {
 	InputStream readFile(String filePath) throws IOException;
 	BufferedWriter appendToFile(String resultFile) throws IOException;
 	void createDir(String filePath, boolean overWrite) throws IOException;
+	List<LocatedFileStatus> getFilesInPath(Path path) throws IOException;
 }
