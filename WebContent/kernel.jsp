@@ -179,7 +179,7 @@ for(Cookie cookie : cookies){
 										
 									</div>
 									<div class="box-body">
-										<form id="svmForm" class="form-horizontal">
+										<form id="kernelForm" class="form-horizontal">
 										  <div class="form-group">
 											 <label class="col-md-2 control-label" for="e1">Training Data<span class="required"></span></label> 
 											 <div class="col-md-10">
@@ -196,8 +196,21 @@ for(Cookie cookie : cookies){
 												</select>												
 											 </div>
 										  </div>
-										  <button type="submit" id="btn-load-complete" class="btn btn-success" data-complete-text="Run again!" data-loading-text="Running...">Run!</button>
+										  <div class="form-group">
+											 <label class="col-md-2 control-label" for="e3">Kernel Type<span class="required"></span></label> 
+											 <div class="col-md-10">
+												<select id="e3" name="kernelType" class="col-md-12">
+													<option value="polyKernel">Polynomial Kernel</option>		
+													<option value="rbFunction">Radial Basis Function</option>
+													<option value="sigmoidFunction">Sigmoid Function</option>	
+													<option value="blank" selected></option>			   
+												</select>												
+											 </div>
+										  </div>
+										  <div class="form-group" id="kernelParam">
 										  
+										  </div>
+										  <button type="submit" id="btn-load-complete" class="btn btn-success" data-complete-text="Run again!" data-loading-text="Running...">Run!</button>
 									   </form>
 									   <br/>
 									   <button id="btn-chart" class="btn btn-success" data-complete-text="Refresh" data-loading-text="Refresh...">Display Chart</button>
@@ -210,8 +223,8 @@ for(Cookie cookie : cookies){
 								</div>
 								<!-- /BOX -->
 							</div>
-							<!-- SVM CHART -->
-							<div class="col-md-12" id="svmChart" style="display:none;">
+							<!-- KERNEL CHART -->
+							<div class="col-md-12" id="kernelChart" style="display:none;">
 								<!-- BOX -->
 								<div class="box border blue" style="width:90%">
 									<div class="box-title">
@@ -237,7 +250,7 @@ for(Cookie cookie : cookies){
 								</div>
 								<!-- /BOX -->
 							</div>
-							<!-- /SVM CHART -->
+							<!-- /KERNEL CHART -->
 						</div>
 						<!-- /ADVANCED -->
 						<!-- /PAGE HEADER -->
@@ -290,7 +303,7 @@ for(Cookie cookie : cookies){
 	<!-- CUSTOM SCRIPT -->
 	<script src="js/script.js"></script>
 	<script src="js/svm.charts.js"></script>
-	<script src="js/svm.js"></script>
+	<script src="js/kernel.js"></script>
 	<script>
 		jQuery(document).ready(function() {		
 			App.setPage("forms");  //Set current page

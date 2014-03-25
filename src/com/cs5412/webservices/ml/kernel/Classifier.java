@@ -1,4 +1,4 @@
-package com.cs5412.webservices.ml.svm;
+package com.cs5412.webservices.ml.kernel;
 
 import jnisvmlight.*;
 
@@ -6,6 +6,7 @@ import java.io.*;
 import java.util.*;
 
 import com.cs5412.filesystem.IFileSystem;
+import com.cs5412.webservices.ml.svm.GetFeatureVector;
 
 public class Classifier {
 	public static ArrayList<ArrayList<Double>> valAccuracies = new ArrayList<ArrayList<Double>>();
@@ -20,7 +21,6 @@ public class Classifier {
 			
 			BufferedReader in = new BufferedReader(new InputStreamReader(fin));
 			LabeledFeatureVector[] fvVectors = GetFeatureVector.readFileToFV(in);
-			//BufferedWriter bw = new BufferedWriter(new FileWriter(of, true));
 			acc = new ArrayList<Double>();
 			for(int i=1;i<=7;i++){
 				String mf = modelFile + i + ".model";
@@ -41,24 +41,21 @@ public class Classifier {
 					if(intPrediction == label) match += 1.0;
 					total += 1.0;
 				}
-				//bw.append((match/total) + " ");
 				acc.add(match/total);
 			}
 			valAccuracies.add(acc);
-			//bw.newLine();
-			//bw.close();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 	}
 	
-	public static String valClassifyCaller(IFileSystem fs,String crossvalidation, String modelPath, String of){
+	public static String valClassifyCaller(IFileSystem fs, String crossvalidation, String modelPath, String of){
 		of = crossvalidation+File.separator+"output"+File.separator+of;
-		valClassify(1, modelPath, crossvalidation, of,fs);
-		valClassify(2, modelPath, crossvalidation, of,fs);
-		valClassify(3, modelPath, crossvalidation, of,fs);
-		valClassify(4, modelPath, crossvalidation, of,fs);
-		valClassify(5, modelPath, crossvalidation, of,fs);
+		valClassify(1, modelPath, crossvalidation, of, fs);
+		valClassify(2, modelPath, crossvalidation, of, fs);
+		valClassify(3, modelPath, crossvalidation, of, fs);
+		valClassify(4, modelPath, crossvalidation, of, fs);
+		valClassify(5, modelPath, crossvalidation, of, fs);
 		double max = -1.0;
 		int maxIndex = -1;
 		try{

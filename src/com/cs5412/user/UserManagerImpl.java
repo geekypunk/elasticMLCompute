@@ -17,6 +17,7 @@ import com.cs5412.dataobjects.UserDao;
 import com.cs5412.filesystem.IFileSystem;
 import com.cs5412.listeners.WebAppListener;
 import com.cs5412.utils.PasswordHash;
+import com.cs5412.utils.ServerConstants;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 
@@ -61,10 +62,10 @@ public class UserManagerImpl implements UserManager{
 	public void createHDFSNamespace(IFileSystem fs,String username) throws IOException {
 		// TODO Auto-generated method stub
 		fs.getUserPath(username);
-		fs.createDir(fs.getUserPath(username).toString()+File.separator+"train", true);
-		fs.createDir(fs.getUserPath(username).toString()+File.separator+"test", true);
-		fs.createDir(fs.getUserPath(username).toString()+File.separator+"reports", true);
-		fs.createDir(fs.getUserPath(username).toString()+File.separator+"others", true);
+		fs.createDir(fs.getUserPath(username).toString()+ServerConstants.linuxSeparator+"train", true);
+		fs.createDir(fs.getUserPath(username).toString()+ServerConstants.linuxSeparator+"test", true);
+		fs.createDir(fs.getUserPath(username).toString()+ServerConstants.linuxSeparator+"reports", true);
+		fs.createDir(fs.getUserPath(username).toString()+ServerConstants.linuxSeparator+"others", true);
 	}
 	
 	@Override

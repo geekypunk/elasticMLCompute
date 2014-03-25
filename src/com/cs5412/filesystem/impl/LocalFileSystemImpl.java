@@ -14,9 +14,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.hadoop.fs.LocatedFileStatus;
 
 import com.cs5412.filesystem.IFileSystem;
 import com.cs5412.utils.ServerConstants;
@@ -133,6 +135,12 @@ public class LocalFileSystemImpl implements IFileSystem{
 			throws IOException {
 		// TODO Auto-generated method stub
 		
+	}
+	@Override
+	public List<LocatedFileStatus> getFilesInPath(org.apache.hadoop.fs.Path path)
+			throws IOException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

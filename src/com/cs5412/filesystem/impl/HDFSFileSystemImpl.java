@@ -29,6 +29,7 @@ public class HDFSFileSystemImpl implements IFileSystem{
 	
 	private FileSystem hdfs;
 	private Configuration configuration = new Configuration();
+	private String seperator ="/";
 	
 	public HDFSFileSystemImpl(String HDFS_URI) throws IOException, URISyntaxException{
 		hdfs = FileSystem.get( new URI( HDFS_URI ), configuration );
@@ -51,13 +52,13 @@ public class HDFSFileSystemImpl implements IFileSystem{
 		// TODO Auto-generated method stub
 		String path = null;
 		if(fileName.contains(".train")){
-			path = getUserPath(userName)+File.separator+"train"+File.separator+fileName;
+			path = getUserPath(userName)+seperator+"train"+seperator+fileName;
 		}
 		else if(fileName.contains(".test")){
-			path = getUserPath(userName)+File.separator+"test"+File.separator+fileName;
+			path = getUserPath(userName)+seperator+"test"+seperator+fileName;
 		}
 		else{
-			path = getUserPath(userName)+File.separator+"others"+File.separator+fileName;
+			path = getUserPath(userName)+seperator+"others"+seperator+fileName;
 		}
 			
 		return path;
@@ -65,19 +66,19 @@ public class HDFSFileSystemImpl implements IFileSystem{
 
 	@Override
 	public List<LocatedFileStatus> getAllUploaded(String userName) throws FileNotFoundException, IOException {
-		Path file = new Path(hdfs.getUri()+File.separator+userName);
+		Path file = new Path(hdfs.getUri()+seperator+userName);
 		return getFilesInPath(file);
 	}
 
 	@Override
 	public List<LocatedFileStatus> getUploadedTrainingDatasets(String userName) throws FileNotFoundException, IOException {
-		Path file = new Path(hdfs.getUri()+File.separator+userName+File.separator+"train");
+		Path file = new Path(hdfs.getUri()+seperator+userName+seperator+"train");
 		return getFilesInPath(file);
 	}
 
 	@Override
 	public List<LocatedFileStatus> getUploadedTestDatasets(String userName) throws FileNotFoundException, IOException {
-		Path file = new Path(hdfs.getUri()+File.separator+userName+File.separator+"test");
+		Path file = new Path(hdfs.getUri()+seperator+userName+seperator+"test");
 		return getFilesInPath(file);
 	}
 
@@ -149,11 +150,12 @@ public class HDFSFileSystemImpl implements IFileSystem{
 	}
 	@Override
 	public Path getUserPath(String username){
-		Path file = new Path(hdfs.getUri()+File.separator+username);
+		Path file = new Path(hdfs.getUri()+seperator+username);
 		return file;
 		
 	}
-	private List<LocatedFileStatus> getFilesInPath(Path path) throws IOException{
+	@Override
+	public List<LocatedFileStatus> getFilesInPath(Path path) throws IOException{
 		List<LocatedFileStatus> filesList = Lists.newArrayList();
 		try{
 		

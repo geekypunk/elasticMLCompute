@@ -35,7 +35,6 @@ public class TaskManager implements ITaskManager{
 
 	@Override
 	public void getTaskById(int id) {
-		// TODO Auto-generated method stub
 		
 	}
 

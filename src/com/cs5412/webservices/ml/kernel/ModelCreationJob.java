@@ -1,4 +1,4 @@
-package com.cs5412.webservices.ml.svm;
+package com.cs5412.webservices.ml.kernel;
 
 import java.io.File;
 
@@ -14,16 +14,21 @@ public class ModelCreationJob implements Runnable{
 	private String modelPath;
 	private String crossvalidationPath;
 	private IFileSystem fs;
-	public ModelCreationJob(int fileNum, int tradeOffNum,String crossvalidation,String modelPath,IFileSystem fs){
+	private String kernelType;
+	private String kernelParam;
+	
+	public ModelCreationJob(int fileNum, int tradeOffNum,String crossvalidation,String modelPath,IFileSystem fs,String kernelType,String kernelParam){
 		this.fileNum = fileNum;
 		this.tradeOffNum = tradeOffNum;
 		this.crossvalidationPath = crossvalidation;
 		this.modelPath = modelPath;
 		this.fs = fs;
+		this.kernelType = kernelType;
+		this.kernelParam = kernelParam;
 	}
 	public void run() {
 		try{
-			Model.create(crossvalidationPath +File.separator+ "SVM" , fileNum, tradeOffNum, "0", modelPath,fs);
+			Model.create(crossvalidationPath +File.separator+ "SVM" , fileNum, tradeOffNum, kernelType, kernelParam, modelPath,fs);
 			LOG.debug("Finished Model"+fileNum+tradeOffNum);
 		}catch(Exception e){
 			e.printStackTrace();
