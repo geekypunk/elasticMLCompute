@@ -8,8 +8,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -37,18 +39,26 @@ import com.cs5412.webservices.fileupload.FileUploadServlet;
 public class KNNService{
 	static final Logger LOG = LoggerFactory.getLogger(FileUploadServlet.class);
 	static final int NUM_MODELS = 5;
+	@Context ServletContext context;
+	IFileSystem fs;
+	
+	@PostConstruct
+    void initialize() {
+		fs = (IFileSystem) context.getAttribute("fileSystem");
+    }
+	
 	@Path("/runService")
 	@POST
 	@Consumes("application/x-www-form-urlencoded")
 	public Response runService(
 			@FormParam("trainingDataset") String trainingDataset,
 			@FormParam("testDataset") String testDataset,
-			@Context ServletContext context
+			@Context HttpServletRequest request
 			
 			) throws Exception {
-		IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
 		LOG.debug("Using "+trainingDataset+" dataset for KNN");
-		String username="admin";
+		HttpSession session = request.getSession(false);
+		String username = (String) session.getAttribute("user");
 		String trainFile = fs.getFilePathForUploads(trainingDataset, username);
 		String testFile = fs.getFilePathForUploads(testDataset, username);
 		String resultFile = fs.getUserPath(username)+File.separator+"reports"+File.separator+trainingDataset+"-"+testDataset+".output";
@@ -84,10 +94,10 @@ public class KNNService{
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getTrainingDataSets(
-			@Context ServletContext context
+			@Context HttpServletRequest request
 			) throws Exception {
-		IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
-		String username="admin";
+		HttpSession session = request.getSession(false);
+		String username = (String) session.getAttribute("user");
 		List<LocatedFileStatus> files = (List<LocatedFileStatus>) fs.getUploadedTrainingDatasets(username);
 		JSONArray filesJson = new JSONArray();
 		JSONObject jsonFile;
@@ -109,10 +119,10 @@ public class KNNService{
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getTestDataSets(
-			@Context ServletContext context
+			@Context HttpServletRequest request
 			) throws Exception {
-		IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
-		String username="admin";
+		HttpSession session = request.getSession(false);
+		String username = (String) session.getAttribute("user");
 		List<LocatedFileStatus> files = (List<LocatedFileStatus>) fs.getUploadedTestDatasets(username);
 		JSONArray filesJson = new JSONArray();
 		JSONObject jsonFile;
@@ -133,10 +143,10 @@ public class KNNService{
 	@GET
 	public Response getReportData(
 			@PathParam("reportId") String reportId,
-			@Context ServletContext context
+			@Context HttpServletRequest request
 			) throws Exception {
-		IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
-		String username="admin";
+		HttpSession session = request.getSession(false);
+		String username = (String) session.getAttribute("user");
 		LOG.debug("Reading report"+reportId);
 		String path = fs.getUserPath(username)+File.separator+"reports"+File.separator+reportId;
 		return Response.status(200).entity(fs.readFileToString(path)).build();

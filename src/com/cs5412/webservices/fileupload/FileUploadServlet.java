@@ -35,6 +35,7 @@ import com.cs5412.dataobjects.TaskDao;
 import com.cs5412.filesystem.IFileSystem;
 import com.cs5412.utils.HTTPConstants;
 import com.cs5412.utils.ServerConstants;
+import com.cs5412.utils.TaskType;
 import com.cs5412.taskmanager.TaskManager;
 import com.cs5412.taskmanager.TaskStatus;
 
@@ -79,7 +80,6 @@ public class FileUploadServlet extends HttpServlet {
      */
     protected void doPost(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
-    	
     	HttpSession session = request.getSession();
     	String username = (String)session.getAttribute("user");
     	// checks if the request actually contains upload file
@@ -134,8 +134,12 @@ public class FileUploadServlet extends HttpServlet {
  	                    	array.put(jsono);
  	                    	result.put("files", array);
                         } else{
+                        	
                         	TaskDao uploadTask = new TaskDao(username, fileName, "upload", TaskStatus.RUNNING, false);
-                           	
+                        	uploadTask.setHttpRequest(request);
+                        	uploadTask.setTaskType(TaskType.DATASET_UPLOAD);
+                        	uploadTask.setTaskDescription(fileName);
+                        	
                         	try{
 	                        	taskManager.registerTask(uploadTask);
 	                        	jsono = createJsonObj(item);

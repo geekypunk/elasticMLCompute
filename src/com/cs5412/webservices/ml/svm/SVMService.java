@@ -43,6 +43,7 @@ import org.slf4j.LoggerFactory;
 import com.couchbase.client.CouchbaseClient;
 import com.cs5412.dataobjects.TaskDao;
 import com.cs5412.filesystem.IFileSystem;
+
 import com.cs5412.taskmanager.TaskManager;
 import com.cs5412.taskmanager.TaskStatus;
 import com.cs5412.utils.ServerConstants;
@@ -53,12 +54,15 @@ public class SVMService{
 	static final Logger LOG = LoggerFactory.getLogger(FileUploadServlet.class);
 	static final int NUM_MODELS = 5;
 	@Context ServletContext context;
+
 	public static String LoadBalancerAddress = "http://localhost:1246";
 	TaskManager taskManager;
+	IFileSystem fs;
 	
 	@PostConstruct
     void initialize() {
 		taskManager = new TaskManager((CouchbaseClient)context.getAttribute("couchbaseClient"));
+		fs = (IFileSystem) context.getAttribute("fileSystem");
 
     }
 	
@@ -125,6 +129,7 @@ public class SVMService{
 		}
         return Response.status(200).entity("").build();
 	}*/
+
 	
 	@Path("/runService")
 	@POST
@@ -132,18 +137,23 @@ public class SVMService{
 	public Response runService(
 			@FormParam("trainingDataset") String trainingDataset,
 			@FormParam("testDataset") String testDataset,
+
 			@Context ServletContext context,
 			@Context HttpServletRequest request,
 			@Context HttpServletResponse response
+
 			) throws Exception {
 		
-		IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
 		LOG.debug("Using "+trainingDataset+" dataset for SVM");
 		HttpSession session = request.getSession(false);
 		String username = (String) session.getAttribute("user");
+
 		
 		String crossvalidation = fs.getUserPath(username)+ServerConstants.linuxSeparator+"work"+ServerConstants.linuxSeparator+"crossvalidation";
 		String modelPath = crossvalidation+ServerConstants.linuxSeparator+"model"+ServerConstants.linuxSeparator;
+
+	
+
 		String trainFile = fs.getFilePathForUploads(trainingDataset, username);
 		String testFile = fs.getFilePathForUploads(testDataset, username);
 		
@@ -264,11 +274,16 @@ public class SVMService{
 	@GET
 	public Response getReportData(
 			@PathParam("reportId") String reportId,
+
 			@Context ServletContext context,
-			@Context HttpServletRequest request,
-			@Context HttpServletResponse response
+			@Context HttpServletRequest request
+
+
+
 			) throws Exception {
-		IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
+
+
+
 		HttpSession session = request.getSession(false);
 		String username = (String) session.getAttribute("user");
 		LOG.debug("Reading report"+reportId);
@@ -279,11 +294,22 @@ public class SVMService{
 	@Path("/crossvalidation/createfiles/{username}/{trainingDataSet}")
 	@GET
 	public Response createSVMFiles(
+
 			@PathParam("username") String username,
 			@PathParam("trainingDataSet") String trainingDataset,
-			@Context ServletContext context			
+	
+
+			@FormParam("testDataset") String testDataset,
+			@Context HttpServletRequest request
+			
+
 			) throws Exception {
-		IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
+
+
+
+		HttpSession session = request.getSession(false);
+		//String username = (String) session.getAttribute("user");
+
 		LOG.debug("Using "+trainingDataset+" dataset for SVM");
 		String trainFile = fs.getFilePathForUploads(trainingDataset, username);
 		String crossvalidation = fs.getUserPath(username)+ServerConstants.linuxSeparator+"work"+ServerConstants.linuxSeparator+"crossvalidation";
@@ -332,11 +358,15 @@ public class SVMService{
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getTrainingDataSets(
+
 			@Context ServletContext context,
 			@Context HttpServletRequest request,
 			@Context HttpServletResponse response
+
+
 			) throws Exception {
-		IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
+
+
 		HttpSession session = request.getSession(false);
 		String username = (String) session.getAttribute("user");
 		List<LocatedFileStatus> files = (List<LocatedFileStatus>) fs.getUploadedTrainingDatasets(username);
@@ -360,11 +390,14 @@ public class SVMService{
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getTestDataSets(
+
 			@Context ServletContext context,
 			@Context HttpServletRequest request,
 			@Context HttpServletResponse response
+
 			) throws Exception {
-		IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
+
+
 		HttpSession session = request.getSession(false);
 		String username = (String) session.getAttribute("user");
 		List<LocatedFileStatus> files = (List<LocatedFileStatus>) fs.getUploadedTestDatasets(username);

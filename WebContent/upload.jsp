@@ -5,7 +5,7 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 	<meta charset="utf-8">
-	<title>Elastic ML Cloud Admin | DashBoard</title>
+	<title>Elastic ML Cloud Admin | Manage your datasets</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
 	<meta name="description" content="">
 	<meta name="author" content="">
@@ -21,6 +21,7 @@
 	<link rel="stylesheet" href="js/jquery-upload/css/jquery.fileupload-ui.css">
 	<!-- FONTS -->
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
+	<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
 </head>
 <body>
 <%
@@ -81,7 +82,7 @@ for(Cookie cookie : cookies){
 					<li class="dropdown user" id="header-user">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
 							<img alt="" src="img/avatars/avatar3.jpg" />
-							<span class="username"><%=userName%></span>
+							<span class="username"><%=session.getAttribute("user")%></span>
 							<i class="fa fa-angle-down"></i>
 						</a>
 						<ul class="dropdown-menu">
@@ -136,23 +137,12 @@ for(Cookie cookie : cookies){
 							<!-- /ML ALGORITHM MENU -->
 							
 							<!-- REPORTS MENU -->
-							<li class="has-sub">
-								<a href="javascript:;" class="">
-								<i class="fa fa-bar-chart-o fa-fw"></i> <span class="menu-text">Reports</span>
-								<span class="arrow"></span>
-								</a>
-								<ul class="sub">
-									<li><a class="" href="flot_charts.html"><span class="sub-menu-text">Flot Charts</span></a></li>
-									<li><a class="" href="xcharts.html"><span class="sub-menu-text">xCharts</span></a></li>
-									
-									<li><a class="" href="others.html"><span class="sub-menu-text">Others</span></a></li>
-								</ul>
-							</li>
+							<li><a class="" href="reports.jsp"><i class="fa fa-bar-chart-o fa-fw"></i> <span class="menu-text">Reports</span></a></li>
 							<!-- /REPORTS MENU -->
 							
-							<!-- FAQ -->
-							<li><a class="" href="faq.html"><i class="fa fa-picture-o fa-fw"></i> <span class="menu-text">FAQ</span></a></li>
-							<!-- /FAQ -->
+							<!-- TASKS -->
+							<li><a class="" href="tasks.jsp"><i class="fa fa-tasks fa-fw"></i> <span class="menu-text">Tasks</span></a></li>
+							<!-- /TASKS -->
 						</ul>
 						<!-- /SIDEBAR MENU -->
 					</div>
@@ -370,7 +360,7 @@ for(Cookie cookie : cookies){
 	<script src="js/notifications.js"></script>
 	<script>
 	$.ajax({
-	    url : "task/notifications/getFinishedTasks",
+	    url : "ui/notifications/getFinishedTasks",
 	    type: "GET",
 	    dataType : "json",
 	    data : {
@@ -387,7 +377,7 @@ for(Cookie cookie : cookies){
 	});
 	$( "#header-notification" ).click(function() {
   		$.ajax({
-		    url : "task/notifications/markAllAsSeen",
+		    url : "ui/notifications/markAllAsSeen",
 		    type: "GET",
 		    data : {
 		    	

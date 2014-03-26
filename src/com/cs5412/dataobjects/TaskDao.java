@@ -1,6 +1,9 @@
 package com.cs5412.dataobjects;
 
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import com.cs5412.taskmanager.TaskStatus;
 import com.google.common.collect.Lists;
@@ -9,10 +12,13 @@ public class TaskDao {
 	private String userId;
 	private String taskName;
 	private String taskDescription;
+	private String taskType;
 	private String reportUrl;
 	private TaskStatus status;
 	private boolean isSeen;
 	private int taskId;
+	private int parentTaskId;
+	private HttpServletRequest httpRequest;
 	List<TaskDao> subTasks = Lists.newArrayList();
 	
 	public TaskDao(String userId,String taskName,String reportUrl,TaskStatus status,boolean isSeen){
@@ -132,6 +138,48 @@ public class TaskDao {
 	 */
 	public void setTaskDescription(String taskDescription) {
 		this.taskDescription = taskDescription;
+	}
+
+	/**
+	 * @return the taskType
+	 */
+	public String getTaskType() {
+		return taskType;
+	}
+
+	/**
+	 * @param taskType the taskType to set
+	 */
+	public void setTaskType(String taskType) {
+		this.taskType = taskType;
+	}
+
+	/**
+	 * @return the parentTaskId
+	 */
+	public int getParentTaskId() {
+		return parentTaskId;
+	}
+
+	/**
+	 * @param parentTaskId the parentTaskId to set
+	 */
+	public void setParentTaskId(int parentTaskId) {
+		this.parentTaskId = parentTaskId;
+	}
+
+	/**
+	 * @return the httpRequest
+	 */
+	public HttpServletRequest getHttpRequest() {
+		return httpRequest;
+	}
+
+	/**
+	 * @param httpRequest the httpRequest to set
+	 */
+	public void setHttpRequest(HttpServletRequest httpRequest) {
+		this.httpRequest = httpRequest;
 	}
 
 	

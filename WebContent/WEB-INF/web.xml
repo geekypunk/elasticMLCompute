@@ -18,11 +18,27 @@
     </init-param>
   </servlet>
    <servlet>
-    <servlet-name>Notification REST Service</servlet-name>
+    <servlet-name>Notifications REST Service</servlet-name>
     <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
     <init-param>
       <param-name>jersey.config.server.provider.packages</param-name>
       <param-value>com.cs5412.webservices.notifications</param-value>
+    </init-param>
+  </servlet>
+  <servlet>
+    <servlet-name>Tasks REST Service</servlet-name>
+    <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+    <init-param>
+      <param-name>jersey.config.server.provider.packages</param-name>
+      <param-value>com.cs5412.webservices.tasks</param-value>
+    </init-param>
+  </servlet>
+  <servlet>
+    <servlet-name>Reports REST Service</servlet-name>
+    <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+    <init-param>
+      <param-name>jersey.config.server.provider.packages</param-name>
+      <param-value>com.cs5412.webservices.reports</param-value>
     </init-param>
   </servlet>
   <servlet-mapping>
@@ -34,8 +50,16 @@
     <url-pattern>/user/*</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>Notification REST Service</servlet-name>
-    <url-pattern>/task/*</url-pattern>
+    <servlet-name>Notifications REST Service</servlet-name>
+    <url-pattern>/ui/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>Tasks REST Service</servlet-name>
+    <url-pattern>/taskui/*</url-pattern>
+  </servlet-mapping>
+   <servlet-mapping>
+    <servlet-name>Reports REST Service</servlet-name>
+    <url-pattern>/reportsui/*</url-pattern>
   </servlet-mapping>
   <listener>
     <listener-class>com.cs5412.listeners.WebAppListener</listener-class>

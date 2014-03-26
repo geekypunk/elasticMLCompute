@@ -1,11 +1,9 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 	<meta charset="utf-8">
-	<title>Elastic ML Cloud Admin | SVM</title>
+	<title>Cloud Admin | Reports</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
 	<meta name="description" content="">
 	<meta name="author" content="">
@@ -15,15 +13,14 @@
 	<link rel="stylesheet" type="text/css"  href="css/responsive.css" >
 	
 	<link href="font-awesome/css/font-awesome.min.css" rel="stylesheet">
+	<!-- JQUERY UI-->
+	<link rel="stylesheet" type="text/css" href="js/jquery-ui-1.10.3.custom/css/custom-theme/jquery-ui-1.10.3.custom.min.css" />
 	<!-- DATE RANGE PICKER -->
 	<link rel="stylesheet" type="text/css" href="js/bootstrap-daterangepicker/daterangepicker-bs3.css" />
-	<!-- TYPEAHEAD -->
-	<link rel="stylesheet" type="text/css" href="js/typeahead/typeahead.css" />
-	<!-- SELECT2 -->
-	<link rel="stylesheet" type="text/css" href="js/select2/select2.min.css" />
-	<!-- UNIFORM -->
-	<link rel="stylesheet" type="text/css" href="js/uniform/css/uniform.default.min.css" />
-
+	<!-- DATA TABLES -->
+	<link rel="stylesheet" type="text/css" href="js/datatables/media/css/jquery.dataTables.min.css" />
+	<link rel="stylesheet" type="text/css" href="js/datatables/media/assets/css/datatables.min.css" />
+	<link rel="stylesheet" type="text/css" href="js/datatables/extras/TableTools/media/css/TableTools.min.css" />
 	<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
 	<!-- FONTS -->
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
@@ -45,7 +42,7 @@ for(Cookie cookie : cookies){
 }
 }
 %>
-	<!-- HEADER -->
+		<!-- HEADER -->
 	<header class="navbar clearfix" id="header">
 		<div class="container">
 				<div class="navbar-brand">
@@ -134,9 +131,6 @@ for(Cookie cookie : cookies){
 								<ul class="sub">
 									<li><a class="" href="knn.jsp"><span class="sub-menu-text">KNN</span></a></li>
 									<li><a class="" href="svm.jsp"><span class="sub-menu-text">SVM</span></a></li>
-									<li><a class="" href="kernel.jsp"><span class="sub-menu-text">KERNEL</span></a></li>
-									<li><a class="" href="decisiontree.jsp"><span class="sub-menu-text">DECISION TREE</span></a></li>
-									<li><a class="" href="wsd.jsp"><span class="sub-menu-text">WSD</span></a></li>
 								</ul>
 							</li>
 							<!-- /ML ALGORITHM MENU -->
@@ -154,47 +148,65 @@ for(Cookie cookie : cookies){
 				</div>
 				<!-- /SIDEBAR -->
 		<div id="main-content">
+			<!-- SAMPLE BOX CONFIGURATION MODAL FORM-->
+			<div class="modal fade" id="box-config" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+				  <div class="modal-content">
+					<div class="modal-header">
+					  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					  <h4 class="modal-title">Box Settings</h4>
+					</div>
+					<div class="modal-body">
+					  Here goes box setting content.
+					</div>
+					<div class="modal-footer">
+					  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					  <button type="button" class="btn btn-primary">Save changes</button>
+					</div>
+				  </div>
+				</div>
+			  </div>
+			<!-- /SAMPLE BOX CONFIGURATION MODAL FORM-->
 			<div class="container">
 				<div class="row">
 					<div id="content" class="col-lg-12">
-						<!-- PAGE HEADER-->
-						<!-- ADVANCED -->
+						<!-- DATA TABLES -->
 						<div class="row">
 							<div class="col-md-12">
 								<!-- BOX -->
 								<div class="box border green">
 									<div class="box-title">
-										<h4><i class="fa fa-bars"></i>Parameters</h4>
-										
+										<h4><i class="fa fa-table"></i>Reports</h4>
+										<div class="tools hidden-xs">
+											
+											<a href="javascript:;" class="reload">
+												<i class="fa fa-refresh"></i>
+											</a>
+											
+										</div>
 									</div>
 									<div class="box-body">
-										<form id="svmForm" class="form-horizontal">
-										  <div class="form-group">
-											 <label class="col-md-2 control-label" for="e1">Training Data<span class="required"></span></label> 
-											 <div class="col-md-10">
-												<select id="e1" name="trainingDataset" class="col-md-12">
-																				
-												</select>												
-											 </div>
-										  </div>
-										  <div class="form-group">
-											 <label class="col-md-2 control-label" for="e2">Test Data<span class="required"></span></label> 
-											 <div class="col-md-10">
-												<select id="e2" name="testDataset" class="col-md-12">
-												   								   
-												</select>												
-											 </div>
-										  </div>
-										  <button type="submit" id="btn-load-complete" class="btn btn-success" data-complete-text="Run again!" data-loading-text="Running...">Run!</button>
-										  
-									   </form>
-									   <br/>
-									   <button id="btn-chart" class="btn btn-success" data-complete-text="Refresh" data-loading-text="Refresh...">Display Chart</button>
-									   <br/>
-									 
-									  
-									  
-										
+										<table id="datatable1" cellpadding="0" cellspacing="0" border="0" class="datatable table table-striped table-bordered table-hover">
+											<thead>
+												<tr>
+													<th>Report name</th>
+													<th>Size</th>
+													<th>Created At</th>
+													<th></th>
+												</tr>
+											</thead>
+											<tbody>
+												
+											</tbody>
+											<tfoot>
+												<tr>
+													<th>Report name</th>
+													<th>Size</th>
+													<th>Created At</th>
+													<th></th>
+												</tr>
+											</tfoot>
+										</table>
 									</div>
 								</div>
 								<!-- /BOX -->
@@ -228,12 +240,12 @@ for(Cookie cookie : cookies){
 							</div>
 							<!-- /SVM CHART -->
 						</div>
-						<!-- /ADVANCED -->
-						<!-- /PAGE HEADER -->
-					</div>
+												
+					</div><!-- /CONTENT-->
 				</div>
 			</div>
 		</div>
+		
 	</section>
 	<!--/PAGE -->
 	<!-- JAVASCRIPTS -->
@@ -244,23 +256,8 @@ for(Cookie cookie : cookies){
 	<script src="js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 	<!-- BOOTSTRAP -->
 	<script src="bootstrap-dist/js/bootstrap.min.js"></script>
-	
-	<!-- SLIMSCROLL -->
-	<script type="text/javascript" src="js/jQuery-slimScroll-1.3.0/jquery.slimscroll.min.js"></script><script type="text/javascript" src="js/jQuery-slimScroll-1.3.0/slimScrollHorizontal.min.js"></script>
-	<!-- BLOCK UI -->
-	<script type="text/javascript" src="js/jQuery-BlockUI/jquery.blockUI.min.js"></script>
-	<!-- TYPEHEAD -->
-	<script type="text/javascript" src="js/typeahead/typeahead.min.js"></script>
-	<!-- AUTOSIZE -->
-	<script type="text/javascript" src="js/autosize/jquery.autosize.min.js"></script>
-	<!-- COUNTABLE -->
-	<script type="text/javascript" src="js/countable/jquery.simplyCountable.min.js"></script>
-	<!-- INPUT MASK -->
-	<script type="text/javascript" src="js/bootstrap-inputmask/bootstrap-inputmask.min.js"></script>
-	<!-- SELECT2 -->
-	<script type="text/javascript" src="js/select2/select2.min.js"></script>
-	<!-- UNIFORM -->
-	<script type="text/javascript" src="js/uniform/jquery.uniform.min.js"></script>
+	<!-- BOOTBOX For Modals-->
+	<script type="text/javascript" src="js/bootbox/bootbox.min.js"></script>
 	<!-- FLOT CHARTS -->
 	<script src="js/flot/jquery.flot.min.js"></script>
 	<script src="js/flot/jquery.flot.time.min.js"></script>
@@ -269,26 +266,28 @@ for(Cookie cookie : cookies){
     <script src="js/flot/jquery.flot.pie.min.js"></script>
     <script src="js/flot/jquery.flot.stack.min.js"></script>
     <script src="js/flot/jquery.flot.crosshair.min.js"></script>
+	<!-- SLIMSCROLL -->
+	<script type="text/javascript" src="js/jQuery-slimScroll-1.3.0/jquery.slimscroll.min.js"></script><script type="text/javascript" src="js/jQuery-slimScroll-1.3.0/slimScrollHorizontal.min.js"></script>
+	<!-- BLOCK UI -->
+	<script type="text/javascript" src="js/jQuery-BlockUI/jquery.blockUI.min.js"></script>
+	<!-- DATA TABLES -->
+	<script type="text/javascript" src="js/datatables/media/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" src="js/datatables/media/assets/js/datatables.min.js"></script>
+	<script type="text/javascript" src="js/datatables/extras/TableTools/media/js/TableTools.min.js"></script>
+	<script type="text/javascript" src="js/datatables/extras/TableTools/media/js/ZeroClipboard.min.js"></script>
 	<!-- COOKIE -->
 	<script type="text/javascript" src="js/jQuery-Cookie/jquery.cookie.min.js"></script>
-	<!-- WIZARD -->
-	<script src="js/bootstrap-wizard/jquery.bootstrap.wizard.min.js"></script>
-	<!-- WIZARD -->
-	<script src="js/jquery-validate/jquery.validate.min.js"></script>
-	<script src="js/jquery-validate/additional-methods.min.js"></script>
 	<!-- CUSTOM SCRIPT -->
-	<script src="js/script.js"></script>
 	<script src="js/svm.charts.js"></script>
-	<script src="js/svm.js"></script>
-	<script>
-		jQuery(document).ready(function() {		
-			App.setPage("forms");  //Set current page
-			App.init(); //Initialise plugins and elements
-			
-		});
-	</script>
 	<!-- Notification Script-->
 	<script src="js/notifications.js"></script>
+	<script src="js/script.js"></script>
+    <script>
+		jQuery(document).ready(function() {		
+			App.setPage("dynamic_table");  //Set current page
+			App.init(); //Initialise plugins and elements
+		});
+	</script>
 	<script>
 	$.ajax({
 	    url : "ui/notifications/getFinishedTasks",
@@ -325,6 +324,114 @@ for(Cookie cookie : cookies){
 	});
 	</script>
 	<!-- END Notification Script-->
+	<script>
+	$.ajax({
+	    url : "reportsui/reports/getAllReports",
+	    type: "GET",
+	    dataType : "json",
+	    data : {
+	    	
+	    },
+	    success: function(data, textStatus, jqXHR)
+	    {
+	    	var r = new Array(), j = -1;
+			var row;
+			for (var key=0, size=data.length; key<size; key++){
+				row = new Array();
+			    row.push(data[key].name);
+			    row.push(data[key].size);
+			    row.push(data[key].createdAt);
+			   row.push('<button class="btn btn-xs btn-primary" onclick=showChart('+'\''+data[key].name+'\''+')>VISUALIZE</button>');
+			    r.push(row);
+			   
+			}
+	 		$("#datatable1").dataTable().fnDestroy();
+       		$('#datatable1').dataTable({
+               "sPaginationType": "bs_full"
+         	}).fnAddData(r);
+            $('.datatable').each(function(){
+	            var datatable = $(this);
+	            // SEARCH - Add the placeholder for Search and Turn this into in-line form control
+	            var search_input = datatable.closest('.dataTables_wrapper').find('div[id$=_filter] input');
+	            search_input.attr('placeholder', 'Search');
+	            search_input.addClass('form-control input-sm');
+	            // LENGTH - Inline-Form control
+	            var length_sel = datatable.closest('.dataTables_wrapper').find('div[id$=_length] select');
+	            length_sel.addClass('form-control input-sm');
+	        });
+	    },
+	    error: function (jqXHR, textStatus, errorThrown)
+	    {
+	 			console.log(errorThrown);
+	    }
+	});
+
+	$(".reload").click(function(){
+  		$.ajax({
+		    url : "reportsui/reports/getAllReports",
+		    type: "GET",
+		    dataType : "json",
+		    data : {
+		    	
+		    },
+		    success: function(data, textStatus, jqXHR)
+		    {
+		    	var r = new Array(), j = -1;
+				var row;
+				for (var key=0, size=data.length; key<size; key++){
+					row = new Array();
+				    row.push(data[key].name);
+				    row.push(data[key].size);
+				    row.push(data[key].createdAt);
+row.push('<button class="btn btn-xs btn-primary" onclick=showChart('+'\''+data[key].name+'\''+')>VISUALIZE</button>');
+				    r.push(row);
+				   
+				}
+	 			$("#datatable1").dataTable().fnDestroy();
+       			$('#datatable1').dataTable({
+             	   "sPaginationType": "bs_full"
+         	    }).fnAddData(r);
+              
+		        $('.datatable').each(function(){
+		            var datatable = $(this);
+		            // SEARCH - Add the placeholder for Search and Turn this into in-line form control
+		            var search_input = datatable.closest('.dataTables_wrapper').find('div[id$=_filter] input');
+		            search_input.attr('placeholder', 'Search');
+		            search_input.addClass('form-control input-sm');
+		            // LENGTH - Inline-Form control
+		            var length_sel = datatable.closest('.dataTables_wrapper').find('div[id$=_length] select');
+		            length_sel.addClass('form-control input-sm');
+		        });
+		    },
+		    error: function (jqXHR, textStatus, errorThrown)
+		    {
+		 			console.log(errorThrown);
+		    }
+		});
+	});
+	</script>
+	
+	<!-- Show Chart Modal -->
+	<script>
+		function showChart(reportId){
+			//$('#'+reportId).click(function() {
+				$.ajax({
+						type: "GET",
+						dataType: "text",
+						url: "reportsui/reports/getReport/"+reportId,
+						success: function (d) {
+							$('#svmChart').show();
+							SVMCharts.displayChart(d);
+							//bootbox.alert($('#chart_2').html());
+						}
+					});
+				
+	        //});
+		}
+    </script>
+   	
+    <!-- /Show Chart Modal -->
+	
 	<!-- /JAVASCRIPTS -->
 </body>
 </html>
