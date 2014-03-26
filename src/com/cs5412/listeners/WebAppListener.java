@@ -20,7 +20,6 @@ import com.cs5412.dataobjects.UserDao;
 import com.cs5412.filesystem.IFileSystem;
 import com.cs5412.filesystem.impl.HDFSFileSystemImpl;
 import com.cs5412.utils.ServerConstants;
-import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 
 @WebListener

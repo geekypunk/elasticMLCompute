@@ -297,12 +297,8 @@ public class SVMService{
 
 			@PathParam("username") String username,
 			@PathParam("trainingDataSet") String trainingDataset,
-	
-
-			@FormParam("testDataset") String testDataset,
 			@Context HttpServletRequest request
 			
-
 			) throws Exception {
 
 

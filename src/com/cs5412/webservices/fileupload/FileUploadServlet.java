@@ -136,7 +136,7 @@ public class FileUploadServlet extends HttpServlet {
                         } else{
                         	
                         	TaskDao uploadTask = new TaskDao(username, fileName, "upload", TaskStatus.RUNNING, false);
-                        	uploadTask.setHttpRequest(request);
+                        	//uploadTask.setHttpRequest(request);
                         	uploadTask.setTaskType(TaskType.DATASET_UPLOAD);
                         	uploadTask.setTaskDescription(fileName);
                         	
@@ -153,6 +153,7 @@ public class FileUploadServlet extends HttpServlet {
 		                    	result.put("files", array);
 		                    	taskManager.setTaskStatus(uploadTask, TaskStatus.SUCCESS);
                         	}catch(Exception e){
+                        		  LOG.error("Error",e);
                         		taskManager.setTaskStatus(uploadTask, TaskStatus.FAILURE);
                         	}
                         }
@@ -166,7 +167,7 @@ public class FileUploadServlet extends HttpServlet {
         } catch (FileSizeLimitExceededException e) {
             request.setAttribute("message",
                     "There was an error: " + e.getMessage());
-            LOG.error("Error",e.getFieldName());
+            LOG.error("Error",e.getCause());
         }catch(Exception ex){
         	request.setAttribute("message",
                     "There was an error: " + ex.getMessage());

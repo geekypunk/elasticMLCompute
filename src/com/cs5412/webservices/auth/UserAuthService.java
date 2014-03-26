@@ -1,5 +1,6 @@
 package com.cs5412.webservices.auth;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -16,6 +17,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +25,7 @@ import com.couchbase.client.CouchbaseClient;
 import com.cs5412.filesystem.IFileSystem;
 import com.cs5412.user.UserManager;
 import com.cs5412.user.UserManagerImpl;
-import com.google.common.collect.Maps;
+
 
 @Path("/auth")
 public class UserAuthService {
@@ -54,7 +56,7 @@ public class UserAuthService {
 			@Context HttpServletResponse response
 			) throws Exception {
 		
-		Map<String,String> params = Maps.newHashMap();
+		Map<String,String> params = new HashMap<String, String>();
 		params.put("fullName", name);
 		params.put("email", email);
 		params.put("username", username);

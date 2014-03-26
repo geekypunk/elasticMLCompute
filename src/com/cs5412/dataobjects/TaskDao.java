@@ -1,12 +1,11 @@
 package com.cs5412.dataobjects;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import com.cs5412.taskmanager.TaskStatus;
-import com.google.common.collect.Lists;
 
 public class TaskDao {
 	private String userId;
@@ -18,8 +17,8 @@ public class TaskDao {
 	private boolean isSeen;
 	private int taskId;
 	private int parentTaskId;
-	private HttpServletRequest httpRequest;
-	List<TaskDao> subTasks = Lists.newArrayList();
+	//private HttpServletRequest httpRequest
+	List<Integer> subTasks = new ArrayList<Integer>();
 	
 	public TaskDao(String userId,String taskName,String reportUrl,TaskStatus status,boolean isSeen){
 		
@@ -78,15 +77,15 @@ public class TaskDao {
 	 * @return the status.
 	 */
 	public TaskStatus getStatus() {
-		if(this.subTasks.size() ==0)
+		//if(this.subTasks.size() ==0)
 			return status;
-		else{
-			for(TaskDao task: this.subTasks){
-				if(task.status == TaskStatus.FAILURE)
-					return TaskStatus.FAILURE;
-			}
-			return TaskStatus.SUCCESS;
-		}
+	//	else{
+	//		for(TaskDao task: this.subTasks){
+	//			if(task.status == TaskStatus.FAILURE)
+	//				return TaskStatus.FAILURE;
+	//		}
+	//		return TaskStatus.SUCCESS;
+	//	}
 	}
 	/**
 	 * @param status the status to set
@@ -95,12 +94,13 @@ public class TaskDao {
 		this.status = status;
 	}
 	
-	public void addSubTask(TaskDao task){
+	public void addSubTask(int task){
 		
 		this.subTasks.add(task);
 		
 	}
 
+	/*
 	public TaskDao getSubTaskById(int id){
 		
 		for(TaskDao task:this.subTasks){
@@ -108,8 +108,8 @@ public class TaskDao {
 				return task;
 		}
 		return null;
-	}
-	public List<TaskDao>getAllSubTasks(){
+	}*/
+	public List<Integer>getAllSubTasks(){
 		
 		return this.subTasks;
 	}
@@ -168,19 +168,7 @@ public class TaskDao {
 		this.parentTaskId = parentTaskId;
 	}
 
-	/**
-	 * @return the httpRequest
-	 */
-	public HttpServletRequest getHttpRequest() {
-		return httpRequest;
-	}
-
-	/**
-	 * @param httpRequest the httpRequest to set
-	 */
-	public void setHttpRequest(HttpServletRequest httpRequest) {
-		this.httpRequest = httpRequest;
-	}
+	
 
 	
 }

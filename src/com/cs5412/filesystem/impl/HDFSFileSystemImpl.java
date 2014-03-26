@@ -10,6 +10,7 @@ import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -23,7 +24,7 @@ import org.apache.hadoop.fs.RemoteIterator;
 
 import com.cs5412.filesystem.IFileSystem;
 import com.cs5412.utils.ServerConstants;
-import com.google.common.collect.Lists;
+
 
 public class HDFSFileSystemImpl implements IFileSystem{
 	
@@ -156,7 +157,7 @@ public class HDFSFileSystemImpl implements IFileSystem{
 	}
 	@Override
 	public List<LocatedFileStatus> getFilesInPath(Path path) throws IOException{
-		List<LocatedFileStatus> filesList = Lists.newArrayList();
+		List<LocatedFileStatus> filesList = new ArrayList<LocatedFileStatus>();
 		try{
 		
 			RemoteIterator<LocatedFileStatus> files = hdfs.listFiles(path, true);

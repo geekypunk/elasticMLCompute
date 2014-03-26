@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -324,16 +324,32 @@ for(Cookie cookie : cookies){
 		    success: function(data, textStatus, jqXHR)
 		    {
 		    	var r = new Array(), j = -1;
+				var row;
 				for (var key=0, size=data.length; key<size; key++){
-				    r[++j] ='<tr><td>';
-				    r[++j] = getTaskTypeIcon(data[key].taskType)+data[key].taskType;
-				    r[++j] = '</td><td>';
-				    r[++j] = data[key].taskDescription;
-				    r[++j] = '</td><td>';
-				    r[++j] = getTaskStatusIcon(data[key].status);
-				    r[++j] = '</td></tr>';
+					row = new Array();
+				    row.push(getTaskTypeIcon(data[key].taskType)+data[key].taskType);
+				    row.push(data[key].taskDescription);
+				    row.push(getTaskStatusIcon(data[key].status));
+				    r.push(row);
+				   
 				}
-	 			$('#datatable1>tbody').html(r.join('')); 
+				$("#datatable1").dataTable().fnDestroy();
+	       		$('#datatable1').dataTable({
+	                "sPaginationType": "bs_full"
+	            }).fnAddData(r);
+	    
+	           
+		        $('.datatable').each(function(){
+		            var datatable = $(this);
+		            // SEARCH - Add the placeholder for Search and Turn this into in-line form control
+		            var search_input = datatable.closest('.dataTables_wrapper').find('div[id$=_filter] input');
+		            search_input.attr('placeholder', 'Search');
+		            search_input.addClass('form-control input-sm');
+		            // LENGTH - Inline-Form control
+		            var length_sel = datatable.closest('.dataTables_wrapper').find('div[id$=_length] select');
+		            length_sel.addClass('form-control input-sm');
+		        });
+	 			
 		    },
 		    error: function (jqXHR, textStatus, errorThrown)
 		    {

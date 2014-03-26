@@ -22,7 +22,7 @@ public class ServerConstants {
 	public static final int UPLOAD_BUFFER   = 1024 * 1024 * 5;  // 5MB
 	public static final String linuxSeparator = "/";
 	
-	public static final String HDFS_URI = "hdfs://192.168.56.101:9000";
+	public static final String HDFS_URI = "hdfs://localhost:9000";
 	//These should not exceed -Xmx argument
 	public static final int MAX_FILE_SIZE      = 1024 * 1024 * 1024; // 500MB
 	public static final int MAX_REQUEST_SIZE   = 1024 * 1024 * 1024; // 500MB

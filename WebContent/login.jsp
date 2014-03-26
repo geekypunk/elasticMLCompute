@@ -99,7 +99,7 @@ for(Cookie cookie : cookies){
 							<div class="login-box-plain">
 								<h2 class="bigintro">Register</h2>
 								<div class="divide-40"></div>
-								<form id="registerForm" role="form" action="user/auth/register" method="POST">
+								<form id="registerForm" role="form" >
 								  <div class="form-group">
 									<label for="registerFullName">Full Name</label>
 									<i class="fa fa-font"></i>
