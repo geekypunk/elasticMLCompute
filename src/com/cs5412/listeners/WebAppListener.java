@@ -40,7 +40,7 @@ public class WebAppListener implements ServletContextListener {
 			application.setAttribute("fileSystem", fs);	
 			//List of couchbase nodes
 			List<URI> hosts = Arrays.asList(
-				      new URI("http://127.0.0.1:8091/pools")
+				      new URI("http://10.32.32.7/:8091/pools")
 				    );
 			Gson gson = new Gson();
 		    // Name of the Bucket to connect to

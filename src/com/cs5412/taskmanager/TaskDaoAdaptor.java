@@ -32,8 +32,8 @@ public class TaskDaoAdaptor implements JsonSerializer<TaskDao> {
         obj.addProperty("isSeen",src.isSeen());
         final JsonArray subTasks = new JsonArray();
         for (final Integer task : src.getAllSubTasks()) {
-            final JsonPrimitive jsonAuthor = new JsonPrimitive(task);
-            subTasks.add(jsonAuthor);
+            final JsonPrimitive taskID = new JsonPrimitive(task);
+            subTasks.add(taskID);
           }
         obj.add("subTasks", subTasks);
 

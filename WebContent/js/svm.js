@@ -1,14 +1,14 @@
 
 		$(function(){
 			
-			$.getJSON("http://localhost:8080/elasticMLCompute/ml/svm/getTrainingDataSets",{id: $(this).val(), ajax: 'true'}, function(j){
+			$.getJSON("ml/svm/getTrainingDataSets",{id: $(this).val(), ajax: 'true'}, function(j){
 		 		var $subType = $("#e1");
 				$subType.empty();
 				$.each(j, function () {
 					$subType.append($('<option></option>').attr("value", this.optionValue).text(this.optionDisplay));
 				});
 			});
-			$.getJSON("http://localhost:8080/elasticMLCompute/ml/svm/getTestDataSets",{id: $(this).val(), ajax: 'true'}, function(j){
+			$.getJSON("ml/svm/getTestDataSets",{id: $(this).val(), ajax: 'true'}, function(j){
 		 		var $subType = $("#e2");
 				$subType.empty();
 				$.each(j, function () {
@@ -35,7 +35,7 @@
 						testDataset: $('#e2').val() 
 					},
 					dataType: "text",
-					url: "http://localhost:8080/elasticMLCompute/ml/svm/runService",
+					url: "ml/svm/runService",
 					success: function (d) {
 						a.button("complete");
 					},
@@ -64,7 +64,7 @@
 				$.ajax({
 					type: "GET",
 					dataType: "text",
-					url: "http://localhost:8080/elasticMLCompute/ml/svm/getReport/SVM.train-SVM.test.chart",
+					url: "ml/svm/getReport/SVM.train-SVM.test.chart",
 					success: function (d) {
 						a.button("complete");
 						SVMCharts.displayChart(d);

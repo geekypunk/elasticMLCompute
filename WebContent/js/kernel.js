@@ -1,13 +1,13 @@
 		$(function(){
 			
-			$.getJSON("http://localhost:8080/elasticMLCompute/ml/kernel/getTrainingDataSets",{id: $(this).val(), ajax: 'true'}, function(j){
+			$.getJSON("ml/kernel/getTrainingDataSets",{id: $(this).val(), ajax: 'true'}, function(j){
 		 		var $subType = $("#e1");
 				$subType.empty();
 				$.each(j, function () {
 					$subType.append($('<option></option>').attr("value", this.optionValue).text(this.optionDisplay));
 				});
 			});
-			$.getJSON("http://localhost:8080/elasticMLCompute/ml/kernel/getTestDataSets",{id: $(this).val(), ajax: 'true'}, function(j){
+			$.getJSON("ml/kernel/getTestDataSets",{id: $(this).val(), ajax: 'true'}, function(j){
 		 		var $subType = $("#e2");
 				$subType.empty();
 				$.each(j, function () {
@@ -26,7 +26,7 @@
 				$.ajax({
 					type: "GET",
 					dataType: "text",
-					url: "http://localhost:8080/elasticMLCompute/ml/kernel/getReport/SVM.train-SVM.test.chart",
+					url: "ml/kernel/getReport/SVM.train-SVM.test.chart",
 					success: function (d) {
 						a.button("complete");
 						SVMCharts.displayChart(d);
@@ -69,7 +69,7 @@
 			a.button("loading");
 			var kernelType = $('#e3').val();
 			var kernelValue = $('#e4').val();
-			var myUrl = "http://localhost:8080/elasticMLCompute/ml/kernel/runService/" + kernelType + "/" + kernelValue; 
+			var myUrl = "ml/kernel/runService/" + kernelType + "/" + kernelValue; 
 			var trainingDataset = $('#e1').val();
 			if(trainingDataset.trim().length > 0 && trainingDataset.trim().indexOf(".train")!=-1){	
 				$.ajax({

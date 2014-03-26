@@ -7,7 +7,7 @@ import org.apache.commons.lang.SystemUtils;
 public class ServerConstants {
 	
 	//Only needed if request is Cross-Origin 
-	public static final String SERVER_URL = "http://localhost:8080/elasticMLCompute/";
+	public static final String SERVER_URL = "http://10.32.32.7/:8181/elasticMLCompute/";
 	public static final String UPLOAD_DIRECTORY_ROOT = "C:"+File.separator+"upload";
 	public static final String UPLOAD_DIRECTORY_TRAIN = "C:"+File.separator+"upload"+File.separator+"train";
 	public static final String UPLOAD_DIRECTORY_TEST = "C:"+File.separator+"upload"+File.separator+"test";
@@ -22,7 +22,7 @@ public class ServerConstants {
 	public static final int UPLOAD_BUFFER   = 1024 * 1024 * 5;  // 5MB
 	public static final String linuxSeparator = "/";
 	
-	public static final String HDFS_URI = "hdfs://localhost:9000";
+	public static final String HDFS_URI = "hdfs://10.32.32.7:9000";
 	//These should not exceed -Xmx argument
 	public static final int MAX_FILE_SIZE      = 1024 * 1024 * 1024; // 500MB
 	public static final int MAX_REQUEST_SIZE   = 1024 * 1024 * 1024; // 500MB

@@ -37,8 +37,13 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.couchbase.client.CouchbaseClient;
+import com.cs5412.dataobjects.TaskDao;
 import com.cs5412.filesystem.IFileSystem;
+import com.cs5412.taskmanager.TaskManager;
+import com.cs5412.taskmanager.TaskStatus;
 import com.cs5412.utils.ServerConstants;
+import com.cs5412.utils.TaskType;
 import com.cs5412.webservices.fileupload.FileUploadServlet;
 
 @Path("/dTree")
@@ -46,7 +51,7 @@ public class RandomForestService {
 	static final Logger LOG = LoggerFactory.getLogger(FileUploadServlet.class);
 	public int bestHeight;
 	public static int [] choplist = {2,3,5,10,50,80};
-	public static String LoadBalancerAddress = "http://localhost:1246";
+	public static String LoadBalancerAddress = "http://10.32.32.7:8181";
 	
 	@Path("/runDistributedService")
 	@POST
@@ -61,7 +66,7 @@ public class RandomForestService {
 		LOG.debug("Using "+trainingDataset+" dataset for SVM");
 		HttpSession session = request.getSession(false);
 		String username = (String) session.getAttribute("user");
-		
+		TaskManager taskManager = new TaskManager((CouchbaseClient)context.getAttribute("couchbaseClient"));
 		String taskUrl = LoadBalancerAddress + "/elasticMLCompute/ml/dTree/beginService" + "/" + username + "/" + trainingDataset;
 		URL url = new URL(taskUrl);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -75,6 +80,11 @@ public class RandomForestService {
         LOG.debug(conn.getResponseCode() + "");
         ArrayList<ArrayList<Double>> allAccuracies = new ArrayList<ArrayList<Double>>();
         ExecutorService es = Executors.newFixedThreadPool(5);
+        TaskDao dtTask = new TaskDao(username, trainingDataset, "upload", TaskStatus.RUNNING, false);
+    	//uploadTask.setHttpRequest(request);
+    	dtTask.setTaskType(TaskType.ALGORITHM_EXEC);
+    	dtTask.setTaskDescription("Decision Tree algorithm");
+    	taskManager.registerTask(dtTask);
         for(int i=1;i<=5;i++){
         	Runnable job = new ParallelDTJob(username, LoadBalancerAddress, i, LOG, allAccuracies);
         	Thread t = new Thread(job);
@@ -160,7 +170,7 @@ public class RandomForestService {
 				}
 				result.put(dataPoints);
 				IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
-				String filePath = fs.getUserPath(username)+ServerConstants.linuxSeparator+"dt"+ServerConstants.linuxSeparator+"reports"+ServerConstants.linuxSeparator+ trainingDataset+"-"+testDataset+IFileSystem.CHART_DATA_FORMAT;
+				String filePath = fs.getUserPath(username)+ServerConstants.linuxSeparator+"reports"+ServerConstants.linuxSeparator+ trainingDataset+"-"+testDataset+IFileSystem.CHART_DATA_FORMAT;
 				BufferedWriter bw = fs.createFileToWrite(filePath,true);
 				bw.write(result.toString());
 				bw.close();
@@ -168,8 +178,8 @@ public class RandomForestService {
 				LOG.debug("Error: " + e);
 			}
         }
-        
-		return Response.status(200).entity(conn.getResponseCode()).build();
+        taskManager.setTaskStatus(dtTask, TaskStatus.SUCCESS);
+        return Response.status(200).entity(conn.getResponseCode()).build();
 	}
 	
 	
