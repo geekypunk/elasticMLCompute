@@ -1,4 +1,4 @@
-package com.cs5412.dataobjects;
+package com.cs5412.user;
 
 
 public class UserDao{

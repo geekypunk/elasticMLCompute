@@ -15,8 +15,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.core.Context;
 
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadBase.FileSizeLimitExceededException;
 import org.apache.commons.fileupload.ProgressListener;
@@ -31,13 +31,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.couchbase.client.CouchbaseClient;
-import com.cs5412.dataobjects.TaskDao;
 import com.cs5412.filesystem.IFileSystem;
-import com.cs5412.utils.HTTPConstants;
-import com.cs5412.utils.ServerConstants;
-import com.cs5412.utils.TaskType;
+import com.cs5412.taskmanager.TaskDao;
 import com.cs5412.taskmanager.TaskManager;
 import com.cs5412.taskmanager.TaskStatus;
+import com.cs5412.taskmanager.TaskType;
+import com.cs5412.utils.HTTPConstants;
+import com.cs5412.utils.ServerConstants;
 
 /**
  * A Java servlet that handles file upload from client.
@@ -52,6 +52,7 @@ public class FileUploadServlet extends HttpServlet {
     ServletContext ctx;
     IFileSystem fs;
     TaskManager taskManager;
+    PropertiesConfiguration config;
     ProgressListener progressListener = new ProgressListener(){
     	   public void update(long pBytesRead, long pContentLength, int pItems) {
     	       LOG.info("We are currently reading item " + pItems);
@@ -65,15 +66,15 @@ public class FileUploadServlet extends HttpServlet {
     };
     
     //Initialize global objects
-    public void init(ServletConfig config)
+    public void init(ServletConfig servConfig)
             throws ServletException{
-    	super.init(config);
+    	super.init(servConfig);
     	ctx = getServletContext();
     	fs = (IFileSystem) ctx.getAttribute("fileSystem");
 		taskManager = new TaskManager((CouchbaseClient)ctx.getAttribute("couchbaseClient"));
-
-    	
+		config = (PropertiesConfiguration)ctx.getAttribute("config");
     }
+
     /**
      * Upon receiving file upload submission, parses the request to read
      * upload data and saves the file on disk.
@@ -100,17 +101,17 @@ public class FileUploadServlet extends HttpServlet {
 	        // configures upload settings
 	        DiskFileItemFactory factory = new DiskFileItemFactory();
 	        // sets memory threshold - beyond which files are stored in disk, controls in-memory storage 
-	        factory.setSizeThreshold(ServerConstants.MEMORY_THRESHOLD);
+	        factory.setSizeThreshold(config.getInt("MEMORY_THRESHOLD"));
 	        // sets temporary location to store files
 	        factory.setRepository(new File(ServerConstants.getUploadDirTmp()));
 	 
 	        ServletFileUpload upload = new ServletFileUpload(factory);
 	         
 	        // sets maximum size of upload file
-	        upload.setFileSizeMax(ServerConstants.MAX_FILE_SIZE);
+	        upload.setFileSizeMax(config.getInt("MAX_FILE_SIZE"));
 	         
 	        // sets maximum size of request (include file + form data)
-	        upload.setSizeMax(ServerConstants.MAX_REQUEST_SIZE);
+	        upload.setSizeMax(config.getInt("MAX_REQUEST_SIZE"));
 	        upload.setProgressListener(progressListener);
 	 
             List<FileItem> formItems = upload.parseRequest(request);
@@ -137,7 +138,7 @@ public class FileUploadServlet extends HttpServlet {
                         	
                         	TaskDao uploadTask = new TaskDao(username, fileName, "upload", TaskStatus.RUNNING, false);
                         	//uploadTask.setHttpRequest(request);
-                        	uploadTask.setTaskType(TaskType.DATASET_UPLOAD);
+                        	uploadTask.setTaskType(TaskType.DATASET_UPLOAD.toString());
                         	uploadTask.setTaskDescription(fileName);
                         	
                         	try{

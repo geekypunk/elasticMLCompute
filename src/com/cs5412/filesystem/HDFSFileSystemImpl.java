@@ -1,7 +1,6 @@
-package com.cs5412.filesystem.impl;
+package com.cs5412.filesystem;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +12,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
@@ -22,18 +22,17 @@ import org.apache.hadoop.fs.LocatedFileStatus;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.RemoteIterator;
 
-import com.cs5412.filesystem.IFileSystem;
-import com.cs5412.utils.ServerConstants;
-
 
 public class HDFSFileSystemImpl implements IFileSystem{
 	
 	private FileSystem hdfs;
 	private Configuration configuration = new Configuration();
 	private String seperator ="/";
-	
-	public HDFSFileSystemImpl(String HDFS_URI) throws IOException, URISyntaxException{
-		hdfs = FileSystem.get( new URI( HDFS_URI ), configuration );
+
+	private int UPLOAD_BUFFER;
+	public HDFSFileSystemImpl(PropertiesConfiguration config) throws IOException, URISyntaxException{
+		hdfs = FileSystem.get(new URI(config.getString("HDFS_URI")), configuration );
+		UPLOAD_BUFFER = config.getInt("UPLOAD_BUFFER");
 	}
 
 	@Override
@@ -41,7 +40,7 @@ public class HDFSFileSystemImpl implements IFileSystem{
 		Path file = new Path(filePath);
 		FSDataOutputStream fs = hdfs.create(file,true);
 		int bytesRead = 0;
-		byte[] buffer = new byte[ServerConstants.UPLOAD_BUFFER];
+		byte[] buffer = new byte[UPLOAD_BUFFER];
 		while ((bytesRead = is.read(buffer)) > 0) {
 			  fs.write(buffer, 0, bytesRead);
 		}
@@ -84,9 +83,6 @@ public class HDFSFileSystemImpl implements IFileSystem{
 	}
 
 	@Override
-	/* 
-	 ** 
-	 * */
 	public BufferedWriter createFileToWrite(String filePath,boolean overWrite) throws IOException {
 		Path path = new Path(filePath);
 		FSDataOutputStream fos = hdfs.create(path, overWrite); 
@@ -94,8 +90,9 @@ public class HDFSFileSystemImpl implements IFileSystem{
 		BufferedWriter bw =new BufferedWriter(new OutputStreamWriter(os));
 		return bw;
 		
+		
 	}
-	
+
 	@Override
 	public void createDir(String filePath,boolean overWrite) throws IOException {
 		Path path = new Path(filePath);
@@ -103,6 +100,8 @@ public class HDFSFileSystemImpl implements IFileSystem{
 		
 		
 	}
+	
+	@Override
 	public FSDataOutputStream createHDFSFile(String filePath,boolean overWrite) throws IOException {
 		Path path = new Path(filePath);
 		FSDataOutputStream fos = hdfs.create(path, overWrite); 

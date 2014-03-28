@@ -25,8 +25,7 @@
 	<link rel="stylesheet" type="text/css" href="js/uniform/css/uniform.default.min.css" />
 
 	<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
-	<!-- FONTS -->
-	<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
+	<link href='css/fonts.css' rel='stylesheet' type='text/css'>	
 </head>
 <body>
 <%

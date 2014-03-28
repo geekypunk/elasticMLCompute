@@ -19,8 +19,7 @@
 	<!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
 	<link rel="stylesheet" href="js/jquery-upload/css/jquery.fileupload.css">
 	<link rel="stylesheet" href="js/jquery-upload/css/jquery.fileupload-ui.css">
-	<!-- FONTS -->
-	<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
+	<link href='css/fonts.css' rel='stylesheet' type='text/css'>
 	<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
 </head>
 <body>

@@ -20,8 +20,7 @@
 	<link rel="stylesheet" type="text/css" href="js/uniform/css/uniform.default.min.css" />
 	<!-- ANIMATE -->
 	<link rel="stylesheet" type="text/css" href="css/animatecss/animate.min.css" />
-	<!-- FONTS -->
-	<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
+	<link href='css/fonts.css' rel='stylesheet' type='text/css'>
 	<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
 </head>
 <body class="login">
@@ -77,7 +76,7 @@ for(Cookie cookie : cookies){
 								  </div>
 								  <div class="form-actions">
 									<label class="checkbox"> <input type="checkbox" class="uniform" value=""> Remember me</label>
-									<button type="submit" class="btn btn-danger">Submit</button>
+									<button type="submit" id="btn-login" data-complete-text="Logged In" data-loading-text="Logging In..." class="btn btn-danger">Submit</button>
 								  </div>
 								</form>
 								<div class="login-helpers">
@@ -129,7 +128,7 @@ for(Cookie cookie : cookies){
 								  -->
 								  <div class="form-actions">
 									<label class="checkbox"> <input type="checkbox" class="uniform" value=""> I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
-									<button type="submit" class="btn btn-success">Sign Up</button>
+									<button type="submit" id="btn-register" data-complete-text="Registered" data-loading-text="Signing Up.." class="btn btn-success">Sign Up</button>
 								  </div>
 								</form>
 								<div class="login-helpers">
@@ -200,6 +199,8 @@ for(Cookie cookie : cookies){
 	<script type="text/javascript">
 	$("#loginForm").submit(function(event) {
 		event.preventDefault();
+		var loginBtn=$('#btn-login');
+		loginBtn.button("loading");
 		$.ajax({
 		    url : "user/auth/login",
 		    type: "POST",
@@ -211,10 +212,14 @@ for(Cookie cookie : cookies){
 		    },
 		    success: function(data, textStatus, jqXHR)
 		    {
-		        if(data==="success")
+		        if(data==="success"){
+		        	loginBtn.button("complete");
 		        	window.location.replace("index.jsp");
-		        else
+		        	
+		        }
+		        else{
 		        	alert("Incorrect username/password");
+		        }
 		    },
 		    error: function (jqXHR, textStatus, errorThrown)
 		    {
@@ -225,6 +230,8 @@ for(Cookie cookie : cookies){
 
 	$("#registerForm").submit(function(event) {
 		event.preventDefault();
+		var registerBtn=$('#btn-register');
+		registerBtn.button("loading");
 		$.ajax({
 		    url : "user/auth/register",
 		    type: "POST",
@@ -238,6 +245,7 @@ for(Cookie cookie : cookies){
 		    },
 		    success: function(data, textStatus, jqXHR)
 		    {
+		    	registerBtn.button("complete");
 		        window.location.replace("index.jsp");
 		    },
 		    error: function (jqXHR, textStatus, errorThrown)

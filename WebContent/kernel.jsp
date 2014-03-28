@@ -23,10 +23,7 @@
 	<link rel="stylesheet" type="text/css" href="js/select2/select2.min.css" />
 	<!-- UNIFORM -->
 	<link rel="stylesheet" type="text/css" href="js/uniform/css/uniform.default.min.css" />
-
-
-	<!-- FONTS -->
-	<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
+	<link href='css/fonts.css' rel='stylesheet' type='text/css'>
 </head>
 <body>
 <%

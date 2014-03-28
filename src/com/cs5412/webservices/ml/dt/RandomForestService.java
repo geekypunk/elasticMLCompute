@@ -14,6 +14,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,6 +30,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.LocatedFileStatus;
 import org.json.JSONArray;
@@ -38,12 +40,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.couchbase.client.CouchbaseClient;
-import com.cs5412.dataobjects.TaskDao;
 import com.cs5412.filesystem.IFileSystem;
+import com.cs5412.taskmanager.TaskDao;
 import com.cs5412.taskmanager.TaskManager;
 import com.cs5412.taskmanager.TaskStatus;
+import com.cs5412.taskmanager.TaskType;
 import com.cs5412.utils.ServerConstants;
-import com.cs5412.utils.TaskType;
 import com.cs5412.webservices.fileupload.FileUploadServlet;
 
 @Path("/dTree")
@@ -51,7 +53,20 @@ public class RandomForestService {
 	static final Logger LOG = LoggerFactory.getLogger(FileUploadServlet.class);
 	public int bestHeight;
 	public static int [] choplist = {2,3,5,10,50,80};
-	public static String LoadBalancerAddress = "http://10.32.32.7:8181";
+	
+	@Context ServletContext context;
+	public static String loadBalancerAddress;
+	TaskManager taskManager;
+	IFileSystem fs;
+	
+	@PostConstruct
+    void initialize() {
+		taskManager = new TaskManager((CouchbaseClient)context.getAttribute("couchbaseClient"));
+		fs = (IFileSystem) context.getAttribute("fileSystem");
+		PropertiesConfiguration config = (PropertiesConfiguration)context.getAttribute("config");
+		loadBalancerAddress = config.getString("LOAD_BALANCER_URI");
+
+    }
 	
 	@Path("/runDistributedService")
 	@POST
@@ -67,7 +82,7 @@ public class RandomForestService {
 		HttpSession session = request.getSession(false);
 		String username = (String) session.getAttribute("user");
 		TaskManager taskManager = new TaskManager((CouchbaseClient)context.getAttribute("couchbaseClient"));
-		String taskUrl = LoadBalancerAddress + "/elasticMLCompute/ml/dTree/beginService" + "/" + username + "/" + trainingDataset;
+		String taskUrl = loadBalancerAddress + "/elasticMLCompute/ml/dTree/beginService" + "/" + username + "/" + trainingDataset;
 		URL url = new URL(taskUrl);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setReadTimeout(1000000);
@@ -82,11 +97,11 @@ public class RandomForestService {
         ExecutorService es = Executors.newFixedThreadPool(5);
         TaskDao dtTask = new TaskDao(username, trainingDataset, "upload", TaskStatus.RUNNING, false);
     	//uploadTask.setHttpRequest(request);
-    	dtTask.setTaskType(TaskType.ALGORITHM_EXEC);
+    	dtTask.setTaskType(TaskType.ALGORITHM_EXEC.toString());
     	dtTask.setTaskDescription("Decision Tree algorithm");
     	taskManager.registerTask(dtTask);
         for(int i=1;i<=5;i++){
-        	Runnable job = new ParallelDTJob(username, LoadBalancerAddress, i, LOG, allAccuracies);
+        	Runnable job = new ParallelDTJob(username, loadBalancerAddress, i, LOG, allAccuracies);
         	Thread t = new Thread(job);
 			es.execute(t);
         }
@@ -99,7 +114,7 @@ public class RandomForestService {
 		}
         
         if(es.isTerminated()){
-        	taskUrl = LoadBalancerAddress + "/elasticMLCompute/ml/dTree/calcBestService" + "/" + username;
+        	taskUrl = loadBalancerAddress + "/elasticMLCompute/ml/dTree/calcBestService" + "/" + username;
 			url = new URL(taskUrl);
 			conn = (HttpURLConnection) url.openConnection();
 	        conn.setReadTimeout(1000000);
@@ -123,7 +138,7 @@ public class RandomForestService {
 	        	acc.add(Double.parseDouble(splitStr[j]));
 	        }
 	        
-			taskUrl = LoadBalancerAddress + "/elasticMLCompute/ml/dTree/AccuracyService" + "/" + username + "/" + bh + "/" + trainingDataset + "/" + testDataset;
+			taskUrl = loadBalancerAddress + "/elasticMLCompute/ml/dTree/AccuracyService" + "/" + username + "/" + bh + "/" + trainingDataset + "/" + testDataset;
 			url = new URL(taskUrl);
 			conn = (HttpURLConnection) url.openConnection();
 	        conn.setReadTimeout(1000000);

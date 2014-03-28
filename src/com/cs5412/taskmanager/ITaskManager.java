@@ -3,8 +3,6 @@ package com.cs5412.taskmanager;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import com.cs5412.dataobjects.TaskDao;
-
 public interface ITaskManager {
 	public void registerTask(TaskDao task) throws InterruptedException, ExecutionException;
 	public TaskDao getTaskById(int id,String username);

@@ -13,10 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.couchbase.client.CouchbaseClient;
-import com.cs5412.dataobjects.TaskDao;
-import com.cs5412.dataobjects.UserDao;
 import com.cs5412.filesystem.IFileSystem;
 import com.cs5412.listeners.WebAppListener;
+import com.cs5412.taskmanager.TaskDao;
 import com.cs5412.utils.PasswordHash;
 import com.cs5412.utils.ServerConstants;
 import com.google.gson.Gson;

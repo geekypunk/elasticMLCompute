@@ -1,11 +1,7 @@
-package com.cs5412.dataobjects;
+package com.cs5412.taskmanager;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
-import com.cs5412.taskmanager.TaskStatus;
 
 public class TaskDao {
 	private String userId;

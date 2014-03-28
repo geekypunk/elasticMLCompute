@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -22,8 +22,7 @@
 	<link rel="stylesheet" type="text/css" href="js/datatables/media/assets/css/datatables.min.css" />
 	<link rel="stylesheet" type="text/css" href="js/datatables/extras/TableTools/media/css/TableTools.min.css" />
 	<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
-	<!-- FONTS -->
-	<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
+	<link href='css/fonts.css' rel='stylesheet' type='text/css'>	
 </head>
 <body>
 <%
