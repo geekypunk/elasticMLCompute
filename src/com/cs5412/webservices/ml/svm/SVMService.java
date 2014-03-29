@@ -45,7 +45,7 @@ import com.cs5412.filesystem.IFileSystem;
 import com.cs5412.taskmanager.TaskDao;
 import com.cs5412.taskmanager.TaskManager;
 import com.cs5412.taskmanager.TaskStatus;
-import com.cs5412.utils.ServerConstants;
+import com.cs5412.utils.Utils;
 import com.cs5412.webservices.fileupload.FileUploadServlet;
 
 @Path("/svm")
@@ -148,8 +148,8 @@ public class SVMService{
 		String username = (String) session.getAttribute("user");
 
 		
-		String crossvalidation = fs.getUserPath(username)+ServerConstants.linuxSeparator+"work"+ServerConstants.linuxSeparator+"crossvalidation";
-		String modelPath = crossvalidation+ServerConstants.linuxSeparator+"model"+ServerConstants.linuxSeparator;
+		String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+"work"+Utils.linuxSeparator+"crossvalidation";
+		String modelPath = crossvalidation+Utils.linuxSeparator+"model"+Utils.linuxSeparator;
 
 	
 
@@ -256,7 +256,7 @@ public class SVMService{
 				i++;		
 			}
 			result.put(dataPoints);
-			String filePath = fs.getUserPath(username)+ServerConstants.linuxSeparator+"reports"+ServerConstants.linuxSeparator+ trainingDataset+"-"+testDataset+IFileSystem.CHART_DATA_FORMAT;
+			String filePath = fs.getUserPath(username)+Utils.linuxSeparator+"reports"+Utils.linuxSeparator+ trainingDataset+"-"+testDataset+IFileSystem.CHART_DATA_FORMAT;
 			BufferedWriter bw = fs.createFileToWrite(filePath,true);
 			bw.write(result.toString());
 			bw.close();
@@ -286,7 +286,7 @@ public class SVMService{
 		HttpSession session = request.getSession(false);
 		String username = (String) session.getAttribute("user");
 		LOG.debug("Reading report"+reportId);
-		String path = fs.getUserPath(username)+ServerConstants.linuxSeparator+"reports"+ServerConstants.linuxSeparator+reportId;
+		String path = fs.getUserPath(username)+Utils.linuxSeparator+"reports"+Utils.linuxSeparator+reportId;
 		return Response.status(200).entity(fs.readFileToString(path)).build();
 	}
 	
@@ -307,7 +307,7 @@ public class SVMService{
 
 		LOG.debug("Using "+trainingDataset+" dataset for SVM");
 		String trainFile = fs.getFilePathForUploads(trainingDataset, username);
-		String crossvalidation = fs.getUserPath(username)+ServerConstants.linuxSeparator+"work"+ServerConstants.linuxSeparator+"crossvalidation";
+		String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+"work"+Utils.linuxSeparator+"crossvalidation";
 		CrossValidationFiles.createFiles(trainFile, fs, crossvalidation);
 		return Response.status(200).entity("Hello").build();
 	}
@@ -321,8 +321,8 @@ public class SVMService{
 			@PathParam("fileNum") int fileNum) throws Exception {
 		IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
 		LOG.debug("Creating model: c: " + c + " fileNum: " + fileNum);
-		String crossvalidation = fs.getUserPath(username)+ServerConstants.linuxSeparator+"work"+ServerConstants.linuxSeparator+"crossvalidation";
-		String modelPath = crossvalidation+ServerConstants.linuxSeparator+"model"+ServerConstants.linuxSeparator;
+		String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+"work"+Utils.linuxSeparator+"crossvalidation";
+		String modelPath = crossvalidation+Utils.linuxSeparator+"model"+Utils.linuxSeparator;
 		Model.create(crossvalidation +File.separator+ "SVM" , fileNum, c, "0", modelPath,fs);
 		LOG.debug("Created Model"+c+fileNum);
 		return Response.status(200).entity("Hello").build();

@@ -35,7 +35,7 @@ import com.cs5412.filesystem.IFileSystem;
 import com.cs5412.taskmanager.TaskDao;
 import com.cs5412.taskmanager.TaskManager;
 import com.cs5412.taskmanager.TaskStatus;
-import com.cs5412.utils.ServerConstants;
+import com.cs5412.utils.Utils;
 import com.cs5412.webservices.fileupload.FileUploadServlet;
 
 @Path("/kernel")
@@ -72,8 +72,8 @@ public class KernelService {
 		else if(kernelType.equals("rbFunction")) kernelNum = "2";
 		else if(kernelType.equals("sigmoidFunction")) kernelNum = "3";
 		LOG.debug(kernelNum);
-		String crossvalidation = fs.getUserPath(username)+ServerConstants.linuxSeparator+"kernel"+ServerConstants.linuxSeparator+"work"+ServerConstants.linuxSeparator+"crossvalidation";
-		String modelPath = crossvalidation+ServerConstants.linuxSeparator+"model"+ServerConstants.linuxSeparator;
+		String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+"kernel"+Utils.linuxSeparator+"work"+Utils.linuxSeparator+"crossvalidation";
+		String modelPath = crossvalidation+Utils.linuxSeparator+"model"+Utils.linuxSeparator;
 		String trainFile = fs.getFilePathForUploads(trainingDataset, username);
 		String testFile = fs.getFilePathForUploads(testDataset, username);
 		
@@ -177,7 +177,7 @@ public class KernelService {
 				i++;		
 			}
 			result.put(dataPoints);
-			String filePath = fs.getUserPath(username)+ServerConstants.linuxSeparator+"kernel"+ServerConstants.linuxSeparator+"reports"+ServerConstants.linuxSeparator+ trainingDataset+"-"+testDataset+IFileSystem.CHART_DATA_FORMAT;
+			String filePath = fs.getUserPath(username)+Utils.linuxSeparator+"kernel"+Utils.linuxSeparator+"reports"+Utils.linuxSeparator+ trainingDataset+"-"+testDataset+IFileSystem.CHART_DATA_FORMAT;
 			BufferedWriter bw = fs.createFileToWrite(filePath,true);
 			bw.write(result.toString());
 			bw.close();
@@ -202,7 +202,7 @@ public class KernelService {
 		HttpSession session = request.getSession(false);
 		String username = (String) session.getAttribute("user");
 		LOG.debug("Reading report"+reportId);
-		String path = fs.getUserPath(username)+ServerConstants.linuxSeparator+"kernel"+ServerConstants.linuxSeparator+"reports"+ServerConstants.linuxSeparator+reportId;
+		String path = fs.getUserPath(username)+Utils.linuxSeparator+"kernel"+Utils.linuxSeparator+"reports"+Utils.linuxSeparator+reportId;
 		return Response.status(200).entity(fs.readFileToString(path)).build();
 	}
 	

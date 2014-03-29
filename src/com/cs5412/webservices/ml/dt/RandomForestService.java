@@ -45,7 +45,7 @@ import com.cs5412.taskmanager.TaskDao;
 import com.cs5412.taskmanager.TaskManager;
 import com.cs5412.taskmanager.TaskStatus;
 import com.cs5412.taskmanager.TaskType;
-import com.cs5412.utils.ServerConstants;
+import com.cs5412.utils.Utils;
 import com.cs5412.webservices.fileupload.FileUploadServlet;
 
 @Path("/dTree")
@@ -185,7 +185,7 @@ public class RandomForestService {
 				}
 				result.put(dataPoints);
 				IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
-				String filePath = fs.getUserPath(username)+ServerConstants.linuxSeparator+"reports"+ServerConstants.linuxSeparator+ trainingDataset+"-"+testDataset+IFileSystem.CHART_DATA_FORMAT;
+				String filePath = fs.getUserPath(username)+Utils.linuxSeparator+"reports"+Utils.linuxSeparator+ trainingDataset+"-"+testDataset+IFileSystem.CHART_DATA_FORMAT;
 				BufferedWriter bw = fs.createFileToWrite(filePath,true);
 				bw.write(result.toString());
 				bw.close();
@@ -287,7 +287,7 @@ public class RandomForestService {
 		HttpSession session = request.getSession(false);
 		String username = (String) session.getAttribute("user");
 		LOG.debug("Reading report"+reportId);
-		String path = fs.getUserPath(username)+ServerConstants.linuxSeparator+"dt"+ServerConstants.linuxSeparator+"reports"+ServerConstants.linuxSeparator+reportId;
+		String path = fs.getUserPath(username)+Utils.linuxSeparator+"dt"+Utils.linuxSeparator+"reports"+Utils.linuxSeparator+reportId;
 		return Response.status(200).entity(fs.readFileToString(path)).build();
 	}
 	
@@ -300,7 +300,7 @@ public class RandomForestService {
 			){
 		IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
 		LOG.debug("Using "+trainingDataset+" to begin the service");
-		String crossvalidation = fs.getUserPath(username)+ServerConstants.linuxSeparator+"dt"+ServerConstants.linuxSeparator+"work"+ServerConstants.linuxSeparator+"crossvalidation";
+		String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+"dt"+Utils.linuxSeparator+"work"+Utils.linuxSeparator+"crossvalidation";
 		String trainFile = fs.getFilePathForUploads(trainingDataset, username);
 		
 		CrossValidation CV = new CrossValidation();
@@ -317,13 +317,13 @@ public class RandomForestService {
 			){
 		IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
 		LOG.debug("Generating "+ i +" service");
-		String crossvalidation = fs.getUserPath(username)+ServerConstants.linuxSeparator+"dt"+ServerConstants.linuxSeparator+"work"+ServerConstants.linuxSeparator+"crossvalidation";
+		String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+"dt"+Utils.linuxSeparator+"work"+Utils.linuxSeparator+"crossvalidation";
 		ArrayList<Double> accuracy = new ArrayList<Double>();
 		
 		ExecuteMain EM = new ExecuteMain();
-		String partTrainFile = crossvalidation + ServerConstants.linuxSeparator + "trainFile" + i + ".txt";
-		String partValFile = crossvalidation + ServerConstants.linuxSeparator + "validFile" + i + ".txt";
-		String outputFile = crossvalidation + ServerConstants.linuxSeparator + "output" + i + ".txt";
+		String partTrainFile = crossvalidation + Utils.linuxSeparator + "trainFile" + i + ".txt";
+		String partValFile = crossvalidation + Utils.linuxSeparator + "validFile" + i + ".txt";
+		String outputFile = crossvalidation + Utils.linuxSeparator + "output" + i + ".txt";
 		EM.Construct(partTrainFile, partValFile, outputFile, fs, accuracy);
 		String str = "";
 		for(int j=0;j<accuracy.size();j++){
@@ -340,7 +340,7 @@ public class RandomForestService {
 			){	
 		IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
 		LOG.debug("Calculating the best service");
-		String crossvalidation = fs.getUserPath(username)+ServerConstants.linuxSeparator+"dt"+ServerConstants.linuxSeparator+"work"+ServerConstants.linuxSeparator+"crossvalidation";
+		String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+"dt"+Utils.linuxSeparator+"work"+Utils.linuxSeparator+"crossvalidation";
 		ArrayList<Double> avgAcc = new ArrayList<Double>();
 		
 		BestHeight BH = new BestHeight();
@@ -363,7 +363,7 @@ public class RandomForestService {
 			){	
 		IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
 		LOG.debug("Accuracy Service");
-		String crossvalidation = fs.getUserPath(username)+ServerConstants.linuxSeparator+"dt"+ServerConstants.linuxSeparator+"work"+ServerConstants.linuxSeparator+"crossvalidation";
+		String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+"dt"+Utils.linuxSeparator+"work"+Utils.linuxSeparator+"crossvalidation";
 		String trainFile = fs.getFilePathForUploads(trainingDataset, username);
 		String testFile = fs.getFilePathForUploads(testingDataset, username);
 		ExecuteMain EM = new ExecuteMain();

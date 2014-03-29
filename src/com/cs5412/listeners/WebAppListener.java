@@ -2,6 +2,7 @@ package com.cs5412.listeners;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +47,7 @@ public class WebAppListener implements ServletContextListener {
 		    CouchbaseClient couchbaseClient = new CouchbaseClient(
 		    		hosts, config.getString("COUCH_BUCKET_NAME"), config.getString("COUCH_BUCKET_PWD"));
 		  	application.setAttribute("couchbaseClient", couchbaseClient);	
-			
+		  	
 			
 		}catch(Exception e){
 			LOG.error("Error", e);
@@ -66,5 +68,6 @@ public class WebAppListener implements ServletContextListener {
 			LOG.error("Error", e);
 		}
     }
-	
+    
+   	
 }

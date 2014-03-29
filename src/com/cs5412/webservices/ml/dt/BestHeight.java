@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.ArrayList;
 
 import com.cs5412.filesystem.IFileSystem;
-import com.cs5412.utils.ServerConstants;
+import com.cs5412.utils.Utils;
 
 public class BestHeight {
 	private int CrossValidations;
@@ -41,12 +41,12 @@ public class BestHeight {
 	{
 		BufferedReader[] br = new BufferedReader[CrossValidations];
 		BufferedWriter bw = null;
-		String OutputFileName = crossvalidation + ServerConstants.linuxSeparator + "output.txt";
+		String OutputFileName = crossvalidation + Utils.linuxSeparator + "output.txt";
 		try{
 			for(int i =0;i<CrossValidations;i++)
 			{
 				// read each temporary output file
-				String FileName = crossvalidation + ServerConstants.linuxSeparator + "output"+(i+1)+".txt";
+				String FileName = crossvalidation + Utils.linuxSeparator + "output"+(i+1)+".txt";
 				InputStream fin = (InputStream) fs.readFile(FileName);
 				br[i] = new BufferedReader(new InputStreamReader(fin));
 				String readline = br[i].readLine();

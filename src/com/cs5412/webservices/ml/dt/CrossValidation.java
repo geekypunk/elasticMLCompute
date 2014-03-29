@@ -3,7 +3,7 @@ package com.cs5412.webservices.ml.dt;
 import java.io.*;
 
 import com.cs5412.filesystem.IFileSystem;
-import com.cs5412.utils.ServerConstants;
+import com.cs5412.utils.Utils;
 import com.cs5412.webservices.fileupload.FileUploadServlet;
 
 import java.util.ArrayList;
@@ -25,12 +25,12 @@ public class CrossValidation {
 			br = new BufferedReader(new InputStreamReader(fin));
 			for(int i=0;i<5;i++)
 			{
-				String outFile = crossvalidation + ServerConstants.linuxSeparator + "trainFile"+(i+1)+".txt";
+				String outFile = crossvalidation + Utils.linuxSeparator + "trainFile"+(i+1)+".txt";
 				bwt[i] = (BufferedWriter) fs.createFileToWrite(outFile, true);
 			}
 			for(int i=0;i<5;i++)
 			{
-				String outFile = crossvalidation + ServerConstants.linuxSeparator + "validFile"+(i+1)+".txt";
+				String outFile = crossvalidation + Utils.linuxSeparator + "validFile"+(i+1)+".txt";
 				bwv[i] = (BufferedWriter) fs.createFileToWrite(outFile, true);
 			}
 			String ReadLine = br.readLine();

@@ -32,13 +32,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cs5412.filesystem.IFileSystem;
-import com.cs5412.utils.ServerConstants;
+import com.cs5412.utils.Utils;
 import com.cs5412.webservices.fileupload.FileUploadServlet;
 
 @Path("/knn")
 public class KNNService{
 	static final Logger LOG = LoggerFactory.getLogger(FileUploadServlet.class);
 	static final int NUM_MODELS = 5;
+
+	public static final String KNN_CV_BASE_DIR = "knn"+File.separator
+	            +"crossvalidation"+File.separator;
+	public static final String KNN_CV_RES_FILE = "knnCV.res";
 	@Context ServletContext context;
 	IFileSystem fs;
 	
@@ -62,7 +66,7 @@ public class KNNService{
 		String trainFile = fs.getFilePathForUploads(trainingDataset, username);
 		String testFile = fs.getFilePathForUploads(testDataset, username);
 		String resultFile = fs.getUserPath(username)+File.separator+"reports"+File.separator+trainingDataset+"-"+testDataset+".output";
-		String workDir = fs.getUserPath(username)+File.separator+ServerConstants.KNN_CV_BASE_DIR;
+		String workDir = fs.getUserPath(username)+File.separator+KNN_CV_BASE_DIR;
 		KNN knnService = new KNN(trainFile, testFile, resultFile,workDir, fs);
 		knnService.runKNN();
 		String result=getCrossValidationResults(fs,resultFile);

@@ -3,6 +3,8 @@ package com.cs5412.taskmanager;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.cs5412.utils.Utils;
+
 public class TaskDao {
 	private String userId;
 	private String taskName;
@@ -11,7 +13,7 @@ public class TaskDao {
 	private String reportUrl;
 	private TaskStatus status;
 	private boolean isSeen;
-	private int taskId;
+	private String taskId;
 	private int parentTaskId;
 	//private HttpServletRequest httpRequest
 	List<Integer> subTasks = new ArrayList<Integer>();
@@ -23,11 +25,11 @@ public class TaskDao {
 		this.reportUrl = reportUrl;
 		this.status = status;
 		this.isSeen = isSeen;
-		this.taskId = (this.userId+this.taskName).hashCode();
+		this.taskId = Utils.getUUID();
 	
 	}
 	
-	public int getTaskId(){
+	public String getTaskId(){
 		return taskId;
 	}
 	

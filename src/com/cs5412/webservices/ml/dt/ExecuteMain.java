@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import com.cs5412.filesystem.IFileSystem;
-import com.cs5412.utils.ServerConstants;
+import com.cs5412.utils.Utils;
 
 public class ExecuteMain {
 
@@ -78,7 +78,7 @@ public void FinalAccuracy(String trainFile, String testFile, int height, IFileSy
 		model.setwords(TestingNodes, testFile, fs);
 		int number=2000;
 		try{
-				String out = crossvalidation + ServerConstants.linuxSeparator + "FinalOutput.txt";
+				String out = crossvalidation + Utils.linuxSeparator + "FinalOutput.txt";
 				BufferedWriter bw = (BufferedWriter) fs.createFileToWrite(out,true);
 				TempAccuracy=1.0-model.earlystopping(TestingNodes,dTree,number,height);
 				bw.write(""+TempAccuracy);

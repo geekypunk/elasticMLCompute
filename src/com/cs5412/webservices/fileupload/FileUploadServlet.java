@@ -22,6 +22,7 @@ import org.apache.commons.fileupload.FileUploadBase.FileSizeLimitExceededExcepti
 import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.LocatedFileStatus;
 import org.json.JSONArray;
@@ -37,7 +38,7 @@ import com.cs5412.taskmanager.TaskManager;
 import com.cs5412.taskmanager.TaskStatus;
 import com.cs5412.taskmanager.TaskType;
 import com.cs5412.utils.HTTPConstants;
-import com.cs5412.utils.ServerConstants;
+import com.cs5412.utils.Utils;
 
 /**
  * A Java servlet that handles file upload from client.
@@ -103,7 +104,7 @@ public class FileUploadServlet extends HttpServlet {
 	        // sets memory threshold - beyond which files are stored in disk, controls in-memory storage 
 	        factory.setSizeThreshold(config.getInt("MEMORY_THRESHOLD"));
 	        // sets temporary location to store files
-	        factory.setRepository(new File(ServerConstants.getUploadDirTmp()));
+	        factory.setRepository(FileUtils.getTempDirectory());
 	 
 	        ServletFileUpload upload = new ServletFileUpload(factory);
 	         
@@ -251,9 +252,9 @@ public class FileUploadServlet extends HttpServlet {
     	jsono.put("name", item.getName());
         jsono.put("size", item.getSize());
         jsono.put("type", item.getContentType());
-        jsono.put("url", ServerConstants.SERVER_URL+"FileUpload?getfile=" + item.getName());
+        jsono.put("url", Utils.SERVER_URL+"FileUpload?getfile=" + item.getName());
         jsono.put("thumbnailUrl", "js/jquery-upload/img/document_thumbnail.PNG");
-        jsono.put("deleteUrl", ServerConstants.SERVER_URL+"FileUpload?"+HTTPConstants.DELETE_DATASET+"=" + item.getName());
+        jsono.put("deleteUrl", Utils.SERVER_URL+"FileUpload?"+HTTPConstants.DELETE_DATASET+"=" + item.getName());
         jsono.put("deleteType", "DELETE");
         return jsono;
     }
@@ -303,9 +304,9 @@ public class FileUploadServlet extends HttpServlet {
 				jsono.put("name", file.getPath().getName());
 		        jsono.put("size", file.getLen());
 		        jsono.put("type", "file");
-		        jsono.put("url", ServerConstants.SERVER_URL+"FileUpload?getfile=" + file.getPath().getName());
+		        jsono.put("url", Utils.SERVER_URL+"FileUpload?getfile=" + file.getPath().getName());
 		        jsono.put("thumbnailUrl", "js/jquery-upload/img/document_thumbnail.PNG");
-		        jsono.put("deleteUrl", ServerConstants.SERVER_URL+"FileUpload?"+HTTPConstants.DELETE_DATASET+"=" + file.getPath().getName());
+		        jsono.put("deleteUrl", Utils.SERVER_URL+"FileUpload?"+HTTPConstants.DELETE_DATASET+"=" + file.getPath().getName());
 		        jsono.put("deleteType", "DELETE");
 		        filesJSONArray.put(jsono);
 			}

@@ -27,9 +27,8 @@ public class TaskManager implements ITaskManager{
 
 	@Override
 	public void registerTask(TaskDao task) throws InterruptedException, ExecutionException {
-		// TODO Auto-generated method stub
 		String username = task.getUserId();
-		HashMap<Integer,TaskDao> tasks = getUserTasksMap(username);
+		HashMap<String,TaskDao> tasks = getUserTasksMap(username);
 		tasks.put(task.getTaskId(), task);
 		couchbaseClient.set(username+"Tasks", gson.toJson(tasks)).get();
 		
@@ -37,7 +36,7 @@ public class TaskManager implements ITaskManager{
 
 	@Override
 	public TaskDao getTaskById(int id,String username) {
-		HashMap<Integer,TaskDao> tasks = getUserTasksMap(username);
+		HashMap<String,TaskDao> tasks = getUserTasksMap(username);
 		return tasks.get(id);
 		
 	}
@@ -50,7 +49,7 @@ public class TaskManager implements ITaskManager{
 	@Override
 	public void setTaskStatus(TaskDao task,TaskStatus status) throws InterruptedException, ExecutionException {
 		
-		HashMap<Integer,TaskDao> tasks = getUserTasksMap(task.getUserId());
+		HashMap<String,TaskDao> tasks = getUserTasksMap(task.getUserId());
 		TaskDao _task = tasks.get(task.getTaskId());
 		_task.setStatus(status);
 		couchbaseClient.set(_task.getUserId()+"Tasks", gson.toJson(tasks)).get();
@@ -62,18 +61,16 @@ public class TaskManager implements ITaskManager{
 	
 	@Override
 	public void markAsSeen(String taskId) {
-		// TODO Auto-generated method stub
 		TaskDao task = (TaskDao) couchbaseClient.get(taskId);
 		task.setSeen(true);
 	}
 
 	@Override
 	public List<TaskDao>  getFinishedAndUnseenByUserId(String username) {
-		// TODO Auto-generated method stub
-		HashMap<Integer,TaskDao> tasks = getUserTasksMap(username);
+		HashMap<String,TaskDao> tasks = getUserTasksMap(username);
 		List<TaskDao> unfinished = new ArrayList<TaskDao>();
 		TaskDao task;
-		for (Entry<Integer, TaskDao> entry : tasks.entrySet()) {
+		for (Entry<String, TaskDao> entry : tasks.entrySet()) {
 			task = entry.getValue();
 			if(task.getStatus() == TaskStatus.SUCCESS && !task.isSeen()){
 				unfinished.add(task);
@@ -83,18 +80,18 @@ public class TaskManager implements ITaskManager{
 		
 	}
 
-	private HashMap<Integer,TaskDao> getUserTasksMap(String username){
+	private HashMap<String,TaskDao> getUserTasksMap(String username){
 		
-		Type type = new TypeToken<HashMap<Integer,TaskDao>>(){}.getType();
-		HashMap<Integer,TaskDao> tasks = new HashMap<Integer, TaskDao>();
+		Type type = new TypeToken<HashMap<String,TaskDao>>(){}.getType();
+		HashMap<String,TaskDao> tasks = new HashMap<String, TaskDao>();
 		tasks = gson.fromJson((String) couchbaseClient.get(username+"Tasks"), type);
 		return tasks;
 	}
 
 	@Override
 	public void markAllAsSeen(String username) throws InterruptedException, ExecutionException {
-		HashMap<Integer,TaskDao> tasks = getUserTasksMap(username);
-		for (Entry<Integer, TaskDao> entry : tasks.entrySet()) {
+		HashMap<String,TaskDao> tasks = getUserTasksMap(username);
+		for (Entry<String, TaskDao> entry : tasks.entrySet()) {
 			entry.getValue().setSeen(true);
 		}
 		couchbaseClient.set(username+"Tasks", gson.toJson(tasks)).get();

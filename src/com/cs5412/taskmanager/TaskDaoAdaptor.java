@@ -1,7 +1,6 @@
 package com.cs5412.taskmanager;
 
 import java.lang.reflect.Type;
-import java.util.HashMap;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
