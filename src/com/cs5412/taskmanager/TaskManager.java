@@ -54,7 +54,6 @@ public class TaskManager implements ITaskManager{
 		_task.setStatus(status);
 		couchbaseClient.set(_task.getUserId()+"Tasks", gson.toJson(tasks)).get();
 		
-		
 	}
 
 	
