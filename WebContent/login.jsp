@@ -218,11 +218,14 @@ for(Cookie cookie : cookies){
 		        	
 		        }
 		        else{
+		        	loginBtn.button("reset");
 		        	alert("Incorrect username/password");
+		        	
 		        }
 		    },
 		    error: function (jqXHR, textStatus, errorThrown)
 		    {
+		    	loginBtn.button("reset");
 		 		alert(errorThrown);
 		    }
 		});

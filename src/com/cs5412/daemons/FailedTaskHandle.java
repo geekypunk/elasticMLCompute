@@ -13,6 +13,8 @@ import java.util.Map.Entry;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 
+import net.spy.memcached.CASValue;
+
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +57,9 @@ public class FailedTaskHandle extends TimerTask{
 	    
 	    try{
 		    Type type = new TypeToken<HashMap<String,TaskDao>>(){}.getType();
-		    HashMap<String,TaskDao> tasks = gson.fromJson((String) couchbaseClient.get("AllUser"+"Tasks"), type);
+		    CASValue<Object> obj =  couchbaseClient.getAndLock("AllUser"+"Tasks", 3);
+		    long casValue = obj.getCas();
+		    HashMap<String,TaskDao> tasks = gson.fromJson(obj.getValue().toString(), type);
 		    TaskDao repairTask = null;
 		    if(tasks != null){
 			    for(Entry<String, TaskDao> ent : tasks.entrySet()){
@@ -67,7 +71,9 @@ public class FailedTaskHandle extends TimerTask{
 			    }
 		    }
 		    if(repairTask != null){
-		    	String taskUrl = loadBalancerAddress + repairTask.getWsURL();
+		    	repairTask.setHostAddress("dummy");
+		    	taskManager.setTaskStatus(repairTask, TaskStatus.INITIALIZED);
+		       	String taskUrl = loadBalancerAddress + repairTask.getWsURL();
 		    	URL url = new URL(taskUrl);
 				HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		        conn.setReadTimeout(1000000);

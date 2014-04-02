@@ -57,7 +57,6 @@ public class TaskManager implements ITaskManager{
 		TaskDao _task = tasks.get(task.getTaskId());
 		_task.setStatus(status);
 		couchbaseClient.set(_task.getUserId()+"Tasks", gson.toJson(tasks)).get();
-		
 		tasks = getUserTasksMap("AllUser");
 		_task = tasks.get(task.getTaskId());
 		_task.setStatus(status);
