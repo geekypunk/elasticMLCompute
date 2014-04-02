@@ -35,7 +35,7 @@
 						testDataset: $('#e2').val() 
 					},
 					dataType: "text",
-					url: "ml/svm/runService",
+					url: "ml/svm/runDistributedService",
 					success: function (d) {
 						a.button("complete");
 					},

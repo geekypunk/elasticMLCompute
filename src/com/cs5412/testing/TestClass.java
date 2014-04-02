@@ -17,8 +17,11 @@ import com.google.gson.reflect.TypeToken;
 
 public class TestClass {
 	public static void main(String[] args) throws Exception{
+		System.out.println(System.getProperty("java.library.path"));
+		//PropertiesConfiguration config = new PropertiesConfiguration("../WEB-INF/config.properties");
+	
 		List<URI> hosts = Arrays.asList(
-			      new URI("http://192.168.56.101:8091/pools")
+			      new URI("http://128.84.216.63:8091/pools")
 			    );
 	    CouchbaseClient couchbaseClient = new CouchbaseClient(
 	    		hosts, "default", "");
@@ -38,7 +41,7 @@ public class TestClass {
 //	    Type collectionType = new TypeToken<ArrayList<ArrayList<Double>>>(){}.getType();
 //		ArrayList<ArrayList<Double>> allAccuracies = gson.fromJson((String) couchbaseClient.get("om" + "DTAcc"), collectionType);	
 //		System.out.println(allAccuracies);
-//		couchbaseClient.flush();
+		couchbaseClient.flush();
 	 /*   ArrayList<ArrayList<Integer>> myList = new ArrayList<ArrayList<Integer>>();
 	    ArrayList<Integer> list1 = new ArrayList<Integer>();
 	    ArrayList<Integer> list2 = new ArrayList<Integer>();

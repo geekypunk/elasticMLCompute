@@ -33,6 +33,7 @@ public class FailedTaskHandle extends TimerTask{
 	private Gson gson;
 	TaskManager taskManager;
 	private PropertiesConfiguration config;
+	Logger LOG = LoggerFactory.getLogger(FailedTaskHandle.class);
 	public FailedTaskHandle(ServletContext ctx){
 		this.couchbaseClient = (CouchbaseClient)ctx.getAttribute("couchbaseClient");
 		this.config = (PropertiesConfiguration)ctx.getAttribute("config");
@@ -51,7 +52,7 @@ public class FailedTaskHandle extends TimerTask{
 	    gsonBuilder.registerTypeAdapter(TaskDao.class, new TaskDaoAdaptor());
 	    gsonBuilder.setPrettyPrinting();
 	    gson = gsonBuilder.create();
-	    Logger LOG = LoggerFactory.getLogger(FileUploadServlet.class);
+	    
 	    try{
 		    Type type = new TypeToken<HashMap<String,TaskDao>>(){}.getType();
 		    HashMap<String,TaskDao> tasks = gson.fromJson((String) couchbaseClient.get("AllUser"+"Tasks"), type);
@@ -77,11 +78,12 @@ public class FailedTaskHandle extends TimerTask{
 		        conn.setDoOutput(true);
 		        conn.connect();
 		        LOG.debug(conn.getResponseCode() + "");
+		        LOG.debug(conn.getResponseMessage());
 		    }else{
 		    	LOG.debug("No failed tasks");
 		    }
 	    }catch(Exception e){
-	    	LOG.debug(e.getMessage());
+	    	LOG.debug("Error",e.getCause());
 	    }
 	}
 }

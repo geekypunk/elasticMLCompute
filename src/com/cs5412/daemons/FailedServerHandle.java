@@ -32,6 +32,7 @@ public class FailedServerHandle extends TimerTask{
 	TaskManager taskManager;
 	private PropertiesConfiguration config;
 	private int debug;
+	private static final Logger LOG = LoggerFactory.getLogger(FileUploadServlet.class);
 	public FailedServerHandle(ServletContext ctx){
 		this.couchbaseClient = (CouchbaseClient)ctx.getAttribute("couchbaseClient");
 		this.config = (PropertiesConfiguration)ctx.getAttribute("config");
@@ -50,7 +51,7 @@ public class FailedServerHandle extends TimerTask{
 	    gsonBuilder.registerTypeAdapter(TaskDao.class, new TaskDaoAdaptor());
 	    gsonBuilder.setPrettyPrinting();
 	    gson = gsonBuilder.create();
-	    Logger LOG = LoggerFactory.getLogger(FileUploadServlet.class);
+	   
 	    try{
 			Type type = new TypeToken<HashMap<String,TaskDao>>(){}.getType();
 		    HashMap<String,TaskDao> tasks = gson.fromJson((String) couchbaseClient.get("AllUser"+"Tasks"), type);
@@ -87,7 +88,7 @@ public class FailedServerHandle extends TimerTask{
 		    	LOG.debug("Finished polling all the servers");
 		    }
 	    }catch(Exception e){
-	    	LOG.debug(e.getMessage());
+	    	LOG.debug("Error",e.getCause());
 	    }
 	}
 }
