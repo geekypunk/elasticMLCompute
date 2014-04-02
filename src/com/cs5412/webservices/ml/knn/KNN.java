@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 
 import com.cs5412.filesystem.HDFSFileSystemImpl;
 import com.cs5412.filesystem.IFileSystem;
-import com.cs5412.utils.Utils;
 
 
 public class KNN {

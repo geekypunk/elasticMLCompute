@@ -3,8 +3,8 @@ package com.cs5412.listeners;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Timer;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -16,14 +16,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.couchbase.client.CouchbaseClient;
-import com.cs5412.daemons.FailedTaskPoller;
 import com.cs5412.filesystem.HDFSFileSystemImpl;
 import com.cs5412.filesystem.IFileSystem;
+import com.cs5412.taskmanager.TaskDao;
+import com.cs5412.taskmanager.TaskDaoAdaptor;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @WebListener
 public class WebAppListener implements ServletContextListener {
 	static final Logger LOG = LoggerFactory.getLogger(WebAppListener.class);
-	private static int deamonStartPeriodMillis = 100*1000; // Time intervals in which session cleanup daemon is invoked
     public WebAppListener() {
         // TODO Auto-generated constructor stub
     }
@@ -34,25 +36,33 @@ public class WebAppListener implements ServletContextListener {
     	 * Always load HDFSFileSystemImpl in production
     	 * */
 		try{
-			ServletContext context = sce.getServletContext();
+			ServletContext application = sce.getServletContext();
 			
 			PropertiesConfiguration config = new PropertiesConfiguration();
-			config.load(context.getResourceAsStream("/WEB-INF/config.properties"));
+			config.load(application.getResourceAsStream("/WEB-INF/config.properties"));
 			HDFSFileSystemImpl fs = new HDFSFileSystemImpl(config);
-			context.setAttribute("config", config);
-			context.setAttribute("fileSystem", fs);	
+			application.setAttribute("config", config);
+			application.setAttribute("fileSystem", fs);	
 			//List of couchbase nodes
 			List<URI> hosts = Arrays.asList(
 				      new URI(config.getString("COUCH_URI")+"/pools")
 				    );
 		    CouchbaseClient couchbaseClient = new CouchbaseClient(
 		    		hosts, config.getString("COUCH_BUCKET_NAME"), config.getString("COUCH_BUCKET_PWD"));
-		  	context.setAttribute("couchbaseClient", couchbaseClient);	
-		  	
-		  	//Set up daemon tasks
-		  	Timer time = new Timer(); // Instantiate Timer Object
-		  	FailedTaskPoller st = new FailedTaskPoller(context); // Instantiate SheduledTask class
-			time.schedule(st, 0, deamonStartPeriodMillis); // Create Repetitively task for every 1 secs
+		    
+		    /*Code added to add all users task status */
+		    Gson gson;
+		    final GsonBuilder gsonBuilder = new GsonBuilder();
+		    gsonBuilder.registerTypeAdapter(TaskDao.class, new TaskDaoAdaptor());
+		    gsonBuilder.setPrettyPrinting();
+		    gson = gsonBuilder.create();
+		    HashMap<Integer,TaskDao> tasks = new HashMap<Integer, TaskDao>();
+		    couchbaseClient.add("AllUser"+"Tasks", gson.toJson(tasks)).get();
+		    /*End of Code added*/
+		    
+		  	application.setAttribute("couchbaseClient", couchbaseClient);	
+			
+			
 		}catch(Exception e){
 			LOG.error("Error", e);
 		}
@@ -72,6 +82,5 @@ public class WebAppListener implements ServletContextListener {
 			LOG.error("Error", e);
 		}
     }
-    
-   	
+	
 }

@@ -73,7 +73,6 @@ public class UserAuthService {
 	    //setting cookie to expiry in 30 mins
 	    //loginCookie.setMaxAge(30*60);
 	    response.addCookie(loginCookie);
-	    //response.sendRedirect("/elasticMLCompute/index.jsp");
 		return Response.status(200).entity("success").build();
 				
 				
@@ -99,7 +98,6 @@ public class UserAuthService {
 		    //setting cookie to expiry in 30 mins
 		    //loginCookie.setMaxAge(30*60);
 		     response.addCookie(loginCookie);
-		     //response.sendRedirect("/elasticMLCompute/index.jsp");
 		     return Response.status(200).entity("success").build();
 		}else{
 			return Response.status(200).entity("failure").build();
@@ -134,7 +132,7 @@ public class UserAuthService {
             session.invalidate();
         }
         //no encoding because we have invalidated the session
-        response.sendRedirect("/elasticMLCompute/login.jsp");
+        response.sendRedirect("/login.jsp");
 	
 	}
 	

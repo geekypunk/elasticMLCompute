@@ -1,7 +1,7 @@
 package com.cs5412.taskmanager;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.net.Inet4Address;
+import java.util.*;
 
 import com.cs5412.utils.Utils;
 
@@ -11,14 +11,24 @@ public class TaskDao {
 	private String taskDescription;
 	private String taskType;
 	private String reportUrl;
+	private String hostAddress;
+	private String wsURL;
 	private TaskStatus status;
 	private boolean isSeen;
 	private String taskId;
-	private int parentTaskId;
+	private ArrayList<String> parentTaskIds = new ArrayList<String>();
 	//private HttpServletRequest httpRequest
 	List<Integer> subTasks = new ArrayList<Integer>();
 	
-	public TaskDao(String userId,String taskName,String reportUrl,TaskStatus status,boolean isSeen){
+	public String getHostAddress() {
+		return hostAddress;
+	}
+
+	public void setHostAddress(String hostAddress) {
+		this.hostAddress = hostAddress;
+	}
+
+	public TaskDao(String userId,String taskName,String reportUrl,TaskStatus status,boolean isSeen,String wsURL) throws Exception{
 		
 		this.userId = userId;
 		this.taskName = taskName;
@@ -26,7 +36,9 @@ public class TaskDao {
 		this.status = status;
 		this.isSeen = isSeen;
 		this.taskId = Utils.getUUID();
-	
+		
+		this.hostAddress = Inet4Address.getLocalHost().getHostAddress();
+		this.wsURL = wsURL;
 	}
 	
 	public String getTaskId(){
@@ -155,18 +167,24 @@ public class TaskDao {
 	/**
 	 * @return the parentTaskId
 	 */
-	public int getParentTaskId() {
-		return parentTaskId;
+	public ArrayList<String> getParentTaskId() {
+		return parentTaskIds;
 	}
 
 	/**
 	 * @param parentTaskId the parentTaskId to set
 	 */
-	public void setParentTaskId(int parentTaskId) {
-		this.parentTaskId = parentTaskId;
+	public void setParentTaskId(ArrayList<String> parentTaskIds) {
+		this.parentTaskIds = parentTaskIds;
 	}
 
-	
+	public String getWsURL() {
+		return wsURL;
+	}
+
+	public void setWsURL(String wsURL) {
+		this.wsURL = wsURL;
+	}
 
 	
 }
