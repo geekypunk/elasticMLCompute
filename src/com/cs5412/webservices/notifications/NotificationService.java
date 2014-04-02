@@ -35,6 +35,13 @@ public class NotificationService {
 		taskManager = new TaskManager((CouchbaseClient)context.getAttribute("couchbaseClient"));
 
     }
+	
+	@Path("/poller")
+	@GET
+	public Response isAlive(){
+		return Response.status(200).entity("Hello").build();
+	}
+	
 	/**
 	 * Get finished and unseen tasks
 	 */

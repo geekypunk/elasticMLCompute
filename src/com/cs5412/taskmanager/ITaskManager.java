@@ -5,7 +5,7 @@ import java.util.concurrent.ExecutionException;
 
 public interface ITaskManager {
 	public void registerTask(TaskDao task) throws InterruptedException, ExecutionException;
-	public TaskDao getTaskById(int id,String username);
+	public TaskDao getTaskById(String id,String username);
 	public void setTaskStatus(TaskDao task,TaskStatus status) throws InterruptedException, ExecutionException;
 	public List<TaskDao> getFinishedAndUnseenByUserId(String username);
 	public void markAsSeen(String taskId);

@@ -77,7 +77,7 @@ public class KernelService {
 		String trainFile = fs.getFilePathForUploads(trainingDataset, username);
 		String testFile = fs.getFilePathForUploads(testDataset, username);
 		
-		TaskDao cvfileCreationTask = new TaskDao(username, "cvfileCreationTask", "cvfilecreation", TaskStatus.RUNNING, false);
+		TaskDao cvfileCreationTask = new TaskDao(username, "cvfileCreationTask", "cvfilecreation", TaskStatus.RUNNING, false, "");
 		try{
 			taskManager.registerTask(cvfileCreationTask);
 			CrossValidationFiles.createFiles(trainFile, fs,crossvalidation);
@@ -86,7 +86,7 @@ public class KernelService {
 			taskManager.setTaskStatus(cvfileCreationTask, TaskStatus.FAILURE);
 			e.printStackTrace();
 		}
-		TaskDao cvmodelCreationTask = new TaskDao(username, "cvmodelCreationTask", "cvmodelcreation", TaskStatus.RUNNING, false);
+		TaskDao cvmodelCreationTask = new TaskDao(username, "cvmodelCreationTask", "cvmodelcreation", TaskStatus.RUNNING, false, "");
 		LOG.debug("Creating Models");
 		//ExecutorService es = Executors.newFixedThreadPool(2);
 		try{
@@ -119,7 +119,7 @@ public class KernelService {
 		}
 		
 		String bestC = "3";
-		TaskDao bestCTask = new TaskDao(username, "bestCTask", "bestC", TaskStatus.RUNNING, false);
+		TaskDao bestCTask = new TaskDao(username, "bestCTask", "bestC", TaskStatus.RUNNING, false, "");
 		try{
 			taskManager.registerTask(bestCTask);
 			LOG.debug("Calculating bestC");
@@ -130,7 +130,7 @@ public class KernelService {
 			taskManager.setTaskStatus(bestCTask, TaskStatus.FAILURE);
 			LOG.error("Error", e);
 		}
-		TaskDao testClassificationTask = new TaskDao(username, "testClassificationTask", "testClassification", TaskStatus.RUNNING, false);
+		TaskDao testClassificationTask = new TaskDao(username, "testClassificationTask", "testClassification", TaskStatus.RUNNING, false, "");
 		try{
 			taskManager.registerTask(testClassificationTask);
 			TestClassification.testClassify(Integer.parseInt(bestC.split(" ")[0]), kernelNum, fs ,trainFile,"cv.txt",testFile, kernelParam);
@@ -140,7 +140,7 @@ public class KernelService {
 			LOG.error("Error", e);
 		}
 		
-		TaskDao reportGenerationTask = new TaskDao(username, "reportGenerationTask", "reportGeneration", TaskStatus.RUNNING, false);
+		TaskDao reportGenerationTask = new TaskDao(username, "reportGenerationTask", "reportGeneration", TaskStatus.RUNNING, false, "");
 		JSONArray result = new JSONArray();
 		try{
 			taskManager.registerTask(reportGenerationTask);

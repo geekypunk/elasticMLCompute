@@ -26,7 +26,7 @@ public class ParallelDTJob implements Runnable{
 	
 	public void run() {
 		try{
-			String taskUrl = loadBalancerAddress + "/elasticMLCompute/ml/dTree/generateEachService" + "/" + username + "/" + i;
+			String taskUrl = loadBalancerAddress + "/ml/dTree/generateEachService" + "/" + username + "/" + i;
 	    	URL url = new URL(taskUrl);
 	    	HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 	        conn.setReadTimeout(1000000);

@@ -137,7 +137,7 @@ public class FileUploadServlet extends HttpServlet {
  	                    	result.put("files", array);
                         } else{
                         	
-                        	TaskDao uploadTask = new TaskDao(username, fileName, "upload", TaskStatus.RUNNING, false);
+                        	TaskDao uploadTask = new TaskDao(username, fileName, "upload", TaskStatus.RUNNING, false, "/upload");
                         	//uploadTask.setHttpRequest(request);
                         	uploadTask.setTaskType(TaskType.DATASET_UPLOAD.toString());
                         	uploadTask.setTaskDescription(fileName);
