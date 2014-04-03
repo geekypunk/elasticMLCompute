@@ -58,7 +58,7 @@ public class FailedServerHandle extends TimerTask{
 		    if(tasks != null){
 		    	for(Entry<String, TaskDao> ent : tasks.entrySet()){
 		    		TaskDao td = ent.getValue();
-		    		if(td.getStatus() != TaskStatus.SUCCESS && td.getStatus() != TaskStatus.PARENT){
+		    		if(td.getStatus() != TaskStatus.SUCCESS && !td.isParent()){
 		    			String hostAddr = td.getHostAddress();
 		    			String taskUrl;
 		    			if(debug == 1)

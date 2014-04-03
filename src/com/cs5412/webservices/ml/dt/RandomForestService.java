@@ -85,6 +85,7 @@ public class RandomForestService {
         TaskDao dtTask = new TaskDao(username, "DTRun", "complete", TaskStatus.RUNNING, false, wsURL);
     	dtTask.setTaskType(TaskType.ALGORITHM_EXEC.toString());
     	dtTask.setTaskDescription("Decision Tree algorithm");
+    	dtTask.setParent(true);
     	taskManager.registerTask(dtTask);
     	
     	ArrayList<String> parentIds = new ArrayList<String>();
@@ -248,7 +249,7 @@ public class RandomForestService {
 		
 		  String tId = taskId;
 		  TaskDao task = taskManager.getTaskById(tId, username);
-		  task.setHostAddress(Inet4Address.getLocalHost().getHostAddress());
+		  task.setHostAddress(Utils.getIP());
 		  taskManager.setTaskStatus(task, TaskStatus.RUNNING);
 		  
 		  String mTid = masterTaskId;
@@ -316,7 +317,7 @@ public class RandomForestService {
 		
 		String tId = taskId;
 		TaskDao task = taskManager.getTaskById(tId, username);
-		task.setHostAddress(Inet4Address.getLocalHost().getHostAddress());
+		task.setHostAddress(Utils.getIP());
 		taskManager.setTaskStatus(task, TaskStatus.RUNNING);
 		try{
 			IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
@@ -346,7 +347,7 @@ public class RandomForestService {
 		
 		String tId = taskId;
 		TaskDao task = taskManager.getTaskById(tId, username);
-		task.setHostAddress(Inet4Address.getLocalHost().getHostAddress());
+		task.setHostAddress(Utils.getIP());
 		taskManager.setTaskStatus(task, TaskStatus.RUNNING);
 		try{
 			IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
@@ -385,7 +386,7 @@ public class RandomForestService {
 		
 		String tId = taskId;
 		TaskDao task = taskManager.getTaskById(tId, username);
-		task.setHostAddress(Inet4Address.getLocalHost().getHostAddress());
+		task.setHostAddress(Utils.getIP());
 		taskManager.setTaskStatus(task, TaskStatus.RUNNING);
 		try{
 			IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
@@ -426,7 +427,7 @@ public class RandomForestService {
 			)throws Exception{	
 		String tId = taskId;
 		TaskDao task = taskManager.getTaskById(tId, username);
-		task.setHostAddress(Inet4Address.getLocalHost().getHostAddress());
+		task.setHostAddress(Utils.getIP());
 		taskManager.setTaskStatus(task, TaskStatus.RUNNING);
 		try{
 			IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");

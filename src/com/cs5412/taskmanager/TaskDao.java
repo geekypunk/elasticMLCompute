@@ -16,6 +16,7 @@ public class TaskDao {
 	private TaskStatus status;
 	private boolean isSeen;
 	private String taskId;
+	private boolean isParent;
 	private ArrayList<String> parentTaskIds = new ArrayList<String>();
 	//private HttpServletRequest httpRequest
 	List<Integer> subTasks = new ArrayList<Integer>();
@@ -37,7 +38,7 @@ public class TaskDao {
 		this.isSeen = isSeen;
 		this.taskId = Utils.getUUID();
 		
-		this.hostAddress = Inet4Address.getLocalHost().getHostAddress();
+		this.hostAddress = Utils.getIP();
 		this.wsURL = wsURL;
 	}
 	
@@ -184,6 +185,20 @@ public class TaskDao {
 
 	public void setWsURL(String wsURL) {
 		this.wsURL = wsURL;
+	}
+
+	/**
+	 * @return the isParent
+	 */
+	public boolean isParent() {
+		return isParent;
+	}
+
+	/**
+	 * @param isParent the isParent to set
+	 */
+	public void setParent(boolean isParent) {
+		this.isParent = isParent;
 	}
 
 	
