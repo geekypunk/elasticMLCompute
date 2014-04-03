@@ -170,7 +170,7 @@ public class SVMService{
     	svmTask1.setSeen(true);
     	svmTask1.setParentTaskId(parentIds);
     	taskManager.registerTask(svmTask1);
-    	
+    	svmTask.setParent(true);
     	LOG.debug("Creating CV files");
     	
 		String taskUrl = loadBalancerAddress + wsURL1;
