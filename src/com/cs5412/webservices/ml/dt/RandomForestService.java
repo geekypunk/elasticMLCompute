@@ -214,7 +214,7 @@ public class RandomForestService {
         conn.connect();
         LOG.debug(conn.getResponseCode() + "");
         
-        return Response.status(200).entity(conn.getResponseCode()).build();
+        return Response.status(200).entity("HelloDT").build();
 	}
 	
 	@Path("/getReport/{reportId}")

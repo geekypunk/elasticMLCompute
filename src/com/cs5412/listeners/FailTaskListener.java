@@ -15,7 +15,7 @@ import com.cs5412.daemons.FailedTaskHandle;
 public class FailTaskListener implements ServletContextListener{
 	
 	FailedTaskHandle ftTask;
-	private static int deamonStartPeriod = 40*1000;
+	private static int deamonStartPeriod = 10*1000;
 	
     public void contextInitialized(ServletContextEvent sce) {
     	ServletContext application = sce.getServletContext();
