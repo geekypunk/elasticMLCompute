@@ -93,6 +93,8 @@ public class SVMService{
 		
 		TaskManager taskManager = new TaskManager((CouchbaseClient)context.getAttribute("couchbaseClient"));
 		
+		LOG.debug(".........................................Here i am ..............................................................");
+		
         String wsURL = "/ml/svm/runDistributedService";
         TaskDao svmTask = new TaskDao(username, "SVMRun", "complete", TaskStatus.RUNNING, false, wsURL);
     	svmTask.setTaskType(TaskType.ALGORITHM_EXEC.toString());
