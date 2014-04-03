@@ -99,6 +99,7 @@ public class SVMService{
         TaskDao svmTask = new TaskDao(username, "SVMRun", "complete", TaskStatus.RUNNING, false, wsURL);
     	svmTask.setTaskType(TaskType.ALGORITHM_EXEC.toString());
     	svmTask.setTaskDescription("Support Vector Machine algorithm");
+    	svmTask.setParent(true);
     	taskManager.registerTask(svmTask);
     	
     	ArrayList<String> parentIds = new ArrayList<String>();
@@ -170,7 +171,7 @@ public class SVMService{
     	svmTask1.setSeen(true);
     	svmTask1.setParentTaskId(parentIds);
     	taskManager.registerTask(svmTask1);
-    	svmTask.setParent(true);
+    	
     	LOG.debug("Creating CV files");
     	
 		String taskUrl = loadBalancerAddress + wsURL1;

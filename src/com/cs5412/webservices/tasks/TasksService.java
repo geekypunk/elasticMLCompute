@@ -24,7 +24,6 @@ import com.couchbase.client.CouchbaseClient;
 import com.cs5412.taskmanager.TaskDao;
 import com.cs5412.taskmanager.TaskManager;
 import com.cs5412.taskmanager.TaskStatus;
-import com.cs5412.webservices.notifications.NotificationService;
 
 /**
  * Class for viewing and managing tasks
@@ -54,7 +53,7 @@ public class TasksService {
 		List<TaskDao> tasks = taskManager.getAllTasksForUser(username);
 		List<TaskDao> parentTasks = new ArrayList<>();
 		for(TaskDao task:tasks){
-			if(task.getStatus() == TaskStatus.PARENT){
+			if(task.isParent()){
 				parentTasks.add(task);
 			}
 		}

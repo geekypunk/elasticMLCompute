@@ -141,6 +141,7 @@ public class FileUploadServlet extends HttpServlet {
                         	//uploadTask.setHttpRequest(request);
                         	uploadTask.setTaskType(TaskType.DATASET_UPLOAD.toString());
                         	uploadTask.setTaskDescription(fileName);
+                        	uploadTask.setParent(true);
                         	
                         	try{
 	                        	taskManager.registerTask(uploadTask);

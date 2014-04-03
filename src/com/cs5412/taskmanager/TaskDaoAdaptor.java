@@ -37,6 +37,7 @@ public class TaskDaoAdaptor implements JsonSerializer<TaskDao> {
         obj.addProperty("isSeen",src.isSeen());
         obj.addProperty("taskId",src.getTaskId());
         obj.addProperty("isSeen",src.isSeen());
+        obj.addProperty("isParent",src.isParent());
         obj.addProperty("hostAddress",src.getHostAddress());
         obj.addProperty("wsURL",src.getWsURL());
         final JsonArray subTasks = new JsonArray();
