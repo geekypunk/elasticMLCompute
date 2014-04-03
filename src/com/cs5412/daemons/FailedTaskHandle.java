@@ -51,39 +51,53 @@ public class FailedTaskHandle extends TimerTask{
 	    gson = gsonBuilder.create();
 	    
 	    try{
-		    Type type = new TypeToken<HashMap<String,TaskDao>>(){}.getType();
-		    //CASValue<Object> obj =  couchbaseClient.getAndLock("AllUser"+"Tasks", 30);
-		    //long casValue = obj.getCas();
-		    String obj =  (String) couchbaseClient.get("AllUser"+"Tasks");
-		    HashMap<String,TaskDao> tasks = gson.fromJson(obj, type);
+		    Type type = new TypeToken<HashMap<String,String>>(){}.getType();
+		    String allUserTasks =  (String) couchbaseClient.get("AllUserTasks");
+		    HashMap<String,String> tasks = gson.fromJson(allUserTasks, type);
 		    TaskDao repairTask = null;
+		    String taskId = null,status = null;
+		    long taskCASValue = 0;
+		    CASValue<Object> taskCASObj = null;
+		    String taskCASJson = null;
 		    if(tasks != null){
-			    for(Entry<String, TaskDao> ent : tasks.entrySet()){
-			    	TaskDao td = ent.getValue();
-			    	if(td.getStatus() == TaskStatus.FAILURE && td.getParentTaskId().size() == 0){
-			    		repairTask = td;
-			    		break;
+			    for(Entry<String, String> ent : tasks.entrySet()){
+			    	taskId = ent.getKey();
+			    	status = ent.getValue();
+			    	if(status == TaskStatus.FAILURE.name()){
+			    		taskCASObj = couchbaseClient.gets(taskId); 
+			    		taskCASValue = taskCASObj.getCas();
+			    		taskCASJson = (String)taskCASObj.getValue();
+			    		repairTask = gson.fromJson(taskCASJson,TaskDao.class);
+			    		repairTask.setHostAddress("dummy");
+			    		//Check if someone already changes this task's status
+				    	if(couchbaseClient.gets(taskId).getCas() ==taskCASValue){
+				    		taskManager.setTaskStatus(repairTask, TaskStatus.INITIALIZED);
+					       	String taskUrl = loadBalancerAddress + repairTask.getWsURL();
+					       	LOG.debug(taskUrl);
+					    	URL url = new URL(taskUrl);
+							HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+					        conn.setReadTimeout(1000000);
+					        conn.setConnectTimeout(1000000);
+					        conn.setRequestMethod("GET");
+					        conn.setUseCaches(false);
+					        conn.setDoInput(true);
+					        conn.setDoOutput(true);
+					        conn.connect();
+					        LOG.debug(conn.getResponseCode() + "");
+					        LOG.debug(conn.getResponseMessage());
+					        break;
+				    	}else{
+				    		//Someone already picked up this failed task..move on
+				    		continue;
+				    	} 
+				    	
+			    		
 			    	}
 			    }
 		    }
-		    if(repairTask != null){
-		    	repairTask.setHostAddress("dummy");
-		    	taskManager.setTaskStatus(repairTask, TaskStatus.INITIALIZED);
-		       	String taskUrl = loadBalancerAddress + repairTask.getWsURL();
-		       	LOG.debug(taskUrl);
-		    	URL url = new URL(taskUrl);
-				HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		        conn.setReadTimeout(1000000);
-		        conn.setConnectTimeout(1000000);
-		        conn.setRequestMethod("GET");
-		        conn.setUseCaches(false);
-		        conn.setDoInput(true);
-		        conn.setDoOutput(true);
-		        conn.connect();
-		        LOG.debug(conn.getResponseCode() + "");
-		        LOG.debug(conn.getResponseMessage());
-		    }else{
-		    	LOG.debug("No failed tasks");
+		    if(taskId == null){
+		    	
+		      	LOG.debug("No failed tasks");
 		    }
 	    }catch(Exception e){
 	    	LOG.debug("Error",e.getCause());
