@@ -37,7 +37,7 @@ public class TaskDao {
 		this.isSeen = isSeen;
 		this.taskId = Utils.getUUID();
 		
-		this.hostAddress = Inet4Address.getLocalHost().getHostAddress();
+		this.hostAddress = Utils.getIP();
 		this.wsURL = wsURL;
 	}
 	

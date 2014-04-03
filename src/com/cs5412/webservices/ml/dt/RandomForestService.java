@@ -248,7 +248,7 @@ public class RandomForestService {
 		
 		  String tId = taskId;
 		  TaskDao task = taskManager.getTaskById(tId, username);
-		  task.setHostAddress(Inet4Address.getLocalHost().getHostAddress());
+		  task.setHostAddress(Utils.getIP());
 		  taskManager.setTaskStatus(task, TaskStatus.RUNNING);
 		  
 		  String mTid = masterTaskId;
@@ -316,7 +316,7 @@ public class RandomForestService {
 		
 		String tId = taskId;
 		TaskDao task = taskManager.getTaskById(tId, username);
-		task.setHostAddress(Inet4Address.getLocalHost().getHostAddress());
+		task.setHostAddress(Utils.getIP());
 		taskManager.setTaskStatus(task, TaskStatus.RUNNING);
 		try{
 			IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
@@ -346,7 +346,7 @@ public class RandomForestService {
 		
 		String tId = taskId;
 		TaskDao task = taskManager.getTaskById(tId, username);
-		task.setHostAddress(Inet4Address.getLocalHost().getHostAddress());
+		task.setHostAddress(Utils.getIP());
 		taskManager.setTaskStatus(task, TaskStatus.RUNNING);
 		try{
 			IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
@@ -385,7 +385,7 @@ public class RandomForestService {
 		
 		String tId = taskId;
 		TaskDao task = taskManager.getTaskById(tId, username);
-		task.setHostAddress(Inet4Address.getLocalHost().getHostAddress());
+		task.setHostAddress(Utils.getIP());
 		taskManager.setTaskStatus(task, TaskStatus.RUNNING);
 		try{
 			IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
@@ -426,7 +426,7 @@ public class RandomForestService {
 			)throws Exception{	
 		String tId = taskId;
 		TaskDao task = taskManager.getTaskById(tId, username);
-		task.setHostAddress(Inet4Address.getLocalHost().getHostAddress());
+		task.setHostAddress(Utils.getIP());
 		taskManager.setTaskStatus(task, TaskStatus.RUNNING);
 		try{
 			IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");

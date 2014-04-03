@@ -275,7 +275,7 @@ public class SVMService{
 		
 		  String tId = taskId;
 		  TaskDao task = taskManager.getTaskById(tId, username);
-		  task.setHostAddress(Inet4Address.getLocalHost().getHostAddress());
+		  task.setHostAddress(Utils.getIP());
 		  taskManager.setTaskStatus(task, TaskStatus.RUNNING);
 		  
 		  String mTid = masterTaskId;
@@ -341,7 +341,7 @@ public class SVMService{
 			) throws Exception {
 		String tId = taskId;
 		TaskDao task = taskManager.getTaskById(tId, username);
-		task.setHostAddress(Inet4Address.getLocalHost().getHostAddress());
+		task.setHostAddress(Utils.getIP());
 		taskManager.setTaskStatus(task, TaskStatus.RUNNING);
 		try{
 			IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
@@ -370,7 +370,7 @@ public class SVMService{
 			@Context ServletContext context) throws Exception {
 		String tId = taskId;
 		TaskDao task = taskManager.getTaskById(tId, username);
-		task.setHostAddress(Inet4Address.getLocalHost().getHostAddress());
+		task.setHostAddress(Utils.getIP());
 		taskManager.setTaskStatus(task, TaskStatus.RUNNING);
 		try{
 			IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
@@ -397,7 +397,7 @@ public class SVMService{
 			)throws Exception{
 		String tId = taskId;
 		TaskDao task = taskManager.getTaskById(tId, username);
-		task.setHostAddress(Inet4Address.getLocalHost().getHostAddress());
+		task.setHostAddress(Utils.getIP());
 		taskManager.setTaskStatus(task, TaskStatus.RUNNING);
 		try{
 			IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
@@ -438,7 +438,7 @@ public class SVMService{
 			)throws Exception{
 		String tId = taskId;
 		TaskDao task = taskManager.getTaskById(tId, username);
-		task.setHostAddress(Inet4Address.getLocalHost().getHostAddress());
+		task.setHostAddress(Utils.getIP());
 		taskManager.setTaskStatus(task, TaskStatus.RUNNING);
 		try{
 			String trainFile = fs.getFilePathForUploads(trainingDataSet, username);
