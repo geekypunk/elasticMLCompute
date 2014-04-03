@@ -57,7 +57,7 @@ public class FailedTaskHandle extends TimerTask{
 	    
 	    try{
 		    Type type = new TypeToken<HashMap<String,TaskDao>>(){}.getType();
-		    CASValue<Object> obj =  couchbaseClient.getAndLock("AllUser"+"Tasks", 3);
+		    CASValue<Object> obj =  couchbaseClient.getAndLock("AllUser"+"Tasks", 30);
 		    long casValue = obj.getCas();
 		    HashMap<String,TaskDao> tasks = gson.fromJson(obj.getValue().toString(), type);
 		    TaskDao repairTask = null;
@@ -74,6 +74,7 @@ public class FailedTaskHandle extends TimerTask{
 		    	repairTask.setHostAddress("dummy");
 		    	taskManager.setTaskStatus(repairTask, TaskStatus.INITIALIZED);
 		       	String taskUrl = loadBalancerAddress + repairTask.getWsURL();
+		       	LOG.debug(taskUrl);
 		    	URL url = new URL(taskUrl);
 				HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		        conn.setReadTimeout(1000000);
