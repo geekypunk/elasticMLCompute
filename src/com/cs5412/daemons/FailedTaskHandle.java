@@ -2,16 +2,12 @@ package com.cs5412.daemons;
 
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
-import java.util.TimerTask;
 import java.util.Map.Entry;
+import java.util.TimerTask;
 
 import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
 
 import net.spy.memcached.CASValue;
 
@@ -24,7 +20,6 @@ import com.cs5412.taskmanager.TaskDao;
 import com.cs5412.taskmanager.TaskDaoAdaptor;
 import com.cs5412.taskmanager.TaskManager;
 import com.cs5412.taskmanager.TaskStatus;
-import com.cs5412.webservices.fileupload.FileUploadServlet;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -57,9 +52,10 @@ public class FailedTaskHandle extends TimerTask{
 	    
 	    try{
 		    Type type = new TypeToken<HashMap<String,TaskDao>>(){}.getType();
-		    CASValue<Object> obj =  couchbaseClient.getAndLock("AllUser"+"Tasks", 30);
-		    long casValue = obj.getCas();
-		    HashMap<String,TaskDao> tasks = gson.fromJson(obj.getValue().toString(), type);
+		    //CASValue<Object> obj =  couchbaseClient.getAndLock("AllUser"+"Tasks", 30);
+		    //long casValue = obj.getCas();
+		    String obj =  (String) couchbaseClient.get("AllUser"+"Tasks");
+		    HashMap<String,TaskDao> tasks = gson.fromJson(obj, type);
 		    TaskDao repairTask = null;
 		    if(tasks != null){
 			    for(Entry<String, TaskDao> ent : tasks.entrySet()){
