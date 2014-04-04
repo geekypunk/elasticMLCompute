@@ -276,6 +276,7 @@ for(Cookie cookie : cookies){
 	<script src="js/jquery-validate/jquery.validate.min.js"></script>
 	<script src="js/jquery-validate/additional-methods.min.js"></script>
 	<!-- CUSTOM SCRIPT -->
+	<script src="js/notifications.js"></script>
 	<script src="js/script.js"></script>
 	<script src="js/svm.charts.js"></script>
 	<script src="js/svm.js"></script>
@@ -286,44 +287,7 @@ for(Cookie cookie : cookies){
 			
 		});
 	</script>
-	<!-- Notification Script-->
-	<script src="js/notifications.js"></script>
-	<script>
-	$.ajax({
-	    url : "ui/notifications/getFinishedTasks",
-	    type: "GET",
-	    dataType : "json",
-	    data : {
-	    	
-	    },
-	    success: function(data, textStatus, jqXHR)
-	    {
-	    	handleNewNotifications(data);
-	    },
-	    error: function (jqXHR, textStatus, errorThrown)
-	    {
-	 			console.log(errorThrown);
-	    }
-	});
-	$( "#header-notification" ).click(function() {
-  		$.ajax({
-		    url : "ui/notifications/markAllAsSeen",
-		    type: "GET",
-		    data : {
-		    	
-		    },
-		    success: function(data, textStatus, jqXHR)
-		    {
-		    	
-		    },
-		    error: function (jqXHR, textStatus, errorThrown)
-		    {
-		 			console.log(errorThrown);
-		    }
-		});
-	});
-	</script>
-	<!-- END Notification Script-->
+	
 	<!-- /JAVASCRIPTS -->
 </body>
 </html>

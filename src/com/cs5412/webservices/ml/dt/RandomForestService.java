@@ -82,7 +82,7 @@ public class RandomForestService {
 		TaskManager taskManager = new TaskManager((CouchbaseClient)context.getAttribute("couchbaseClient"));
 		
         String wsURL = "/ml/dTree/runDistributedService";
-        TaskDao dtTask = new TaskDao(username, "DTRun", "complete", TaskStatus.RUNNING, false, wsURL);
+        TaskDao dtTask = new TaskDao(username, "Decision Tree execution for "+trainingDataset+"/"+testDataset, "complete", TaskStatus.RUNNING, false, wsURL);
     	dtTask.setTaskType(TaskType.ALGORITHM_EXEC.toString());
     	dtTask.setTaskDescription("Decision Tree algorithm");
     	dtTask.setParent(true);
@@ -155,9 +155,7 @@ public class RandomForestService {
     	dtTask1.setParentTaskId(parentIds);
     	taskManager.registerTask(dtTask1);
     	
-    	taskManager.setTaskStatus(dtTask, TaskStatus.PARENT);
-    	
-		String taskUrl = loadBalancerAddress + wsURL1;
+    	String taskUrl = loadBalancerAddress + wsURL1;
 		URL url = new URL(taskUrl);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setReadTimeout(1000000);

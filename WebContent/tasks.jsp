@@ -238,6 +238,7 @@ for(Cookie cookie : cookies){
 	<script type="text/javascript" src="js/jQuery-Cookie/jquery.cookie.min.js"></script>
 	<!-- CUSTOM SCRIPT -->
 	<script src="js/script.js"></script>
+	<script src="js/notifications.js"></script>
 	<!-- DATA TABLES -->
 	<script type="text/javascript" src="js/datatables/media/js/jquery.dataTables.min.js"></script>
 	<script type="text/javascript" src="js/datatables/media/assets/js/datatables.min.js"></script>

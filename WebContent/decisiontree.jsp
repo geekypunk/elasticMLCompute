@@ -273,6 +273,8 @@ for(Cookie cookie : cookies){
 	<script src="js/jquery-validate/jquery.validate.min.js"></script>
 	<script src="js/jquery-validate/additional-methods.min.js"></script>
 	<!-- CUSTOM SCRIPT -->
+	<!-- Notification Script-->
+	<script src="js/notifications.js"></script>
 	<script src="js/script.js"></script>
 	<script src="js/svm.charts.js"></script>
 	<script src="js/dt.js"></script>

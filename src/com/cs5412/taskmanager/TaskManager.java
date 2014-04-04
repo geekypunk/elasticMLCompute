@@ -33,9 +33,9 @@ public class TaskManager implements ITaskManager{
 		tasks.put(task.getTaskId(), task);
 		couchbaseClient.set(username+"Tasks", gson.toJson(tasks)).get();
 		
-		tasks = getUserTasksMap("AllUser");
-		tasks.put(task.getTaskId(), task);
-		couchbaseClient.set("AllUser"+"Tasks", gson.toJson(tasks)).get();
+		//tasks = getUserTasksMap("AllUserTasks");
+		//tasks.put(task.getTaskId(), task);
+		//couchbaseClient.set("AllUser"+"Tasks", gson.toJson(tasks)).get();
 	}
 
 	@Override
@@ -57,10 +57,11 @@ public class TaskManager implements ITaskManager{
 		TaskDao _task = tasks.get(task.getTaskId());
 		_task.setStatus(status);
 		couchbaseClient.set(_task.getUserId()+"Tasks", gson.toJson(tasks)).get();
-		tasks = getUserTasksMap("AllUser");
-		_task = tasks.get(task.getTaskId());
-		_task.setStatus(status);
-		couchbaseClient.set("AllUser"+"Tasks", gson.toJson(tasks)).get();
+		
+		//tasks = getUserTasksMap("AllUserTasks");
+		//_task = tasks.get(task.getTaskId());
+		//_task.setStatus(status);
+		//couchbaseClient.set("AllUser"+"Tasks", gson.toJson(tasks)).get();
 	}
 
 	

@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
-import java.net.Inet4Address;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -57,11 +56,11 @@ public class SVMService{
 	static final int NUM_MODELS = 5;
 	
 	@Context ServletContext context;
-	public static String loadBalancerAddress;
-	TaskManager taskManager;
-	IFileSystem fs;
-	CouchbaseClient couchbaseClient;
-	Gson gson;
+	private static String loadBalancerAddress;
+	private TaskManager taskManager;
+	private IFileSystem fs;
+	private CouchbaseClient couchbaseClient;
+	private Gson gson;
 	
 	@PostConstruct
     void initialize() {
@@ -90,13 +89,10 @@ public class SVMService{
 		ArrayList<ArrayList<Double>> accList = new ArrayList<ArrayList<Double>>();
 		String json = gson.toJson(accList);
 		couchbaseClient.set(username + "SVMAcc", json).get();
-		
-		TaskManager taskManager = new TaskManager((CouchbaseClient)context.getAttribute("couchbaseClient"));
-		
-		LOG.debug(".........................................Here i am ..............................................................");
+				
 		
         String wsURL = "/ml/svm/runDistributedService";
-        TaskDao svmTask = new TaskDao(username, "SVMRun", "complete", TaskStatus.RUNNING, false, wsURL);
+        TaskDao svmTask = new TaskDao(username, "SVMRun for "+trainingDataset+"/"+testDataset, "complete", TaskStatus.RUNNING, false, wsURL);
     	svmTask.setTaskType(TaskType.ALGORITHM_EXEC.toString());
     	svmTask.setTaskDescription("Support Vector Machine algorithm");
     	svmTask.setParent(true);

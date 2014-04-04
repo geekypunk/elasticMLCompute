@@ -72,10 +72,10 @@ for(Cookie cookie : cookies){
 								
 							</li>
 							
-							
+							<!--
 							<li class="footer">
 								<a href="#">See all notifications <i class="fa fa-arrow-circle-right"></i></a>
-							</li>
+							</li>-->
 						</ul>
 					</li>
 					
@@ -316,42 +316,6 @@ for(Cookie cookie : cookies){
 		});
 	</script>
 	<script>
-	$.ajax({
-	    url : "ui/notifications/getFinishedTasks",
-	    type: "GET",
-	    dataType : "json",
-	    data : {
-	    	
-	    },
-	    success: function(data, textStatus, jqXHR)
-	    {
-	    	handleNewNotifications(data);
-	    },
-	    error: function (jqXHR, textStatus, errorThrown)
-	    {
-	 			console.log(errorThrown);
-	    }
-	});
-	$( "#header-notification" ).click(function() {
-  		$.ajax({
-		    url : "ui/notifications/markAllAsSeen",
-		    type: "GET",
-		    data : {
-		    	
-		    },
-		    success: function(data, textStatus, jqXHR)
-		    {
-		    	
-		    },
-		    error: function (jqXHR, textStatus, errorThrown)
-		    {
-		 			console.log(errorThrown);
-		    }
-		});
-	});
-	</script>
-	<!-- END Notification Script-->
-	<script>
 	function getTaskTypeIcon(type){
 
 		if(type==="Dataset Upload")
@@ -407,6 +371,8 @@ for(Cookie cookie : cookies){
 			    r.push(row);
 			   
 			}
+			$('#datatable1').dataTable().fnAddData(r);	
+			/*
 			$("#datatable1").dataTable().fnDestroy();
        		$('#datatable1').dataTable({
                 "sPaginationType": "bs_full"
@@ -422,7 +388,7 @@ for(Cookie cookie : cookies){
 	            // LENGTH - Inline-Form control
 	            var length_sel = datatable.closest('.dataTables_wrapper').find('div[id$=_length] select');
 	            length_sel.addClass('form-control input-sm');
-	        });
+	        });*/
  			
 	    },
 	    error: function (jqXHR, textStatus, errorThrown)
@@ -485,6 +451,8 @@ for(Cookie cookie : cookies){
 			    r.push(row);
 			   
 			}
+			$('#datatable2').dataTable().fnAddData(r);	
+			/*
 	 		$("#datatable2").dataTable().fnDestroy();
        		$('#datatable2').dataTable({
                "sPaginationType": "bs_full"
@@ -498,7 +466,7 @@ for(Cookie cookie : cookies){
 	            // LENGTH - Inline-Form control
 	            var length_sel = datatable.closest('.dataTables_wrapper').find('div[id$=_length] select');
 	            length_sel.addClass('form-control input-sm');
-	        });
+	        });*/
 	    },
 	    error: function (jqXHR, textStatus, errorThrown)
 	    {

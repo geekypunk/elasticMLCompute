@@ -69,7 +69,7 @@ public class FailedTaskHandle extends TimerTask{
 			    		taskCASJson = (String)taskCASObj.getValue();
 			    		repairTask = gson.fromJson(taskCASJson,TaskDao.class);
 			    		repairTask.setHostAddress("dummy");
-			    		//Check if someone already changes this task's status
+			    		//Check if someone already changed this task's status
 				    	if(couchbaseClient.gets(taskId).getCas() ==taskCASValue){
 				    		taskManager.setTaskStatus(repairTask, TaskStatus.INITIALIZED);
 					       	String taskUrl = loadBalancerAddress + repairTask.getWsURL();

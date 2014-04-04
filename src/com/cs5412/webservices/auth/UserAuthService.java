@@ -117,22 +117,18 @@ public class UserAuthService {
 		response.setContentType("text/html");
         Cookie[] cookies = request.getCookies();
         if(cookies != null){
-        for(Cookie cookie : cookies){
-            if(cookie.getName().equals("JSESSIONID")){
-                System.out.println("JSESSIONID="+cookie.getValue());
-            }
-            cookie.setMaxAge(0);
-            response.addCookie(cookie);
-        }
+	        for(Cookie cookie : cookies){
+	            cookie.setMaxAge(0);
+	            response.addCookie(cookie);
+	        }
         }
         //invalidate the session if exists
         HttpSession session = request.getSession(false);
-        System.out.println("User="+session.getAttribute("user"));
         if(session != null){
             session.invalidate();
         }
         //no encoding because we have invalidated the session
-        response.sendRedirect("/login.jsp");
+        response.sendRedirect("login.jsp");
 	
 	}
 	

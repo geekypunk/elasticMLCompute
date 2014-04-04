@@ -357,41 +357,6 @@ for(Cookie cookie : cookies){
 	</script>
 	<!-- Notification Script-->
 	<script src="js/notifications.js"></script>
-	<script>
-	$.ajax({
-	    url : "ui/notifications/getFinishedTasks",
-	    type: "GET",
-	    dataType : "json",
-	    data : {
-	    	
-	    },
-	    success: function(data, textStatus, jqXHR)
-	    {
-	    	handleNewNotifications(data);
-	    },
-	    error: function (jqXHR, textStatus, errorThrown)
-	    {
-	 			console.log(errorThrown);
-	    }
-	});
-	$( "#header-notification" ).click(function() {
-  		$.ajax({
-		    url : "ui/notifications/markAllAsSeen",
-		    type: "GET",
-		    data : {
-		    	
-		    },
-		    success: function(data, textStatus, jqXHR)
-		    {
-		    	
-		    },
-		    error: function (jqXHR, textStatus, errorThrown)
-		    {
-		 			console.log(errorThrown);
-		    }
-		});
-	});
-	</script>
 	<!-- END Notification Script-->
 	<!-- /JAVASCRIPTS -->
 </body>

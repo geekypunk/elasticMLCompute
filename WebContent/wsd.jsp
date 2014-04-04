@@ -84,7 +84,7 @@ for(Cookie cookie : cookies){
 					<li class="dropdown user" id="header-user">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
 							<img alt="" src="img/avatars/avatar3.jpg" />
-							<span class="username">John Doe</span>
+							<span class="username"><%=session.getAttribute("user")%></span>
 							<i class="fa fa-angle-down"></i>
 						</a>
 						<ul class="dropdown-menu">
@@ -282,6 +282,7 @@ for(Cookie cookie : cookies){
 	<script src="js/jquery-validate/jquery.validate.min.js"></script>
 	<script src="js/jquery-validate/additional-methods.min.js"></script>
 	<!-- CUSTOM SCRIPT -->
+	<script src="js/notifications.js"></script>
 	<script src="js/script.js"></script>
 	<script src="js/svm.charts.js"></script>
 	<script src="js/wsd.js"></script>
