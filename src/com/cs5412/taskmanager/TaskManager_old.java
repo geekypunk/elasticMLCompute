@@ -123,4 +123,11 @@ public class TaskManager_old implements ITaskManager{
 		}
 		couchbaseClient.set(username+"Tasks", gson.toJson(tasks)).get();
 	}
+
+	@Override
+	public void removeTaskById(String taskId) throws InterruptedException,
+			ExecutionException {
+		// TODO Auto-generated method stub
+		
+	}
 }

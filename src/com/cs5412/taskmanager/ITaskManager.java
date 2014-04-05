@@ -11,6 +11,7 @@ public interface ITaskManager {
 	public void markAsSeen(String taskId) throws InterruptedException, ExecutionException;
 	public void markAllAsSeen(String username) throws InterruptedException, ExecutionException;
 	public void removeParentDependency(String taskId, String username)throws Exception;
+	public void removeTaskById(String taskId)throws InterruptedException, ExecutionException;
 	List<TaskDao> getAllTasksForUser(String username);
 
 }

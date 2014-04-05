@@ -4,6 +4,7 @@ import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -53,12 +54,13 @@ public class FailedServerHandle extends TimerTask{
 	    gson = gsonBuilder.create();
 	   
 	    try{
-			Type type = new TypeToken<HashMap<String,TaskDao>>(){}.getType();
-		    HashMap<String,TaskDao> tasks = gson.fromJson((String) couchbaseClient.get("AllUser"+"Tasks"), type);
+			Type type = new TypeToken<ArrayList<String>>(){}.getType();
+		    String allUserTasks =  (String) couchbaseClient.get("AllUserTaskIds");
+		    ArrayList<String> tasks = gson.fromJson(allUserTasks, type);
 		    if(tasks != null){
-		    	for(Entry<String, TaskDao> ent : tasks.entrySet()){
-		    		TaskDao td = ent.getValue();
-		    		if(td.getStatus() != TaskStatus.SUCCESS && !td.isParent()){
+		    	for(String taskId : tasks){
+		    		TaskDao td = taskManager.getTaskById(taskId);
+		    		if(td.getStatus() != TaskStatus.SUCCESS && td.getStatus() != TaskStatus.FAILURE && !td.isParent()){
 		    			String hostAddr = td.getHostAddress();
 		    			String taskUrl;
 		    			if(debug == 1)
@@ -79,10 +81,13 @@ public class FailedServerHandle extends TimerTask{
 		    	        	try{
 		    	        		conn.connect();
 		    	        	}catch(Exception e1){
+		    	        		
 		    	        		System.out.println("Server: " + hostAddr + " down");
 		    	        		taskManager.setTaskStatus(td, TaskStatus.FAILURE);
 		    	        	}
 		    	        }
+		    		}else if(td.getStatus() == TaskStatus.SUCCESS){
+		    			taskManager.removeTaskById(td.getTaskId());
 		    		}
 		    	}
 		    	LOG.debug("Finished polling all the servers");

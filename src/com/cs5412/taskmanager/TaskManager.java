@@ -95,4 +95,9 @@ public class TaskManager implements ITaskManager{
 			}
 		}
 	}
+	
+	@Override
+	public void removeTaskById(String taskId)throws InterruptedException, ExecutionException {
+		couchbaseClient.delete(taskId);
+	}
 }

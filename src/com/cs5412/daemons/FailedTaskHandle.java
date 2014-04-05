@@ -3,6 +3,7 @@ package com.cs5412.daemons;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.TimerTask;
@@ -51,23 +52,20 @@ public class FailedTaskHandle extends TimerTask{
 	    gson = gsonBuilder.create();
 	    
 	    try{
-		    Type type = new TypeToken<HashMap<String,String>>(){}.getType();
-		    String allUserTasks =  (String) couchbaseClient.get("AllUserTasks");
-		    HashMap<String,String> tasks = gson.fromJson(allUserTasks, type);
+		    Type type = new TypeToken<ArrayList<String>>(){}.getType();
+		    String allUserTasks =  (String) couchbaseClient.get("AllUserTaskIds");
+		    ArrayList<String> tasks = gson.fromJson(allUserTasks, type);
 		    TaskDao repairTask = null;
-		    String taskId = null,status = null;
 		    long taskCASValue = 0;
 		    CASValue<Object> taskCASObj = null;
 		    String taskCASJson = null;
-		    if(tasks != null){
-			    for(Entry<String, String> ent : tasks.entrySet()){
-			    	taskId = ent.getKey();
-			    	status = ent.getValue();
-			    	if(status == TaskStatus.FAILURE.name()){
-			    		taskCASObj = couchbaseClient.gets(taskId); 
-			    		taskCASValue = taskCASObj.getCas();
-			    		taskCASJson = (String)taskCASObj.getValue();
-			    		repairTask = gson.fromJson(taskCASJson,TaskDao.class);
+		    if(tasks != null && tasks.size()!=0){
+			    for(String taskId : tasks){
+		    		taskCASObj = couchbaseClient.gets(taskId); 
+		    		taskCASValue = taskCASObj.getCas();
+		    		taskCASJson = (String)taskCASObj.getValue();
+		    		repairTask = gson.fromJson(taskCASJson,TaskDao.class);
+			    	if(repairTask.getStatus()== TaskStatus.FAILURE){
 			    		repairTask.setHostAddress("dummy");
 			    		//Check if someone already changed this task's status
 				    	if(couchbaseClient.gets(taskId).getCas() ==taskCASValue){
@@ -89,15 +87,15 @@ public class FailedTaskHandle extends TimerTask{
 				    	}else{
 				    		//Someone already picked up this failed task..move on
 				    		continue;
-				    	} 
-				    	
-			    		
+				    	} 		    		
+			    	}else{
+			    		LOG.debug("No failed tasks");
 			    	}
 			    }
 		    }
-		    if(taskId == null){
+		    else{
 		    	
-		      	LOG.debug("No failed tasks");
+		      	LOG.debug("No tasks");
 		    }
 	    }catch(Exception e){
 	    	LOG.debug("Error",e.getCause());
