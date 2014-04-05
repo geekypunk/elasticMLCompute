@@ -10,6 +10,7 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import com.couchbase.client.CouchbaseClient;
 import com.cs5412.taskmanager.TaskDao;
 import com.cs5412.taskmanager.TaskDaoAdaptor;
+import com.cs5412.taskmanager.TaskManager;
 import com.cs5412.taskmanager.TaskStatus;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -21,19 +22,21 @@ public class TestClass {
 		//PropertiesConfiguration config = new PropertiesConfiguration("../WEB-INF/config.properties");
 	
 		List<URI> hosts = Arrays.asList(
-			      new URI("http://localhost:8091/pools")
+			      new URI("http://192.168.56.101:8091/pools")
 			    );
 	    CouchbaseClient couchbaseClient = new CouchbaseClient(
 	    		hosts, "default", "");
+	    TaskManager taskManager = new TaskManager(couchbaseClient);
 		final GsonBuilder gsonBuilder = new GsonBuilder();
 	    gsonBuilder.registerTypeAdapter(TaskDao.class, new TaskDaoAdaptor());
 	    gsonBuilder.setPrettyPrinting();
 	    Gson gson = gsonBuilder.create();
-	    Type type = new TypeToken<HashMap<String,TaskDao>>(){}.getType();
-	    HashMap<String,TaskDao> tasks = gson.fromJson((String) couchbaseClient.get("AllUser"+"Tasks"), type);
+	    Type type = new TypeToken<ArrayList<String>>(){}.getType();
+	    ArrayList<String> tasks = gson.fromJson((String) couchbaseClient.get("AllUser"+"TaskIds"), type);
 	    if(tasks != null){
-		    for(Entry<String, TaskDao> ent : tasks.entrySet()){
-		    	TaskDao td = ent.getValue();
+		    for(String str : tasks){
+//		    	System.out.println(str);
+		    	TaskDao td = taskManager.getTaskById(str);
 		    	System.out.println(td.getWsURL() + " : " + td.getTaskId() + " : " + td.getParentTaskId() + " : " + td.getStatus());
 		    }
 	    }
@@ -41,7 +44,7 @@ public class TestClass {
 //	    Type collectionType = new TypeToken<ArrayList<ArrayList<Double>>>(){}.getType();
 //		ArrayList<ArrayList<Double>> allAccuracies = gson.fromJson((String) couchbaseClient.get("om" + "DTAcc"), collectionType);	
 //		System.out.println(allAccuracies);
-		couchbaseClient.flush();
+//		couchbaseClient.flush();
 	 /*   ArrayList<ArrayList<Integer>> myList = new ArrayList<ArrayList<Integer>>();
 	    ArrayList<Integer> list1 = new ArrayList<Integer>();
 	    ArrayList<Integer> list2 = new ArrayList<Integer>();
@@ -66,6 +69,6 @@ public class TestClass {
 	    	ArrayList<Integer> map = tda.getParentTaskId();
 	    	System.out.println(map.size());
 	    }*/
-		couchbaseClient.shutdown();
+//		couchbaseClient.shutdown();
 	}
 }

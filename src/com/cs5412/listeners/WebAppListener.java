@@ -2,9 +2,7 @@ package com.cs5412.listeners;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -51,13 +49,9 @@ public class WebAppListener implements ServletContextListener {
 		    		hosts, config.getString("COUCH_BUCKET_NAME"), config.getString("COUCH_BUCKET_PWD"));
 		    
 		    /*Code added to add all users task status */
-		    Gson gson;
-		    final GsonBuilder gsonBuilder = new GsonBuilder();
-		    gsonBuilder.registerTypeAdapter(TaskDao.class, new TaskDaoAdaptor());
-		    gsonBuilder.setPrettyPrinting();
-		    gson = gsonBuilder.create();
-		    HashMap<Integer,TaskDao> tasks = new HashMap<Integer, TaskDao>();
-		    couchbaseClient.add("AllUser"+"Tasks", gson.toJson(tasks)).get();
+		    Gson gson = new Gson();
+		    ArrayList<String> taskIds = new ArrayList<String>();
+		    couchbaseClient.add("AllUser"+"TaskIds", gson.toJson(taskIds)).get();
 		    /*End of Code added*/
 		    
 		  	application.setAttribute("couchbaseClient", couchbaseClient);	

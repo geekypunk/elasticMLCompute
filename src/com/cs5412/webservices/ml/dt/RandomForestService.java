@@ -39,7 +39,7 @@ import com.google.gson.reflect.TypeToken;
 
 @Path("/dTree")
 public class RandomForestService {
-	static final Logger LOG = LoggerFactory.getLogger(FileUploadServlet.class);
+	static final Logger LOG = LoggerFactory.getLogger(RandomForestService.class);
 	public static int [] choplist = {2,3,5,10,50,80};
 	
 	@Context ServletContext context;
@@ -246,12 +246,12 @@ public class RandomForestService {
 			)throws Exception{
 		
 		  String tId = taskId;
-		  TaskDao task = taskManager.getTaskById(tId, username);
+		  TaskDao task = taskManager.getTaskById(tId);
 		  task.setHostAddress(Utils.getIP());
 		  taskManager.setTaskStatus(task, TaskStatus.RUNNING);
 		  
 		  String mTid = masterTaskId;
-		  TaskDao masterTask = taskManager.getTaskById(mTid, username);
+		  TaskDao masterTask = taskManager.getTaskById(mTid);
 		  
 	      JSONArray result = new JSONArray();
 	      try{
@@ -314,7 +314,7 @@ public class RandomForestService {
 			)throws Exception{
 		
 		String tId = taskId;
-		TaskDao task = taskManager.getTaskById(tId, username);
+		TaskDao task = taskManager.getTaskById(tId);
 		task.setHostAddress(Utils.getIP());
 		taskManager.setTaskStatus(task, TaskStatus.RUNNING);
 		try{
@@ -329,7 +329,7 @@ public class RandomForestService {
 			taskManager.setTaskStatus(task, TaskStatus.SUCCESS);
 		}catch(Exception e){
 			taskManager.setTaskStatus(task, TaskStatus.FAILURE);
-			LOG.debug(e.getMessage());
+			LOG.debug("Error: " + e);
 		}
 		return Response.status(200).entity("Hello World1").build();
 	}
@@ -344,7 +344,7 @@ public class RandomForestService {
 			)throws Exception{
 		
 		String tId = taskId;
-		TaskDao task = taskManager.getTaskById(tId, username);
+		TaskDao task = taskManager.getTaskById(tId);
 		task.setHostAddress(Utils.getIP());
 		taskManager.setTaskStatus(task, TaskStatus.RUNNING);
 		try{
@@ -383,7 +383,7 @@ public class RandomForestService {
 			)throws Exception{
 		
 		String tId = taskId;
-		TaskDao task = taskManager.getTaskById(tId, username);
+		TaskDao task = taskManager.getTaskById(tId);
 		task.setHostAddress(Utils.getIP());
 		taskManager.setTaskStatus(task, TaskStatus.RUNNING);
 		try{
@@ -424,7 +424,7 @@ public class RandomForestService {
 			@Context ServletContext context
 			)throws Exception{	
 		String tId = taskId;
-		TaskDao task = taskManager.getTaskById(tId, username);
+		TaskDao task = taskManager.getTaskById(tId);
 		task.setHostAddress(Utils.getIP());
 		taskManager.setTaskStatus(task, TaskStatus.RUNNING);
 		try{

@@ -271,12 +271,12 @@ public class SVMService{
 			)throws Exception{
 		
 		  String tId = taskId;
-		  TaskDao task = taskManager.getTaskById(tId, username);
+		  TaskDao task = taskManager.getTaskById(tId);
 		  task.setHostAddress(Utils.getIP());
 		  taskManager.setTaskStatus(task, TaskStatus.RUNNING);
 		  
 		  String mTid = masterTaskId;
-		  TaskDao masterTask = taskManager.getTaskById(mTid, username);
+		  TaskDao masterTask = taskManager.getTaskById(mTid);
 		  
 	      JSONArray result = new JSONArray();
 	      try{
@@ -337,7 +337,7 @@ public class SVMService{
 			@Context ServletContext context		
 			) throws Exception {
 		String tId = taskId;
-		TaskDao task = taskManager.getTaskById(tId, username);
+		TaskDao task = taskManager.getTaskById(tId);
 		task.setHostAddress(Utils.getIP());
 		taskManager.setTaskStatus(task, TaskStatus.RUNNING);
 		try{
@@ -366,7 +366,7 @@ public class SVMService{
 			@PathParam("fileNum") int fileNum,
 			@Context ServletContext context) throws Exception {
 		String tId = taskId;
-		TaskDao task = taskManager.getTaskById(tId, username);
+		TaskDao task = taskManager.getTaskById(tId);
 		task.setHostAddress(Utils.getIP());
 		taskManager.setTaskStatus(task, TaskStatus.RUNNING);
 		try{
@@ -393,7 +393,7 @@ public class SVMService{
 			@Context ServletContext context
 			)throws Exception{
 		String tId = taskId;
-		TaskDao task = taskManager.getTaskById(tId, username);
+		TaskDao task = taskManager.getTaskById(tId);
 		task.setHostAddress(Utils.getIP());
 		taskManager.setTaskStatus(task, TaskStatus.RUNNING);
 		try{
@@ -434,7 +434,7 @@ public class SVMService{
 			@Context ServletContext context
 			)throws Exception{
 		String tId = taskId;
-		TaskDao task = taskManager.getTaskById(tId, username);
+		TaskDao task = taskManager.getTaskById(tId);
 		task.setHostAddress(Utils.getIP());
 		taskManager.setTaskStatus(task, TaskStatus.RUNNING);
 		try{

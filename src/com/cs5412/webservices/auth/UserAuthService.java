@@ -63,7 +63,7 @@ public class UserAuthService {
 		params.put("password", password);
 		userManager.createUser(params);
 		userManager.createHDFSNamespace(fs,username);
-		userManager.createEmptyTaskList(username);
+//		userManager.createEmptyTaskList(username);
 		//Create session and login the user
 		HttpSession session = request.getSession();
 	    session.setAttribute("user", username);
