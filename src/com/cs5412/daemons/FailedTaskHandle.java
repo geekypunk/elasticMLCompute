@@ -4,8 +4,6 @@ import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map.Entry;
 import java.util.TimerTask;
 
 import javax.servlet.ServletContext;
@@ -59,6 +57,7 @@ public class FailedTaskHandle extends TimerTask{
 		    long taskCASValue = 0;
 		    CASValue<Object> taskCASObj = null;
 		    String taskCASJson = null;
+		    boolean foundFailed = false;
 		    if(tasks != null && tasks.size()!=0){
 			    for(String taskId : tasks){
 		    		taskCASObj = couchbaseClient.gets(taskId); 
@@ -66,6 +65,7 @@ public class FailedTaskHandle extends TimerTask{
 		    		taskCASJson = (String)taskCASObj.getValue();
 		    		repairTask = gson.fromJson(taskCASJson,TaskDao.class);
 			    	if(repairTask.getStatus()== TaskStatus.FAILURE){
+			    		foundFailed = true;
 			    		repairTask.setHostAddress("dummy");
 			    		//Check if someone already changed this task's status
 				    	if(couchbaseClient.gets(taskId).getCas() ==taskCASValue){
@@ -88,14 +88,12 @@ public class FailedTaskHandle extends TimerTask{
 				    		//Someone already picked up this failed task..move on
 				    		continue;
 				    	} 		    		
-			    	}else{
-			    		LOG.debug("No failed tasks");
 			    	}
 			    }
 		    }
-		    else{
+		    if (!foundFailed){
 		    	
-		      	LOG.debug("No tasks");
+		      	LOG.debug("No Failed tasks");
 		    }
 	    }catch(Exception e){
 	    	LOG.debug("Error",e.getCause());
