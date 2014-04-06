@@ -193,7 +193,7 @@ public class SVMService{
 		        final HttpGet reqURL = new HttpGet(loadBalancerAddress + wsURL2s[k]);
 		        future = httpclient.execute(reqURL, null);				
 		        k++;
-		        future.get();
+		       // future.get();
 			}
 		}
         HttpResponse response1 = future.get();

@@ -25,9 +25,9 @@ public class TaskManager implements ITaskManager{
 	public void registerTask(TaskDao task) throws InterruptedException, ExecutionException {
 		couchbaseClient.set(task.getTaskId(), gson.toJson(task)).get();
 		Type type = new TypeToken<ArrayList<String>>(){}.getType();
-		ArrayList<String> taskIds = gson.fromJson((String) couchbaseClient.get("AllUser"+"TaskIds"), type);
+		ArrayList<String> taskIds = gson.fromJson((String) couchbaseClient.get("AllUserTaskIds"), type);
 		taskIds.add(task.getTaskId());
-		couchbaseClient.set("AllUser"+"TaskIds", gson.toJson(taskIds)).get();
+		couchbaseClient.set("AllUserTaskIds", gson.toJson(taskIds)).get();
 	}
 	
 	@Override
@@ -49,7 +49,7 @@ public class TaskManager implements ITaskManager{
 	public List<TaskDao> getAllTasksForUser(String username){
 		List<TaskDao> returnList = new ArrayList<TaskDao>();
 		Type type = new TypeToken<ArrayList<String>>(){}.getType();
-		ArrayList<String> taskIds = gson.fromJson((String) couchbaseClient.get("AllUser"+"TaskIds"), type);
+		ArrayList<String> taskIds = gson.fromJson((String) couchbaseClient.get("AllUserTaskIds"), type);
 		for(String td : taskIds){
 			TaskDao task = getTaskById(td);
 			if(task.getUserId().equals(username)) returnList.add(task);
@@ -98,6 +98,10 @@ public class TaskManager implements ITaskManager{
 	
 	@Override
 	public void removeTaskById(String taskId)throws InterruptedException, ExecutionException {
+		Type type = new TypeToken<ArrayList<String>>(){}.getType();
+		ArrayList<String> taskIds = gson.fromJson((String) couchbaseClient.get("AllUserTaskIds"), type);
+		taskIds.remove(taskId);
+		couchbaseClient.set("AllUserTaskIds", gson.toJson(taskIds)).get();
 		couchbaseClient.delete(taskId);
 	}
 }

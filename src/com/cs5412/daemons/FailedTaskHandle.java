@@ -96,7 +96,7 @@ public class FailedTaskHandle extends TimerTask{
 		      	LOG.debug("No Failed tasks");
 		    }
 	    }catch(Exception e){
-	    	LOG.debug("Error",e.getCause());
+	    	LOG.debug("Error",e);
 	    }
 	}
 }

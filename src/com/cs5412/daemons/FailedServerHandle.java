@@ -86,14 +86,14 @@ public class FailedServerHandle extends TimerTask{
 		    	        		taskManager.setTaskStatus(td, TaskStatus.FAILURE);
 		    	        	}
 		    	        }
-		    		}else if(td.getStatus() == TaskStatus.SUCCESS){
+		    		}/*else if(td.getStatus() == TaskStatus.SUCCESS){
 		    			taskManager.removeTaskById(td.getTaskId());
-		    		}
+		    		}*/
 		    	}
 		    	LOG.debug("Finished polling all the servers");
 		    }
 	    }catch(Exception e){
-	    	LOG.debug("Error",e.getCause());
+	    	LOG.debug("Error",e);
 	    }
 	}
 }
