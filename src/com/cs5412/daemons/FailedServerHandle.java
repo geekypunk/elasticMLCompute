@@ -82,7 +82,8 @@ public class FailedServerHandle extends TimerTask{
 		    	        		conn.connect();
 		    	        	}catch(Exception e1){
 		    	        		
-		    	        		System.out.println("Server: " + hostAddr + " down");
+		    	        		LOG.debug("Server: " + hostAddr + " down");
+		    	        		LOG.debug(td.getWsURL());
 		    	        		taskManager.setTaskStatus(td, TaskStatus.FAILURE);
 		    	        	}
 		    	        }
