@@ -29,4 +29,5 @@ public interface IFileSystem {
 	List<LocatedFileStatus> getFilesInPath(Path path) throws IOException;
 	FSDataOutputStream createHDFSFile(String filePath, boolean overWrite)
 			throws IOException;
+	public boolean isPathPresent(String filePath) throws IllegalArgumentException, IOException;
 }

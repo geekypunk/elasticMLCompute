@@ -128,7 +128,7 @@ public class UserAuthService {
             session.invalidate();
         }
         //no encoding because we have invalidated the session
-        response.sendRedirect("login.jsp");
+        response.sendRedirect("/login.jsp");
 	
 	}
 	

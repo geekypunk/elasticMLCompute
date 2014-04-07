@@ -170,11 +170,11 @@ public class FileUploadServlet extends HttpServlet {
         } catch (FileSizeLimitExceededException e) {
             request.setAttribute("message",
                     "There was an error: " + e.getMessage());
-            LOG.error("Error",e.getCause());
+            LOG.debug("Error",e);
         }catch(Exception ex){
         	request.setAttribute("message",
                     "There was an error: " + ex.getMessage());
-            LOG.error("Error",ex.getCause());
+        	LOG.debug("Error",ex);
         }
         finally{
         	writer.write(result.toString());
@@ -314,7 +314,7 @@ public class FileUploadServlet extends HttpServlet {
 		}
 		
 		}catch(Exception e){
-			e.printStackTrace();
+			LOG.debug("Error",e);
 		}finally{
 			
 		}

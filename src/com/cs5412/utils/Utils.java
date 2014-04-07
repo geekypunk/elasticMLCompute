@@ -47,4 +47,9 @@ public class Utils {
 		System.out.println(Utils.getIP());
 	}
 	
+	public static void sendHTTPAsyncReqs(){
+		
+		
+	}
+	
 }

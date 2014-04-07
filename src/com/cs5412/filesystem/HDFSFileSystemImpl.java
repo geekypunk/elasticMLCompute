@@ -173,6 +173,12 @@ public class HDFSFileSystemImpl implements IFileSystem{
 		return filesList;
 	}
 
+	@Override
+	public boolean isPathPresent(String filePath) throws IllegalArgumentException, IOException{
+		
+		return hdfs.exists(new Path(filePath));
+		
+	}
 	
 
 }

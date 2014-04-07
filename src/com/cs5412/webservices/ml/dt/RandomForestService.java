@@ -2,24 +2,34 @@ package com.cs5412.webservices.ml.dt;
 
 import java.io.BufferedWriter;
 import java.lang.reflect.Type;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.DecimalFormat;
-import java.util.*;
-import java.util.concurrent.Future;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
-import javax.servlet.http.*;
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.LocatedFileStatus;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
-import org.apache.http.impl.nio.client.HttpAsyncClients;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,12 +38,12 @@ import org.slf4j.LoggerFactory;
 
 import com.couchbase.client.CouchbaseClient;
 import com.cs5412.filesystem.IFileSystem;
+import com.cs5412.http.AsyncClientHttp;
 import com.cs5412.taskmanager.TaskDao;
 import com.cs5412.taskmanager.TaskManager;
 import com.cs5412.taskmanager.TaskStatus;
 import com.cs5412.taskmanager.TaskType;
 import com.cs5412.utils.Utils;
-import com.cs5412.webservices.fileupload.FileUploadServlet;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -70,150 +80,153 @@ public class RandomForestService {
 			@Context HttpServletResponse response
 			) throws Exception{
 		
-		
-		LOG.debug("Using "+trainingDataset+" dataset for Decision Tree");
-		HttpSession session = request.getSession(false);
-		String username = (String) session.getAttribute("user");
-		
-		ArrayList<ArrayList<Double>> accList = new ArrayList<ArrayList<Double>>();
-		String json = gson.toJson(accList);
-		couchbaseClient.set(username + "DTAcc", json).get();
-		
-		TaskManager taskManager = new TaskManager((CouchbaseClient)context.getAttribute("couchbaseClient"));
-		
-        String wsURL = "/ml/dTree/runDistributedService";
-        TaskDao dtTask = new TaskDao(username, "Decision Tree execution for "+trainingDataset+"/"+testDataset, "complete", TaskStatus.RUNNING, false, wsURL);
-    	dtTask.setTaskType(TaskType.ALGORITHM_EXEC.toString());
-    	dtTask.setTaskDescription("Decision Tree algorithm");
-    	dtTask.setParent(true);
-    	taskManager.registerTask(dtTask);
-    	
-    	ArrayList<String> parentIds = new ArrayList<String>();
-    	String wsURL1 = "/ml/dTree/beginService" + "/" + username + "/" + trainingDataset;
-    	TaskDao dtTask1 = new TaskDao(username, "serviceBegin", "dtSerBegin", TaskStatus.INITIALIZED, false, wsURL1);
-    	wsURL1 += "/" + dtTask1.getTaskId();
-    	dtTask1.setWsURL(wsURL1);
-    	dtTask1.setTaskType(TaskType.ALGORITHM_EXEC.toString());
-    	dtTask1.setTaskDescription("Begin the decision tree task");
-    	dtTask1.setSeen(true);
-    	dtTask1.setParentTaskId(parentIds);
-    	taskManager.registerTask(dtTask1);
-    	
-    	parentIds = new ArrayList<String>();
-    	parentIds.add(dtTask1.getTaskId());
-    	
-    	ArrayList<String> mParentIds = new ArrayList<String>();
-    	String[] wsURL2s = new String[5];
-    	for(int i=1;i<=5;i++){
-    		String wsURL2 = "/ml/dTree/generateEachService" + "/" + username + "/" + i;
-    		dtTask1 = new TaskDao(username, "CrossValidation " + i, "CV " + i, TaskStatus.INITIALIZED, false, wsURL2);
-        	wsURL2 += "/" + dtTask1.getTaskId();
-        	dtTask1.setWsURL(wsURL2);
-        	wsURL2s[i-1] = wsURL2;
-        	dtTask1.setTaskType(TaskType.ALGORITHM_EXEC.toString());
-        	dtTask1.setTaskDescription("Begin the cross validation task " + i);
-        	dtTask1.setSeen(true);
-        	dtTask1.setParentTaskId(parentIds);
-        	mParentIds.add(dtTask1.getTaskId());
-        	taskManager.registerTask(dtTask1);
-    	}
-    	
-    	
-    	String wsURL3 = "/ml/dTree/calcBestService" + "/" + username;
-    	dtTask1 = new TaskDao(username, "calcBestHeight", "calcBestHeight", TaskStatus.INITIALIZED, false, wsURL3);
-    	wsURL3 += "/" + dtTask1.getTaskId();
-    	dtTask1.setWsURL(wsURL3);
-    	dtTask1.setTaskType(TaskType.ALGORITHM_EXEC.toString());
-    	dtTask1.setTaskDescription("Begin the Calucation of best height task");
-    	dtTask1.setSeen(true);
-    	dtTask1.setParentTaskId(mParentIds);
-    	taskManager.registerTask(dtTask1);
-    	
-    	parentIds = new ArrayList<String>();
-    	parentIds.add(dtTask1.getTaskId());
-    	
-    	String wsURL4 = "/ml/dTree/AccuracyService" + "/" + username + "/" + trainingDataset + "/" + testDataset;
-    	dtTask1 = new TaskDao(username, "calcAcc", "calcAcc", TaskStatus.INITIALIZED, false, wsURL4);
-    	wsURL4 += "/" + dtTask1.getTaskId();
-    	dtTask1.setWsURL(wsURL4);
-    	dtTask1.setTaskType(TaskType.ALGORITHM_EXEC.toString());
-    	dtTask1.setTaskDescription("Begin the calculation of validation accuracy task");
-    	dtTask1.setSeen(true);
-    	dtTask1.setParentTaskId(parentIds);
-    	taskManager.registerTask(dtTask1);
-    	
-    	parentIds = new ArrayList<String>();
-    	parentIds.add(dtTask1.getTaskId());
-    	
-    	String wsURL5 = "/ml/dTree/generateReport" + "/" + username + "/" + trainingDataset + "/" + testDataset;
-    	dtTask1 = new TaskDao(username, "GenerateReport", "GenerateReport", TaskStatus.INITIALIZED, false, wsURL5);
-    	wsURL5 += "/" + dtTask1.getTaskId() + "/" + dtTask.getTaskId();
-    	dtTask1.setWsURL(wsURL5);
-    	dtTask1.setTaskType(TaskType.ALGORITHM_EXEC.toString());
-    	dtTask1.setTaskDescription("Begin the GenerateReport task");
-    	dtTask1.setSeen(true);
-    	dtTask1.setParentTaskId(parentIds);
-    	taskManager.registerTask(dtTask1);
-    	
-    	String taskUrl = loadBalancerAddress + wsURL1;
-		URL url = new URL(taskUrl);
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setReadTimeout(1000000);
-        conn.setConnectTimeout(1000000);
-        conn.setRequestMethod("GET");
-        conn.setUseCaches(false);
-        conn.setDoInput(true);
-        conn.setDoOutput(true);
-        conn.connect();
-        LOG.debug(conn.getResponseCode() + "");
-        
-        CloseableHttpAsyncClient httpclient = HttpAsyncClients.createDefault();
-        httpclient.start();
-        Future<HttpResponse> future = null;
-        for(int i=1;i<=5;i++){
-        	final HttpGet reqUrl = new HttpGet(loadBalancerAddress + wsURL2s[i-1]);
-        	future = httpclient.execute(reqUrl, null);
-        }
-        HttpResponse response1 = future.get();
-      
-        taskUrl = loadBalancerAddress + wsURL3;
-        url = new URL(taskUrl);
-        conn = (HttpURLConnection) url.openConnection();
-        conn.setReadTimeout(1000000);
-        conn.setConnectTimeout(1000000);
-        conn.setRequestMethod("GET");
-        conn.setUseCaches(false);
-        conn.setDoInput(true);
-        conn.setDoOutput(true);
-        conn.connect();
-        LOG.debug(conn.getResponseCode() + "");
-
-
-        taskUrl = loadBalancerAddress + wsURL4;
-        url = new URL(taskUrl);
-        conn = (HttpURLConnection) url.openConnection();
-        conn.setReadTimeout(1000000);
-        conn.setConnectTimeout(1000000);
-        conn.setRequestMethod("GET");
-        conn.setUseCaches(false);
-        conn.setDoInput(true);
-        conn.setDoOutput(true);
-        conn.connect();
-        LOG.debug(conn.getResponseCode() + "");
-
-        taskUrl = loadBalancerAddress + wsURL5;
-        url = new URL(taskUrl);
-        conn = (HttpURLConnection) url.openConnection();
-        conn.setReadTimeout(1000000);
-        conn.setConnectTimeout(1000000);
-        conn.setRequestMethod("GET");
-        conn.setUseCaches(false);
-        conn.setDoInput(true);
-        conn.setDoOutput(true);
-        conn.connect();
-        LOG.debug(conn.getResponseCode() + "");
-        
-        return Response.status(200).entity("HelloDT").build();
+		try{
+			LOG.debug("Using "+trainingDataset+" dataset for Decision Tree");
+			HttpSession session = request.getSession(false);
+			String username = (String) session.getAttribute("user");
+			
+			ArrayList<ArrayList<Double>> accList = new ArrayList<ArrayList<Double>>();
+			String json = gson.toJson(accList);
+			couchbaseClient.set(username + "DTAcc", json).get();
+			
+			TaskManager taskManager = new TaskManager((CouchbaseClient)context.getAttribute("couchbaseClient"));
+			
+	        String wsURL = "/ml/dTree/runDistributedService";
+	        TaskDao dtTask = new TaskDao(username, "Decision Tree execution for "+trainingDataset+"/"+testDataset, "complete", TaskStatus.RUNNING, false, wsURL);
+	    	dtTask.setTaskType(TaskType.ALGORITHM_EXEC.toString());
+	    	dtTask.setTaskDescription("Decision Tree algorithm");
+	    	dtTask.setParent(true);
+	    	taskManager.registerTask(dtTask);
+	    	
+	    	ArrayList<String> parentIds = new ArrayList<String>();
+	    	String wsURL1 = "/ml/dTree/beginService" + "/" + username + "/" + trainingDataset;
+	    	TaskDao dtTask1 = new TaskDao(username, "serviceBegin", "dtSerBegin", TaskStatus.INITIALIZED, false, wsURL1);
+	    	wsURL1 += "/" + dtTask1.getTaskId();
+	    	dtTask1.setWsURL(wsURL1);
+	    	dtTask1.setTaskType(TaskType.ALGORITHM_EXEC.toString());
+	    	dtTask1.setTaskDescription("Begin the decision tree task");
+	    	dtTask1.setSeen(true);
+	    	dtTask1.setParentTaskId(parentIds);
+	    	taskManager.registerTask(dtTask1);
+	    	
+	    	parentIds = new ArrayList<String>();
+	    	parentIds.add(dtTask1.getTaskId());
+	    	
+	    	ArrayList<String> mParentIds = new ArrayList<String>();
+	    	String[] wsURL2s = new String[5];
+	    	for(int i=1;i<=5;i++){
+	    		String wsURL2 = "/ml/dTree/generateEachService" + "/" + username + "/" + i;
+	    		dtTask1 = new TaskDao(username, "CrossValidation " + i, "CV " + i, TaskStatus.INITIALIZED, false, wsURL2);
+	        	wsURL2 += "/" + dtTask1.getTaskId();
+	        	dtTask1.setWsURL(wsURL2);
+	        	wsURL2s[i-1] = wsURL2;
+	        	dtTask1.setTaskType(TaskType.ALGORITHM_EXEC.toString());
+	        	dtTask1.setTaskDescription("Begin the cross validation task " + i);
+	        	dtTask1.setSeen(true);
+	        	dtTask1.setParentTaskId(parentIds);
+	        	mParentIds.add(dtTask1.getTaskId());
+	        	taskManager.registerTask(dtTask1);
+	    	}
+	    	
+	    	
+	    	String wsURL3 = "/ml/dTree/calcBestService" + "/" + username;
+	    	dtTask1 = new TaskDao(username, "calcBestHeight", "calcBestHeight", TaskStatus.INITIALIZED, false, wsURL3);
+	    	wsURL3 += "/" + dtTask1.getTaskId();
+	    	dtTask1.setWsURL(wsURL3);
+	    	dtTask1.setTaskType(TaskType.ALGORITHM_EXEC.toString());
+	    	dtTask1.setTaskDescription("Begin the Calucation of best height task");
+	    	dtTask1.setSeen(true);
+	    	dtTask1.setParentTaskId(mParentIds);
+	    	taskManager.registerTask(dtTask1);
+	    	
+	    	parentIds = new ArrayList<String>();
+	    	parentIds.add(dtTask1.getTaskId());
+	    	
+	    	String wsURL4 = "/ml/dTree/AccuracyService" + "/" + username + "/" + trainingDataset + "/" + testDataset;
+	    	dtTask1 = new TaskDao(username, "calcAcc", "calcAcc", TaskStatus.INITIALIZED, false, wsURL4);
+	    	wsURL4 += "/" + dtTask1.getTaskId();
+	    	dtTask1.setWsURL(wsURL4);
+	    	dtTask1.setTaskType(TaskType.ALGORITHM_EXEC.toString());
+	    	dtTask1.setTaskDescription("Begin the calculation of validation accuracy task");
+	    	dtTask1.setSeen(true);
+	    	dtTask1.setParentTaskId(parentIds);
+	    	taskManager.registerTask(dtTask1);
+	    	
+	    	parentIds = new ArrayList<String>();
+	    	parentIds.add(dtTask1.getTaskId());
+	    	
+	    	String wsURL5 = "/ml/dTree/generateReport" + "/" + username + "/" + trainingDataset + "/" + testDataset;
+	    	dtTask1 = new TaskDao(username, "GenerateReport", "GenerateReport", TaskStatus.INITIALIZED, false, wsURL5);
+	    	wsURL5 += "/" + dtTask1.getTaskId() + "/" + dtTask.getTaskId();
+	    	dtTask1.setWsURL(wsURL5);
+	    	dtTask1.setTaskType(TaskType.ALGORITHM_EXEC.toString());
+	    	dtTask1.setTaskDescription("Begin the GenerateReport task");
+	    	dtTask1.setSeen(true);
+	    	dtTask1.setParentTaskId(parentIds);
+	    	taskManager.registerTask(dtTask1);
+	    	
+	    	String taskUrl = loadBalancerAddress + wsURL1;
+			URL url = new URL(taskUrl);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	        conn.setReadTimeout(1000000);
+	        conn.setConnectTimeout(1000000);
+	        conn.setRequestMethod("GET");
+	        conn.setUseCaches(false);
+	        conn.setDoInput(true);
+	        conn.setDoOutput(true);
+	        conn.connect();
+	        LOG.debug(conn.getResponseCode() + "");
+	        
+	      //Issue Async/Non blocking HTTP calls
+	        AsyncClientHttp client = new AsyncClientHttp();
+	        client.setRequests(loadBalancerAddress,wsURL2s);
+	        client.execute();
+	        client.blockOnLastReq();
+	        client.close();
+	   	   
+	        taskUrl = loadBalancerAddress + wsURL3;
+	        url = new URL(taskUrl);
+	        conn = (HttpURLConnection) url.openConnection();
+	        conn.setReadTimeout(1000000);
+	        conn.setConnectTimeout(1000000);
+	        conn.setRequestMethod("GET");
+	        conn.setUseCaches(false);
+	        conn.setDoInput(true);
+	        conn.setDoOutput(true);
+	        conn.connect();
+	        LOG.debug(conn.getResponseCode() + "");
+	
+	     
+	        taskUrl = loadBalancerAddress + wsURL4;
+	        url = new URL(taskUrl);
+	        conn = (HttpURLConnection) url.openConnection();
+	        conn.setReadTimeout(1000000);
+	        conn.setConnectTimeout(1000000);
+	        conn.setRequestMethod("GET");
+	        conn.setUseCaches(false);
+	        conn.setDoInput(true);
+	        conn.setDoOutput(true);
+	        conn.connect();
+	        LOG.debug(conn.getResponseCode() + "");
+	
+	        taskUrl = loadBalancerAddress + wsURL5;
+	        url = new URL(taskUrl);
+	        conn = (HttpURLConnection) url.openConnection();
+	        conn.setReadTimeout(1000000);
+	        conn.setConnectTimeout(1000000);
+	        conn.setRequestMethod("GET");
+	        conn.setUseCaches(false);
+	        conn.setDoInput(true);
+	        conn.setDoOutput(true);
+	        conn.connect();
+	        LOG.debug(conn.getResponseCode() + "");
+	        
+	        return Response.status(200).entity("HelloDT").build();
+		}
+		catch(Exception e){
+			LOG.debug("Error",e);
+			return Response.status(500).entity("Error").build();
+		}
 	}
 	
 	@Path("/getReport/{reportId}")
@@ -291,14 +304,24 @@ public class RandomForestService {
 	      	result.put(dataPoints);
 	      	IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
 	      	String filePath = fs.getUserPath(username)+Utils.linuxSeparator+"reports"+Utils.linuxSeparator+ trainingDataset+"-"+testingDataset+IFileSystem.CHART_DATA_FORMAT;
-	      	BufferedWriter bw = fs.createFileToWrite(filePath,true);
-	      	bw.write(result.toString());
-	      	bw.close();
+	      	if(fs.isPathPresent(filePath)){
+	      		int version = Integer.parseInt(filePath.split("_")[1]);
+	      		version++;
+	      		BufferedWriter bw = fs.createFileToWrite(filePath+version,true);
+		      	bw.write(result.toString());
+		      	bw.close();
+	      		
+	      	}else{
+	      		BufferedWriter bw = fs.createFileToWrite(filePath+"_0",true);
+		      	bw.write(result.toString());
+		      	bw.close();
+	      	}
+	      	
 	      	taskManager.setTaskStatus(task, TaskStatus.SUCCESS);
 	      	taskManager.setTaskStatus(masterTask, TaskStatus.SUCCESS);
 	      }catch(Exception e){
 	    	  taskManager.setTaskStatus(task, TaskStatus.FAILURE);
-	      	LOG.debug("Error: " + e);
+	    	  LOG.debug("Error",e);
 	      }
 		
 		return Response.status(200).entity("Hello World!").build();		
@@ -329,7 +352,7 @@ public class RandomForestService {
 			taskManager.setTaskStatus(task, TaskStatus.SUCCESS);
 		}catch(Exception e){
 			taskManager.setTaskStatus(task, TaskStatus.FAILURE);
-			LOG.debug("Error: " + e);
+			LOG.debug("Error",e);
 		}
 		return Response.status(200).entity("Hello World1").build();
 	}
@@ -368,7 +391,7 @@ public class RandomForestService {
 			taskManager.setTaskStatus(task, TaskStatus.SUCCESS);
 		}catch(Exception e){
 			taskManager.setTaskStatus(task, TaskStatus.FAILURE);
-			LOG.debug(e.getMessage());
+			LOG.debug("Error",e);
 		}
 		
 		return Response.status(200).entity("Hello World!").build();
@@ -408,7 +431,7 @@ public class RandomForestService {
 			taskManager.setTaskStatus(task, TaskStatus.SUCCESS);
 		}catch(Exception e){
 			taskManager.setTaskStatus(task, TaskStatus.FAILURE);
-			LOG.debug(e.getMessage());
+			LOG.debug("Error",e);
 		}
 		
 		return Response.status(200).entity("Hello World!").build();
@@ -444,7 +467,7 @@ public class RandomForestService {
 			taskManager.setTaskStatus(task, TaskStatus.SUCCESS);
 		}catch(Exception e){
 			taskManager.setTaskStatus(task, TaskStatus.FAILURE);
-			LOG.debug(e.getMessage());
+			LOG.debug("Error",e);
 		}
 		return Response.status(200).entity("Hello World").build();
 	}
@@ -460,6 +483,7 @@ public class RandomForestService {
 		IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
 		HttpSession session = request.getSession(false);
 		String username = (String) session.getAttribute("user");
+		@SuppressWarnings("unchecked")
 		List<LocatedFileStatus> files = (List<LocatedFileStatus>) fs.getUploadedTrainingDatasets(username);
 		JSONArray filesJson = new JSONArray();
 		JSONObject jsonFile;
@@ -488,6 +512,7 @@ public class RandomForestService {
 		IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
 		HttpSession session = request.getSession(false);
 		String username = (String) session.getAttribute("user");
+		@SuppressWarnings("unchecked")
 		List<LocatedFileStatus> files = (List<LocatedFileStatus>) fs.getUploadedTestDatasets(username);
 		JSONArray filesJson = new JSONArray();
 		JSONObject jsonFile;

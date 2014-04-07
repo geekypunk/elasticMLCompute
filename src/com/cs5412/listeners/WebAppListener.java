@@ -51,7 +51,7 @@ public class WebAppListener implements ServletContextListener {
 		    /*Code added to add all users task status */
 		    Gson gson = new Gson();
 		    ArrayList<String> taskIds = new ArrayList<String>();
-		    couchbaseClient.add("AllUser"+"TaskIds", gson.toJson(taskIds)).get();
+		    couchbaseClient.set("AllUserTaskIds", gson.toJson(taskIds));
 		    /*End of Code added*/
 		    
 		  	application.setAttribute("couchbaseClient", couchbaseClient);	
