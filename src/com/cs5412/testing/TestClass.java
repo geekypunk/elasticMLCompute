@@ -22,7 +22,7 @@ public class TestClass {
 		//PropertiesConfiguration config = new PropertiesConfiguration("../WEB-INF/config.properties");
 	
 		List<URI> hosts = Arrays.asList(
-			      new URI("http://localhost:8091/pools")
+			      new URI("http://128.84.216.63:8091/pools")
 			    );
 	    CouchbaseClient couchbaseClient = new CouchbaseClient(
 	    		hosts, "default", "");
@@ -69,6 +69,6 @@ public class TestClass {
 	    	ArrayList<Integer> map = tda.getParentTaskId();
 	    	System.out.println(map.size());
 	    }*/
-		couchbaseClient.shutdown();
+//		couchbaseClient.shutdown();
 	}
 }

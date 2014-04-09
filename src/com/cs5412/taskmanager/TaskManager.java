@@ -5,24 +5,39 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.couchbase.client.CouchbaseClient;
+import com.cs5412.utils.Utils;
+import com.cs5412.webservices.ml.dt.RandomForestService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 public class TaskManager implements ITaskManager{
+	static final Logger LOG = LoggerFactory.getLogger(TaskManager.class);
 	private CouchbaseClient couchbaseClient;
-	final private Gson gson;
+	private Gson gson;
+	private String hostVersion = null;
 	public TaskManager(CouchbaseClient client){
-		couchbaseClient = client;
-		final GsonBuilder gsonBuilder = new GsonBuilder();
-	    gsonBuilder.registerTypeAdapter(TaskDao.class, new TaskDaoAdaptor());
-	    gsonBuilder.setPrettyPrinting();
-	    gson = gsonBuilder.create();
+		hostVersion = null;
+		gson = null;
+		try{
+			couchbaseClient = client;
+			final GsonBuilder gsonBuilder = new GsonBuilder();
+		    gsonBuilder.registerTypeAdapter(TaskDao.class, new TaskDaoAdaptor());
+		    gsonBuilder.setPrettyPrinting();
+		    gson = gsonBuilder.create();
+		    hostVersion = (String) couchbaseClient.get(Utils.getIP());
+		}catch(Exception e){
+			LOG.error("Error: ", e);
+		}
 	}
 	
 	@Override
 	public void registerTask(TaskDao task) throws InterruptedException, ExecutionException {
+		task.setHostVersion(hostVersion);
 		couchbaseClient.set(task.getTaskId(), gson.toJson(task)).get();
 		Type type = new TypeToken<ArrayList<String>>(){}.getType();
 		ArrayList<String> taskIds = gson.fromJson((String) couchbaseClient.get("AllUserTaskIds"), type);
@@ -32,6 +47,7 @@ public class TaskManager implements ITaskManager{
 	
 	@Override
 	public void setTaskStatus(TaskDao task,TaskStatus status) throws InterruptedException, ExecutionException {
+		task.setHostVersion(hostVersion);
 		Type type = new TypeToken<TaskDao>(){}.getType();
 		TaskDao _task = gson.fromJson((String) couchbaseClient.get(task.getTaskId()), type);
 		_task.setStatus(status);

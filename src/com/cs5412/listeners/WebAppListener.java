@@ -18,6 +18,7 @@ import com.cs5412.filesystem.HDFSFileSystemImpl;
 import com.cs5412.filesystem.IFileSystem;
 import com.cs5412.taskmanager.TaskDao;
 import com.cs5412.taskmanager.TaskDaoAdaptor;
+import com.cs5412.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -51,7 +52,15 @@ public class WebAppListener implements ServletContextListener {
 		    /*Code added to add all users task status */
 		    Gson gson = new Gson();
 		    ArrayList<String> taskIds = new ArrayList<String>();
-		    couchbaseClient.set("AllUserTaskIds", gson.toJson(taskIds));
+		    couchbaseClient.add("AllUserTaskIds", gson.toJson(taskIds));
+		    /*End of Code added*/
+		    
+		    /*Code added to add version number of the server to keep track of the number of restarts*/
+		    Integer versionNumber = -1;
+		    couchbaseClient.add(Utils.getIP(), versionNumber);
+		    versionNumber = (Integer) couchbaseClient.get(Utils.getIP());
+		    versionNumber++;
+		    couchbaseClient.set(Utils.getIP(), versionNumber);
 		    /*End of Code added*/
 		    
 		  	application.setAttribute("couchbaseClient", couchbaseClient);	

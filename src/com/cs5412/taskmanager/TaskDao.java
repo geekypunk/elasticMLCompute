@@ -12,6 +12,7 @@ public class TaskDao {
 	private String taskType;
 	private String reportUrl;
 	private String hostAddress;
+	private String hostVersion;
 	private String wsURL;
 	private TaskStatus status;
 	private boolean isSeen;
@@ -20,6 +21,14 @@ public class TaskDao {
 	private ArrayList<String> parentTaskIds = new ArrayList<String>();
 	//private HttpServletRequest httpRequest
 	List<Integer> subTasks = new ArrayList<Integer>();
+	
+	public String getHostVersion() {
+		return hostVersion;
+	}
+
+	public void setHostVersion(String hostVersion) {
+		this.hostVersion = hostVersion;
+	}
 	
 	public String getHostAddress() {
 		return hostAddress;

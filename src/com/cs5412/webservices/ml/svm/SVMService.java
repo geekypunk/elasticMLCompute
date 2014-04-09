@@ -8,6 +8,7 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
@@ -28,6 +29,10 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.LocatedFileStatus;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,6 +47,7 @@ import com.cs5412.taskmanager.TaskManager;
 import com.cs5412.taskmanager.TaskStatus;
 import com.cs5412.taskmanager.TaskType;
 import com.cs5412.utils.Utils;
+import com.cs5412.webservices.fileupload.FileUploadServlet;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -77,7 +83,6 @@ public class SVMService{
 			@Context HttpServletRequest request,
 			@Context HttpServletResponse response
 			) throws Exception{
-		
 		try{
 			LOG.debug("Using "+trainingDataset+" dataset for SVM");
 			HttpSession session = request.getSession(false);
@@ -90,6 +95,7 @@ public class SVMService{
 			
 	        String wsURL = "/ml/svm/runDistributedService";
 	        TaskDao svmTask = new TaskDao(username, "SVMRun for "+trainingDataset+"/"+testDataset, "complete", TaskStatus.RUNNING, false, wsURL);
+	        
 	    	svmTask.setTaskType(TaskType.ALGORITHM_EXEC.toString());
 	    	svmTask.setTaskDescription("Support Vector Machine algorithm");
 	    	svmTask.setParent(true);
@@ -181,7 +187,7 @@ public class SVMService{
 	        
 	        LOG.debug("Creating Models");
 	        
-	        //Issue Async/Non blocking HTTP calls
+		      //Issue Async/Non blocking HTTP calls
 	        AsyncClientHttp client = new AsyncClientHttp();
 	        client.setRequests(loadBalancerAddress,wsURL2s);
 	        client.execute();
@@ -231,9 +237,10 @@ public class SVMService{
 	        LOG.debug(conn.getResponseCode() + "");
 	        
 	        return Response.status(200).entity("").build();
-		}catch(Exception e){
-			LOG.debug("Error",e);
-			return Response.status(500).entity("").build();
+		}
+        catch (Exception e) {
+        	LOG.debug("Error",e);
+			return Response.status(500).entity("Error").build();
 		}
 	}
 	
@@ -309,23 +316,14 @@ public class SVMService{
 	      	result.put(dataPoints);
 	      	IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
 	      	String filePath = fs.getUserPath(username)+Utils.linuxSeparator+"reports"+Utils.linuxSeparator+ trainingDataset+"-"+testingDataset+IFileSystem.CHART_DATA_FORMAT;
-	      	if(fs.isPathPresent(filePath)){
-	      		int version = Integer.parseInt(filePath.split("_")[1]);
-	      		version++;
-	      		BufferedWriter bw = fs.createFileToWrite(filePath+version,true);
-		      	bw.write(result.toString());
-		      	bw.close();
-	      		
-	      	}else{
-	      		BufferedWriter bw = fs.createFileToWrite(filePath+"_0",true);
-		      	bw.write(result.toString());
-		      	bw.close();
-	      	}
+	      	BufferedWriter bw = fs.createFileToWrite(filePath,true);
+	      	bw.write(result.toString());
+	      	bw.close();
 	      	taskManager.setTaskStatus(task, TaskStatus.SUCCESS);
 	      	taskManager.setTaskStatus(masterTask, TaskStatus.SUCCESS);
 	      }catch(Exception e){
 	    	  taskManager.setTaskStatus(task, TaskStatus.FAILURE);
-	    	  LOG.debug("Error",e);
+	      	LOG.debug("Error: " + e);
 	      }
 		
 		return Response.status(200).entity("Hello World!").build();		
@@ -354,7 +352,7 @@ public class SVMService{
 			taskManager.setTaskStatus(task, TaskStatus.SUCCESS);
 		}catch(Exception e){
 			taskManager.setTaskStatus(task, TaskStatus.FAILURE);
-			LOG.debug("Error",e);
+			LOG.debug(e.getMessage());
 		}
 		return Response.status(200).entity("Hello").build();
 	}
@@ -383,7 +381,7 @@ public class SVMService{
 			taskManager.setTaskStatus(task, TaskStatus.SUCCESS);
 		}catch(Exception e){
 			taskManager.setTaskStatus(task, TaskStatus.FAILURE);
-			LOG.debug("Error",e);
+			LOG.debug(e.getMessage());
 		}
 		return Response.status(200).entity("Hello").build();
 	}
@@ -422,7 +420,7 @@ public class SVMService{
 			taskManager.setTaskStatus(task, TaskStatus.SUCCESS);
 		}catch(Exception e){
 			taskManager.setTaskStatus(task, TaskStatus.FAILURE);
-			LOG.debug("Error",e);
+			LOG.debug(e.getMessage());
 		}
 		return Response.status(200).entity("Hello").build();
 	}
@@ -452,7 +450,7 @@ public class SVMService{
 			taskManager.setTaskStatus(task, TaskStatus.SUCCESS);
 		}catch(Exception e){
 			taskManager.setTaskStatus(task, TaskStatus.FAILURE);
-			LOG.debug("Error",e);
+			LOG.debug(e.getMessage());
 		}
 		return Response.status(200).entity("Hello").build();
 	}
