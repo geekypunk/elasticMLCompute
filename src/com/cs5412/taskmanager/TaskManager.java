@@ -29,7 +29,7 @@ public class TaskManager implements ITaskManager{
 		    gsonBuilder.registerTypeAdapter(TaskDao.class, new TaskDaoAdaptor());
 		    gsonBuilder.setPrettyPrinting();
 		    gson = gsonBuilder.create();
-		    hostVersion = (String) couchbaseClient.get(Utils.getIP());
+		    hostVersion = (Integer) couchbaseClient.get(Utils.getIP()) + "";
 		}catch(Exception e){
 			LOG.error("Error: ", e);
 		}

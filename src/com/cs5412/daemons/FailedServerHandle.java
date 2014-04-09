@@ -77,7 +77,7 @@ public class FailedServerHandle extends TimerTask{
 		    	        conn.setDoOutput(true);
 		    	        try{
 		    	        	conn.connect();
-		    	        	String hostVersion = (String) couchbaseClient.get(hostAddr);
+		    	        	String hostVersion = (Integer) couchbaseClient.get(hostAddr) + "";
 		    	        	if(!td.getHostVersion().equals(hostVersion)){
 		    	        		LOG.debug("Server: " + hostAddr + " was down");
 		    	        		LOG.debug(td.getWsURL());
@@ -86,7 +86,7 @@ public class FailedServerHandle extends TimerTask{
 		    	        }catch(Exception e){
 		    	        	try{
 		    	        		conn.connect();
-			    	        	String hostVersion = (String) couchbaseClient.get(hostAddr);
+			    	        	String hostVersion = (Integer) couchbaseClient.get(hostAddr) + "";
 			    	        	if(!td.getHostVersion().equals(hostVersion)){
 			    	        		LOG.debug("Server: " + hostAddr + " was down");
 			    	        		LOG.debug(td.getWsURL());
