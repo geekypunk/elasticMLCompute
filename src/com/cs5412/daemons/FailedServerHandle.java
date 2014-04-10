@@ -99,9 +99,7 @@ public class FailedServerHandle extends TimerTask{
 		    	        		taskManager.setTaskStatus(td, TaskStatus.FAILURE);
 		    	        	}
 		    	        }
-		    		}/*else if(td.getStatus() == TaskStatus.SUCCESS){
-		    			taskManager.removeTaskById(td.getTaskId());
-		    		}*/
+		    		}
 		    	}
 		    	LOG.debug("Finished polling all the servers");
 		    }
