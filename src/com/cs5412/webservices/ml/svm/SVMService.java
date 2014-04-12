@@ -8,7 +8,6 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Future;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
@@ -29,10 +28,6 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.LocatedFileStatus;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
-import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,7 +42,6 @@ import com.cs5412.taskmanager.TaskManager;
 import com.cs5412.taskmanager.TaskStatus;
 import com.cs5412.taskmanager.TaskType;
 import com.cs5412.utils.Utils;
-import com.cs5412.webservices.fileupload.FileUploadServlet;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
