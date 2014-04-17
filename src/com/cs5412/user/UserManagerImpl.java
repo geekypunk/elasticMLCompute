@@ -1,13 +1,9 @@
 package com.cs5412.user;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-
-import jersey.repackaged.com.google.common.collect.Lists;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +16,10 @@ import com.cs5412.utils.PasswordHash;
 import com.cs5412.utils.Utils;
 import com.google.gson.Gson;
 
+/**
+ * @author kt466
+ *
+ */
 public class UserManagerImpl implements UserManager{
 
 	static final Logger LOG = LoggerFactory.getLogger(WebAppListener.class);

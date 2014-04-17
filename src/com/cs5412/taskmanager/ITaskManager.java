@@ -2,7 +2,10 @@ package com.cs5412.taskmanager;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
+/**
+ * @author kt466
+ *
+ */
 public interface ITaskManager {
 	public void registerTask(TaskDao task) throws InterruptedException, ExecutionException;
 	public TaskDao getTaskById(String id);

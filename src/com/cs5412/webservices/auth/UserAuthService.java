@@ -17,7 +17,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.collections.map.HashedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +25,10 @@ import com.cs5412.filesystem.IFileSystem;
 import com.cs5412.user.UserManager;
 import com.cs5412.user.UserManagerImpl;
 
-
+/**
+ * @author kt466
+ *
+ */
 @Path("/auth")
 public class UserAuthService {
 

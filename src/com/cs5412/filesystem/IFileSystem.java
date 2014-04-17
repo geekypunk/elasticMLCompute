@@ -10,6 +10,10 @@ import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.LocatedFileStatus;
 import org.apache.hadoop.fs.Path;
 
+/**
+ * @author kt466
+ *
+ */
 public interface IFileSystem {
 	static String CSV_FORMAT=".csv";
 	static String CHART_DATA_FORMAT=".chart";

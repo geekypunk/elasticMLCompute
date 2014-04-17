@@ -26,7 +26,8 @@ import com.cs5412.taskmanager.TaskManager;
 import com.cs5412.taskmanager.TaskStatus;
 
 /**
- * Class for viewing and managing tasks
+ * @author kt466
+ * <p>Class for viewing and managing tasks</p>
  */
 @Path("/tasks")
 public class TasksService {

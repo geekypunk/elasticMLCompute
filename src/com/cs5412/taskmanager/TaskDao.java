@@ -1,10 +1,14 @@
 package com.cs5412.taskmanager;
 
-import java.net.Inet4Address;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.cs5412.utils.Utils;
 
+/**
+ * @author kt466
+ *
+ */
 public class TaskDao {
 	private String userId;
 	private String taskName;

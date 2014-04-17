@@ -23,6 +23,11 @@ import org.slf4j.LoggerFactory;
 import com.couchbase.client.CouchbaseClient;
 import com.cs5412.taskmanager.TaskDao;
 import com.cs5412.taskmanager.TaskManager;
+
+/**
+ * @author kt466
+ *
+ */
 @Path("/notifications")
 public class NotificationService {
 	

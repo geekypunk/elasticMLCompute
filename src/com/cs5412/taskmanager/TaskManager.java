@@ -1,8 +1,8 @@
 package com.cs5412.taskmanager;
 
 import java.lang.reflect.Type;
-import java.util.*;
-import java.util.Map.Entry;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
@@ -10,11 +10,14 @@ import org.slf4j.LoggerFactory;
 
 import com.couchbase.client.CouchbaseClient;
 import com.cs5412.utils.Utils;
-import com.cs5412.webservices.ml.dt.RandomForestService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+/**
+ * @author kt466
+ *
+ */
 public class TaskManager implements ITaskManager{
 	static final Logger LOG = LoggerFactory.getLogger(TaskManager.class);
 	private CouchbaseClient couchbaseClient;

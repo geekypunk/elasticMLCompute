@@ -2,8 +2,6 @@ package com.cs5412.taskmanager;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map.Entry;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -12,7 +10,10 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-
+/**
+ * @author kt466
+ *
+ */
 public class TaskDaoAdaptor implements JsonSerializer<TaskDao> {
 
  @Override

@@ -7,7 +7,10 @@ import java.net.SocketException;
 import java.util.Enumeration;
 import java.util.UUID;
 
-
+/**
+ * @author kt466
+ *
+ */
 public class Utils {
 	
 	public static final String SERVER_URL = "http://10.32.32.7:8181/elasticMLCompute/";

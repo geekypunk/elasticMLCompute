@@ -6,6 +6,10 @@ import java.util.concurrent.ExecutionException;
 
 import com.cs5412.filesystem.IFileSystem;
 
+/**
+ * @author kt466
+ *
+ */
 public interface UserManager {
 	
 	void createUser(Map<String,String> requestParams);

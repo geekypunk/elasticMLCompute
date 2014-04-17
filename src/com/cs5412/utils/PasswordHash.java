@@ -10,7 +10,7 @@ import javax.crypto.spec.PBEKeySpec;
 
 /**
  * 
- * @author kira
+ * @author kt466
  * Uses native Java implementation of "PBKDF2" algorithm as "PBKDF2WithHmacSHA1".
  */
 public class PasswordHash {

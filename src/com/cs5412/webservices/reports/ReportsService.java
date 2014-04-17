@@ -26,6 +26,10 @@ import com.couchbase.client.CouchbaseClient;
 import com.cs5412.filesystem.IFileSystem;
 import com.cs5412.taskmanager.TaskManager;
 
+/**
+ * @author kt466
+ *
+ */
 @Path("/reports")
 public class ReportsService {
 	static final Logger LOG = LoggerFactory.getLogger(ReportsService.class);

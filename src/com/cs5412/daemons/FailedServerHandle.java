@@ -2,14 +2,9 @@ package com.cs5412.daemons;
 
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.TimerTask;
-import java.util.Map.Entry;
 
 import javax.servlet.ServletContext;
 
@@ -18,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.couchbase.client.CouchbaseClient;
+import com.cs5412.ssh.Machine;
+import com.cs5412.ssh.SSHAdaptor;
 import com.cs5412.taskmanager.TaskDao;
 import com.cs5412.taskmanager.TaskDaoAdaptor;
 import com.cs5412.taskmanager.TaskManager;
@@ -92,6 +89,7 @@ public class FailedServerHandle extends TimerTask{
 			    	        		LOG.debug(td.getWsURL());
 			    	        		taskManager.setTaskStatus(td, TaskStatus.FAILURE);
 			    	        	}
+			    	        	startFailedServer(hostAddr);
 		    	        	}catch(Exception e1){
 		    	        		
 		    	        		LOG.debug("Server: " + hostAddr + " down");
@@ -106,5 +104,11 @@ public class FailedServerHandle extends TimerTask{
 	    }catch(Exception e){
 	    	LOG.debug("Error",e);
 	    }
+	}
+	
+	private void startFailedServer(String ip) throws Exception{
+		Machine mc = new Machine("kt466", "l", ip);
+		SSHAdaptor ssh = new SSHAdaptor(mc);
+		ssh.connect().execute("sh startup.sh");
 	}
 }

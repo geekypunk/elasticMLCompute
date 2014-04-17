@@ -1,5 +1,9 @@
 package com.cs5412.taskmanager;
 
+/**
+ * @author kt466
+ *
+ */
 public enum TaskType {
 
 	DATASET_UPLOAD {

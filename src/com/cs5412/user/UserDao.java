@@ -1,6 +1,9 @@
 package com.cs5412.user;
 
-
+/**
+ * @author kt466
+ *
+ */
 public class UserDao{
 
 	public static final String FULLNAME="fullName";

@@ -1,5 +1,6 @@
 package com.cs5412.filesystem;
 
+
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -22,7 +23,10 @@ import org.apache.hadoop.fs.LocatedFileStatus;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.RemoteIterator;
 
-
+/**
+ * @author kt466
+ *
+ */
 public class HDFSFileSystemImpl implements IFileSystem{
 	
 	private FileSystem hdfs;
