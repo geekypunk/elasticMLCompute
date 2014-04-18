@@ -69,14 +69,16 @@
 			a.button("loading");
 			var kernelType = $('#e3').val();
 			var kernelValue = $('#e4').val();
-			var myUrl = "ml/kernel/runService/" + kernelType + "/" + kernelValue; 
+			var myUrl = "ml/kernel/runDistributedService"; 
 			var trainingDataset = $('#e1').val();
 			if(trainingDataset.trim().length > 0 && trainingDataset.trim().indexOf(".train")!=-1){	
 				$.ajax({
 					type: "POST",
 					data:{ 
 						trainingDataset: trainingDataset, 
-						testDataset: $('#e2').val() 
+						testDataset: $('#e2').val(),
+						kernelType : kernelType,
+						kernelValue : kernelValue
 					},
 					dataType: "text",
 					url: myUrl,

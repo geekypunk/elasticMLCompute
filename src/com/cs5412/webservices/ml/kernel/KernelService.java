@@ -67,14 +67,14 @@ public class KernelService {
 		gson = new Gson();
 	}
 	
-	@Path("/runDistributedService/{kernelType}/{kernelParam}")
+	@Path("/runDistributedService")
 	@POST
 	@Consumes("application/x-www-form-urlencoded")
 	public Response runDistributedService(
 			@FormParam("trainingDataset") String trainingDataset,
 			@FormParam("testDataset") String testDataset,
-			@PathParam("kernelType") String kernelType,
-			@PathParam("kernelParam") String kernelParam,
+			@FormParam("kernelType") String kernelType,
+			@FormParam("kernelParam") String kernelParam,
 			@Context ServletContext context,
 			@Context HttpServletRequest request,
 			@Context HttpServletResponse response
