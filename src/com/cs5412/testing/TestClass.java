@@ -37,14 +37,16 @@ public class TestClass {
 		    for(String str : tasks){
 //		    	System.out.println(str);
 		    	TaskDao td = taskManager.getTaskById(str);
-		    	System.out.println(td.getWsURL() + " : " + td.getTaskId() + " : " + td.getParentTaskId() + " : " + td.getStatus());
+//		    	System.out.println(td.getWsURL() + " : " + td.getTaskId() + " : " + td.getParentTaskId() + " : " + td.getStatus());
 		    }
 	    }
+	    ArrayList<String> bestC = gson.fromJson((String) couchbaseClient.get("ad" + "KernelAcc"), type);
+	    System.out.println(bestC);
 //	    Gson gson = new Gson();
 //	    Type collectionType = new TypeToken<ArrayList<ArrayList<Double>>>(){}.getType();
 //		ArrayList<ArrayList<Double>> allAccuracies = gson.fromJson((String) couchbaseClient.get("om" + "DTAcc"), collectionType);	
 //		System.out.println(allAccuracies);
-		couchbaseClient.flush();
+//		couchbaseClient.flush();
 	 /*   ArrayList<ArrayList<Integer>> myList = new ArrayList<ArrayList<Integer>>();
 	    ArrayList<Integer> list1 = new ArrayList<Integer>();
 	    ArrayList<Integer> list2 = new ArrayList<Integer>();
