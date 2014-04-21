@@ -1,4 +1,4 @@
-package com.cs5412.utils;
+package com.cs5412.user;
 
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;

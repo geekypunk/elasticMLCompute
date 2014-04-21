@@ -1,7 +1,6 @@
 package com.cs5412.webservices.ml.svm;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.util.ArrayList;
 
 import jnisvmlight.LabeledFeatureVector;

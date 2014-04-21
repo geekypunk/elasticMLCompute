@@ -67,4 +67,9 @@ public class Machine {
 		this.sshPort = sshPort;
 	}
 
+	@Override
+	public String toString(){
+		
+		return this.userName+"@"+this.ipAddress+":"+this.sshPort +" Password:"+this.password;
+	}
 }

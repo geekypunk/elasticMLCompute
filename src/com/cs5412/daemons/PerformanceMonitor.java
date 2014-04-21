@@ -4,12 +4,7 @@
 package com.cs5412.daemons;
 
 import java.util.TimerTask;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import javax.servlet.ServletContext;
@@ -18,10 +13,12 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.cs5412.autoscaling.AutoScale;
+import com.cs5412.utils.NativeCommandExecutor;
+
 /**
- * Class responsible for autoscaling
  * @author kt466
- *
+ * <p><b>Class responsible for crash prevention due to OOM</b></p>
  */
 public class PerformanceMonitor extends TimerTask{
 
@@ -40,15 +37,18 @@ public class PerformanceMonitor extends TimerTask{
 	private boolean isServerUp;
 	private static String CMD_DISABLE;
 	private static String CMD_ENABLE;
-	private static final ExecutorService THREAD_POOL 
-								= Executors.newCachedThreadPool();
 	private static long PROCESS_EXEC_TIMEOUT = 3;
+	private static NativeCommandExecutor cmdExecutor;
+	private static AutoScale autoScaler;
+	
 	public PerformanceMonitor(ServletContext ctx){
 		this.config = (PropertiesConfiguration)ctx.getAttribute("config");
+		autoScaler = new AutoScale(config);
 		this.NODE_NAME = SERVER_POOL_NAME+"/"+this.config.getString("NODE_NAME");
 		CMD_DISABLE  = "echo \"disable server "+this.NODE_NAME+"\" | socat stdio "+HASOCKET;
 		CMD_ENABLE   = "echo \"enable server "+this.NODE_NAME+"\" | socat stdio "+HASOCKET;
 		this.isServerUp = this.config.getBoolean("SERVER_UP");
+		cmdExecutor = NativeCommandExecutor.getInstance();
 	}
 	
 	/**
@@ -74,6 +74,7 @@ public class PerformanceMonitor extends TimerTask{
 			long freeMemory = getFreeMemory();
 			if(this.isServerUp == true && usedMemory+USED_MEMORY_THRESHOLD>=maxMemory){
 				deRegisterFromLB();
+				autoScaler.scaleUp();
 			}
 			else if(this.isServerUp == false && freeMemory>=FREE_MEMORY_THRESHOLD){
 				registerWithLB();
@@ -87,12 +88,7 @@ public class PerformanceMonitor extends TimerTask{
 	private void deRegisterFromLB(){
 		try {
 			LOG.debug("Deregistering "+this.NODE_NAME);
-		    int returnCode = timedCall(new Callable<Integer>() {
-		        public Integer call() throws Exception
-		        {
-		            Process process = Runtime.getRuntime().exec(CMD_DISABLE); 
-		            return process.waitFor();
-		        }}, PROCESS_EXEC_TIMEOUT, TimeUnit.SECONDS);
+			cmdExecutor.execute(CMD_DISABLE, PROCESS_EXEC_TIMEOUT);
 		    LOG.debug("SUCCESS :  Deregisteration of "+this.NODE_NAME);
 		} 
 		    
@@ -113,12 +109,7 @@ public class PerformanceMonitor extends TimerTask{
 		
 		try {
 			LOG.debug("Registering "+this.NODE_NAME);
-		    int returnCode = timedCall(new Callable<Integer>() {
-		        public Integer call() throws Exception
-		        {
-		            Process process = Runtime.getRuntime().exec(CMD_ENABLE); 
-		            return process.waitFor();
-		        }}, PROCESS_EXEC_TIMEOUT, TimeUnit.SECONDS);
+			cmdExecutor.execute(CMD_ENABLE, PROCESS_EXEC_TIMEOUT);
 		    LOG.debug("SUCCESS :  Registeration of "+this.NODE_NAME);
 		} 
 		    
@@ -135,12 +126,6 @@ public class PerformanceMonitor extends TimerTask{
         
 		
 	}
-	private static <T> T timedCall(Callable<T> c, long timeout, TimeUnit timeUnit)
-		    throws InterruptedException, ExecutionException, TimeoutException
-		{
-		    FutureTask<T> task = new FutureTask<T>(c);
-		    THREAD_POOL.execute(task);
-		    return task.get(timeout, timeUnit);
-		}
+	
 
 }

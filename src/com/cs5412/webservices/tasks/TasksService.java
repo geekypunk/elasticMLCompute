@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import com.couchbase.client.CouchbaseClient;
 import com.cs5412.taskmanager.TaskDao;
 import com.cs5412.taskmanager.TaskManager;
-import com.cs5412.taskmanager.TaskStatus;
 
 /**
  * @author kt466

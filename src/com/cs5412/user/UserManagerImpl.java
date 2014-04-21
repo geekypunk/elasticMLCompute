@@ -12,7 +12,6 @@ import com.couchbase.client.CouchbaseClient;
 import com.cs5412.filesystem.IFileSystem;
 import com.cs5412.listeners.WebAppListener;
 import com.cs5412.taskmanager.TaskDao;
-import com.cs5412.utils.PasswordHash;
 import com.cs5412.utils.Utils;
 import com.google.gson.Gson;
 
