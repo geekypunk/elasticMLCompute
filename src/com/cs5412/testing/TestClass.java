@@ -1,15 +1,17 @@
 package com.cs5412.testing;
 
 import java.lang.reflect.Type;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.net.*;
+import java.util.*;
+import java.util.Map.Entry;
+
+import org.apache.commons.configuration.PropertiesConfiguration;
 
 import com.couchbase.client.CouchbaseClient;
 import com.cs5412.taskmanager.TaskDao;
 import com.cs5412.taskmanager.TaskDaoAdaptor;
 import com.cs5412.taskmanager.TaskManager;
+import com.cs5412.taskmanager.TaskStatus;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -35,14 +37,16 @@ public class TestClass {
 		    for(String str : tasks){
 //		    	System.out.println(str);
 		    	TaskDao td = taskManager.getTaskById(str);
-		    	System.out.println(td.getWsURL() + " : " + td.getTaskId() + " : " + td.getParentTaskId() + " : " + td.getStatus());
+//		    	System.out.println(td.getWsURL() + " : " + td.getTaskId() + " : " + td.getParentTaskId() + " : " + td.getStatus());
 		    }
 	    }
+	    ArrayList<String> bestC = gson.fromJson((String) couchbaseClient.get("ad" + "KernelAcc"), type);
+	    System.out.println(bestC);
 //	    Gson gson = new Gson();
 //	    Type collectionType = new TypeToken<ArrayList<ArrayList<Double>>>(){}.getType();
 //		ArrayList<ArrayList<Double>> allAccuracies = gson.fromJson((String) couchbaseClient.get("om" + "DTAcc"), collectionType);	
 //		System.out.println(allAccuracies);
-		couchbaseClient.flush();
+//		couchbaseClient.flush();
 	 /*   ArrayList<ArrayList<Integer>> myList = new ArrayList<ArrayList<Integer>>();
 	    ArrayList<Integer> list1 = new ArrayList<Integer>();
 	    ArrayList<Integer> list2 = new ArrayList<Integer>();

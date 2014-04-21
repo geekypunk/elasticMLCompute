@@ -67,14 +67,14 @@ public class KernelService {
 		gson = new Gson();
 	}
 	
-	@Path("/runDistributedService/{kernelType}/{kernelParam}")
+	@Path("/runDistributedService")
 	@POST
 	@Consumes("application/x-www-form-urlencoded")
 	public Response runDistributedService(
 			@FormParam("trainingDataset") String trainingDataset,
 			@FormParam("testDataset") String testDataset,
-			@PathParam("kernelType") String kernelType,
-			@PathParam("kernelParam") String kernelParam,
+			@FormParam("kernelType") String kernelType,
+			@FormParam("kernelParam") String kernelParam,
 			@Context ServletContext context,
 			@Context HttpServletRequest request,
 			@Context HttpServletResponse response
@@ -292,7 +292,7 @@ public class KernelService {
 			String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+"work"+Utils.linuxSeparator+"crossvalidation";
 			String modelPath = crossvalidation+Utils.linuxSeparator+"model"+Utils.linuxSeparator;
 			
-			Model.create(crossvalidation +File.separator+ "Kernel" , fileNum, c, kernelNum, kernelParam, modelPath,fs);
+			Model.create(crossvalidation +File.separator+ "SVM" , fileNum, c, kernelNum, kernelParam, modelPath,fs);
 			taskManager.removeParentDependency(tId, username);
 			taskManager.setTaskStatus(task, TaskStatus.SUCCESS);
 		}catch(Exception e){
