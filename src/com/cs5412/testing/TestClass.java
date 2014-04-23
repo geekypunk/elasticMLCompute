@@ -46,7 +46,7 @@ public class TestClass {
 //	    Type collectionType = new TypeToken<ArrayList<ArrayList<Double>>>(){}.getType();
 //		ArrayList<ArrayList<Double>> allAccuracies = gson.fromJson((String) couchbaseClient.get("om" + "DTAcc"), collectionType);	
 //		System.out.println(allAccuracies);
-//		couchbaseClient.flush();
+		couchbaseClient.flush();
 	 /*   ArrayList<ArrayList<Integer>> myList = new ArrayList<ArrayList<Integer>>();
 	    ArrayList<Integer> list1 = new ArrayList<Integer>();
 	    ArrayList<Integer> list2 = new ArrayList<Integer>();

@@ -24,11 +24,13 @@ public class PerformanceMonitor extends TimerTask{
 
 	Logger LOG = LoggerFactory.getLogger(PerformanceMonitor.class);
 	
+	
+	private static final long GB = 1024*1024*1024;
 	//2GB. Buffer memory
-	private static final long USED_MEMORY_THRESHOLD = 2*1024*1024*1024;
+	private static final long USED_MEMORY_THRESHOLD = 1*GB;
 	
 	//5GB
-	private static final long FREE_MEMORY_THRESHOLD = 4*1024*1024*1024;
+	private static final long FREE_MEMORY_THRESHOLD = 2*GB;
 
 	private PropertiesConfiguration config;
 	private String NODE_NAME;
@@ -72,6 +74,9 @@ public class PerformanceMonitor extends TimerTask{
 			long maxMemory = getMaxMemory();
 			long usedMemory = getUsedMemory();
 			long freeMemory = getFreeMemory();
+			LOG.info("Perf stats:"+" Max:"+maxMemory/(long)GB);
+			LOG.info("Perf stats:"+" Used:"+usedMemory/(long)GB);
+			LOG.info("Perf stats:"+" Free:"+freeMemory/(long)GB);
 			if(this.isServerUp == true && usedMemory+USED_MEMORY_THRESHOLD>=maxMemory){
 				deRegisterFromLB();
 				autoScaler.scaleUp();

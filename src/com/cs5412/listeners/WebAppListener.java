@@ -54,6 +54,12 @@ public class WebAppListener implements ServletContextListener {
 		    CouchbaseClient couchbaseClient = new CouchbaseClient(
 		    		hosts, config.getString("COUCH_BUCKET_NAME"), config.getString("COUCH_BUCKET_PWD"));
 		    
+		    /*
+		    String webAppPath = application.getRealPath("/");
+			String log4jPropPath = webAppPath + "WEB-INF/log4j.properties";
+			log4jIntialization(log4jPropPath);
+		    */
+		    
 		    /*Code added to add all users task status */
 		    Gson gson = new Gson();
 		    ArrayList<String> taskIds = new ArrayList<String>();
@@ -62,18 +68,21 @@ public class WebAppListener implements ServletContextListener {
 		    
 		    /*Code added to add version number of the server to keep track of the number of restarts*/
 		    Integer versionNumber = -1;
-		    couchbaseClient.add(Utils.getIP(), versionNumber);
+		    couchbaseClient.add(Utils.getIP(), versionNumber).get();
 		    versionNumber = (Integer) couchbaseClient.get(Utils.getIP());
-		    versionNumber++;
-		    couchbaseClient.set(Utils.getIP(), versionNumber);
-		    /*End of Code added*/
 		    
+		    if(versionNumber != null){
+		    	versionNumber++;
+			    couchbaseClient.set(Utils.getIP(), versionNumber);
+			    
+		    }
+		    /*End of Code added*/
 		  	application.setAttribute("couchbaseClient", couchbaseClient);	
 			
 		  	//Monitor server statistics to prevent OOM crash
 		  	PerformanceMonitor perfMonitor = new PerformanceMonitor(application);
 			Timer time = new Timer();
-			time.schedule(perfMonitor, 0,120*1000);
+			time.schedule(perfMonitor, 0,5*1000);
 			
 		}catch(Exception e){
 			LOG.error("Error", e);
@@ -94,5 +103,18 @@ public class WebAppListener implements ServletContextListener {
 			LOG.error("Error", e);
 		}
     }
-	
+    /*
+    private static void log4jIntialization(String log4jPropPath){
+		if(log4jPropPath!= null && new File(log4jPropPath).exists()){
+			System.out.println("Intializing log4j with " + log4jPropPath);
+			PropertyConfigurator.configure(log4jPropPath);
+		}
+		else{
+			System.err.println("ContextInitializer :" + log4jPropPath + " file not found\n" 
+					+ "Initializing log4j with BasicConfigurator");
+			BasicConfigurator.configure();
+		}
+		Logger log = LoggerFactory.getLogger(WebAppListener.class);
+		log.info("log4j Initialized");
+	}*/
 }

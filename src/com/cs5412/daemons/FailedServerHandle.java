@@ -109,6 +109,6 @@ public class FailedServerHandle extends TimerTask{
 	private void startFailedServer(String ip) throws Exception{
 		Machine mc = new Machine("kt466", "l", ip);
 		SSHAdaptor ssh = new SSHAdaptor(mc);
-		ssh.connect().execute("sh startup.sh");
+		ssh.connect().execute(this.config.getString("sh"+"TOMCAT_BIN_DIR"+"startup.sh"));
 	}
 }
