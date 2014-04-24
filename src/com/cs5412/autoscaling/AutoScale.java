@@ -14,16 +14,20 @@ public class AutoScale {
 	private static String STATSCMD = " show health | grep servers | awk  '{ print $2,$3 }'";
 	private static String SERVER_POOL_NAME="servers";
 	private static String HASOCKET="/var/run/haproxy.stat";
-	
+	private static String CMD_DISABLE;
+	private static String CMD_ENABLE;
 	private static Random randomGenerator;
 	private static Machine LOAD_BALANCER;
 	private static SSHAdaptor lbShell;
+	private String NODE_NAME;
 	public AutoScale(PropertiesConfiguration cfg){
+		this.NODE_NAME = SERVER_POOL_NAME+"/"+cfg.getString("NODE_NAME");
 		randomGenerator = new Random();
 		LOAD_BALANCER = new Machine(cfg.getString("LOAD_BALANCER_USER"), 
 				cfg.getString("LOAD_BALANCER_PWD"), 
 				cfg.getString("LOAD_BALANCER_IP"));
 		lbShell = new SSHAdaptor(LOAD_BALANCER);
+		
 	}
 	
 	public void  scaleUp() throws Exception{
@@ -48,6 +52,30 @@ public class AutoScale {
 		
 	}
 	
+	public static void main(String args[]) throws Exception{
+		CMD_DISABLE  = "echo \"disable server "+"servers/node2"+"\" | socat stdio "+HASOCKET;
+		CMD_ENABLE   = "echo \"enable server "+"servers/node2"+"\" | socat stdio "+HASOCKET;
+		lbShell = new SSHAdaptor(new Machine("kt466", "l", "128.84.216.68"));
+		String output;
+		
+		lbShell = lbShell.connect();
+		lbShell.execute(HAPROXYCTL+STATSCMD);
+		output = lbShell.getShellOutput();
+		System.out.println(output);
+		lbShell.disconnect();
+		
+		
+		lbShell = lbShell.connect();
+		lbShell.execute(CMD_DISABLE);
+		lbShell.disconnect();
+		
+		
+		output = lbShell.getShellOutput();
+		System.out.println(output);
+		lbShell.disconnect();
+		
+		
+	}
 	
 	
 	

@@ -1,17 +1,15 @@
 package com.cs5412.testing;
 
 import java.lang.reflect.Type;
-import java.net.*;
-import java.util.*;
-import java.util.Map.Entry;
-
-import org.apache.commons.configuration.PropertiesConfiguration;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import com.couchbase.client.CouchbaseClient;
 import com.cs5412.taskmanager.TaskDao;
 import com.cs5412.taskmanager.TaskDaoAdaptor;
 import com.cs5412.taskmanager.TaskManager;
-import com.cs5412.taskmanager.TaskStatus;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -37,7 +35,7 @@ public class TestClass {
 		    for(String str : tasks){
 //		    	System.out.println(str);
 		    	TaskDao td = taskManager.getTaskById(str);
-//		    	System.out.println(td.getWsURL() + " : " + td.getTaskId() + " : " + td.getParentTaskId() + " : " + td.getStatus());
+		    	System.out.println(td.getWsURL() + " : " + td.getTaskId() + " : " + td.getParentTaskId() + " : " + td.getStatus());
 		    }
 	    }
 	    ArrayList<String> bestC = gson.fromJson((String) couchbaseClient.get("ad" + "KernelAcc"), type);

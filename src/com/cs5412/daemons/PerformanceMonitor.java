@@ -14,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cs5412.autoscaling.AutoScale;
+import com.cs5412.ssh.Machine;
+import com.cs5412.ssh.SSHAdaptor;
 import com.cs5412.utils.NativeCommandExecutor;
 
 /**
@@ -36,12 +38,15 @@ public class PerformanceMonitor extends TimerTask{
 	private String NODE_NAME;
 	private String SERVER_POOL_NAME="servers";
 	private String HASOCKET="/var/run/haproxy.stat";
+	private static String HAPROXYCTL = "/opt/haproxyctl/haproxyctl";
 	private boolean isServerUp;
 	private static String CMD_DISABLE;
 	private static String CMD_ENABLE;
 	private static long PROCESS_EXEC_TIMEOUT = 3;
 	private static NativeCommandExecutor cmdExecutor;
 	private static AutoScale autoScaler;
+	private static SSHAdaptor lbShell;
+	private static Machine LOAD_BALANCER;
 	
 	public PerformanceMonitor(ServletContext ctx){
 		this.config = (PropertiesConfiguration)ctx.getAttribute("config");
@@ -51,6 +56,11 @@ public class PerformanceMonitor extends TimerTask{
 		CMD_ENABLE   = "echo \"enable server "+this.NODE_NAME+"\" | socat stdio "+HASOCKET;
 		this.isServerUp = this.config.getBoolean("SERVER_UP");
 		cmdExecutor = NativeCommandExecutor.getInstance();
+		
+		LOAD_BALANCER = new Machine(config.getString("LOAD_BALANCER_USER"), 
+				config.getString("LOAD_BALANCER_PWD"), 
+				config.getString("LOAD_BALANCER_IP"));
+		lbShell = new SSHAdaptor(LOAD_BALANCER);
 	}
 	
 	/**
@@ -90,10 +100,12 @@ public class PerformanceMonitor extends TimerTask{
 		
 	}
 	
-	private void deRegisterFromLB(){
+	private void deRegisterFromLB() throws Exception{
 		try {
 			LOG.debug("Deregistering "+this.NODE_NAME);
-			cmdExecutor.execute(CMD_DISABLE, PROCESS_EXEC_TIMEOUT);
+			lbShell = lbShell.connect();
+			lbShell.execute(CMD_DISABLE);
+			//cmdExecutor.execute(CMD_DISABLE, PROCESS_EXEC_TIMEOUT);
 		    LOG.debug("SUCCESS :  Deregisteration of "+this.NODE_NAME);
 		} 
 		    
