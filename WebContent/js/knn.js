@@ -34,7 +34,7 @@
 						trainingDataset: trainingDataset, 
 						testDataset: $('#e2').val() 
 					},
-					dataType: "text",
+					dataType:"text",
 					url: "http://localhost:8080/elasticMLCompute/ml/knn/runDistributedService",
 					success: function (d) {
 						a.button("complete");
