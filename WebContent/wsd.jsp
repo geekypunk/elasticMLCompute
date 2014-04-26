@@ -175,26 +175,28 @@ for(Cookie cookie : cookies){
 											 </div>
 										  </div>
 										  <div class="form-group">
-											 <label class="col-md-2 control-label" for="e2">Test Data<span class="required"></span></label> 
+											 <label class="col-md-2 control-label" for="e2">Validation Data<span class="required"></span></label> 
 											 <div class="col-md-10">
-												<select id="e2" name="testDataset" class="col-md-12">
-												   								   
+												<select id="e2" name="validationDataset" class="col-md-12">
+																				
 												</select>												
 											 </div>
 										  </div>
 										  <div class="form-group">
-											 <label class="col-md-2 control-label" for="e3">WSD Type<span class="required"></span></label> 
+											 <label class="col-md-2 control-label" for="e3">Test Data<span class="required"></span></label> 
 											 <div class="col-md-10">
-												<select id="e3" name="wsdType" class="col-md-12">
-													<option value="polyKernel">Supervised</option>		
-													<option value="blank" selected></option>			   
+												<select id="e3" name="testDataset" class="col-md-12">
+												   								   
 												</select>												
 											 </div>
 										  </div>
 										  <button type="submit" id="btn-load-complete" class="btn btn-success" data-complete-text="Run again!" data-loading-text="Running...">Run!</button>
 									   </form>
 									   <br/>
-									   <button id="btn-chart" class="btn btn-success" data-complete-text="Refresh" data-loading-text="Refresh...">Display Chart</button>
+									   <button id="btn-chart-co" class="btn btn-success" data-complete-text="Refresh" data-loading-text="Refresh...">Display CO Chart</button>
+									   <br/>
+									   <br/>
+									   <button id="btn-chart-cl" class="btn btn-success" data-complete-text="Refresh" data-loading-text="Refresh...">Display CL Chart</button>
 									   <br/>
 									 
 									  
@@ -204,7 +206,7 @@ for(Cookie cookie : cookies){
 								</div>
 								<!-- /BOX -->
 							</div>
-							<!-- WSD CHART -->
+							<!-- WSD CO CHART -->
 							<div class="col-md-12" id="wsdChart" style="display:none;">
 								<!-- BOX -->
 								<div class="box border blue" style="width:90%">
@@ -231,7 +233,8 @@ for(Cookie cookie : cookies){
 								</div>
 								<!-- /BOX -->
 							</div>
-							<!-- /WSD CHART -->
+							<!-- /WSD CO CHART -->
+							
 						</div>
 						<!-- /ADVANCED -->
 						<!-- /PAGE HEADER -->

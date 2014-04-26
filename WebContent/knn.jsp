@@ -167,7 +167,7 @@ for(Cookie cookie : cookies){
 										
 									</div>
 									<div class="box-body">
-										<form id="svmForm" class="form-horizontal">
+										<form id="knnForm" class="form-horizontal">
 										  <div class="form-group">
 											 <label class="col-md-2 control-label" for="e1">Training Data<span class="required"></span></label> 
 											 <div class="col-md-10">
@@ -198,8 +198,8 @@ for(Cookie cookie : cookies){
 								</div>
 								<!-- /BOX -->
 							</div>
-							<!-- SVM CHART -->
-							<div class="col-md-12" id="svmChart" style="display:none;">
+							<!-- KNN CHART -->
+							<div class="col-md-12" id="knnChart" style="display:none;">
 								<!-- BOX -->
 								<div class="box border blue" style="width:90%">
 									<div class="box-title">
@@ -225,7 +225,7 @@ for(Cookie cookie : cookies){
 								</div>
 								<!-- /BOX -->
 							</div>
-							<!-- /SVM CHART -->
+							<!-- /KNN CHART -->
 						</div>
 						<!-- /ADVANCED -->
 						<!-- /PAGE HEADER -->
