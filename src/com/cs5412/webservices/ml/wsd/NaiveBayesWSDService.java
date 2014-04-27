@@ -323,9 +323,18 @@ public class NaiveBayesWSDService {
 				result.put(dataPoints);
 				
 				String filePath = fs.getUserPath(username)+Utils.linuxSeparator+"reports"+Utils.linuxSeparator+ trainingDataset+"-"+testDataset+"_CO"+IFileSystem.CHART_DATA_FORMAT;
-				BufferedWriter bw = fs.createFileToWrite(filePath,true);
-				bw.write(result.toString());
-				bw.close();
+				if(fs.isPathPresent(filePath)){
+		      		int version = Integer.parseInt(filePath.split("_")[1]);
+		      		version++;
+		      		BufferedWriter bw = fs.createFileToWrite(filePath+version,true);
+			      	bw.write(result.toString());
+			      	bw.close();
+		      		
+		      	}else{
+		      		BufferedWriter bw = fs.createFileToWrite(filePath+"_0",true);
+			      	bw.write(result.toString());
+			      	bw.close();
+		      	}
 				
 				//CL
 				result = new JSONArray();
@@ -341,9 +350,18 @@ public class NaiveBayesWSDService {
 				result.put(dataPoints);
 				
 				filePath = fs.getUserPath(username)+Utils.linuxSeparator+"reports"+Utils.linuxSeparator+ trainingDataset+"-"+testDataset+"_CL"+IFileSystem.CHART_DATA_FORMAT;
-				bw = fs.createFileToWrite(filePath,true);
-				bw.write(result.toString());
-				bw.close();
+				if(fs.isPathPresent(filePath)){
+		      		int version = Integer.parseInt(filePath.split("_")[1]);
+		      		version++;
+		      		BufferedWriter bw = fs.createFileToWrite(filePath+version,true);
+			      	bw.write(result.toString());
+			      	bw.close();
+		      		
+		      	}else{
+		      		BufferedWriter bw = fs.createFileToWrite(filePath+"_0",true);
+			      	bw.write(result.toString());
+			      	bw.close();
+		      	}
 				
 				LOG.debug("FINISHED WSD EXECUTION for"+trainingDataset+"|"+testDataset);
 	      	taskManager.setTaskStatus(task, TaskStatus.SUCCESS);

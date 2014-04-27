@@ -140,7 +140,7 @@ public class CrossValidation {
 		}
 		catch(Exception e)
 		{
-			System.out.println("createCrossValidationFiles: "+e);
+			LOG.error("Error",e);
 		}
 	}
 	

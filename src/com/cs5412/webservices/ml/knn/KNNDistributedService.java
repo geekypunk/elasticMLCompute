@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
 
 import com.couchbase.client.CouchbaseClient;
 import com.cs5412.filesystem.IFileSystem;
+import com.cs5412.http.AsyncClientHttp;
 import com.cs5412.taskmanager.TaskDao;
 import com.cs5412.taskmanager.TaskManager;
 import com.cs5412.taskmanager.TaskStatus;
@@ -93,7 +94,8 @@ public class KNNDistributedService{
 		TaskManager taskManager = new TaskManager((CouchbaseClient)context.getAttribute("couchbaseClient"));
 		
 		LOG.debug(".........................................BEGIN..............................................................");
-		
+		LOG.debug( "For user:"+username);
+		LOG.debug( "For sessionId:"+session.getId());
         String wsURL = "/ml/knn/runDistributedService";
         TaskDao knnTask = new TaskDao(username, "KNNRun", "complete", TaskStatus.RUNNING, false, wsURL);
     	knnTask.setTaskType(TaskType.ALGORITHM_EXEC.toString());
@@ -121,7 +123,7 @@ public class KNNDistributedService{
     	String[] wsTuneParamURLs = new String[kSet.length*NUM_MODELS];
     	int index=0;
         for(int k: kSet){
-			for(int modelNo=1;modelNo<=NUM_MODELS;modelNo++) {
+			for(int modelNo=0;modelNo<NUM_MODELS;modelNo++) {
 				String wsTuneParamURL = "/ml/knn/runcrossvalidation" + "/" + username + "/" + k + "/" + modelNo;
 				TaskDao knnCVTask = new TaskDao(username, "CrossValidation " + k, "CV " + modelNo, TaskStatus.INITIALIZED, false, wsTuneParamURL);
 	        	wsTuneParamURL += "/" + knnCVTask.getTaskId();
@@ -176,6 +178,14 @@ public class KNNDistributedService{
         
         LOG.debug("Running Cross Validation tasks");
         
+        //Issue Async/Non blocking HTTP calls
+        /*AsyncClientHttp client = new AsyncClientHttp();
+        client.setRequests(loadBalancerAddress,wsTuneParamURLs);
+        client.execute();
+        client.blockOnLastReq();
+        client.close();
+        */
+        
         CloseableHttpAsyncClient httpclient = HttpAsyncClients.createDefault();
         httpclient.start();
         Future<HttpResponse> future = null;
@@ -189,7 +199,7 @@ public class KNNDistributedService{
 			}
 		}
         HttpResponse response1 = future.get();
-
+		
         LOG.debug("Predicting the test");
         
         taskUrl = loadBalancerAddress + wsClassifyURL;
@@ -281,9 +291,18 @@ public class KNNDistributedService{
 				result.put(dataPoints);
 				
 				String filePath = fs.getUserPath(username)+Utils.linuxSeparator+"reports"+Utils.linuxSeparator+ trainingDataset+"-"+testDataset+IFileSystem.CHART_DATA_FORMAT;
-				BufferedWriter bw = fs.createFileToWrite(filePath,true);
-				bw.write(result.toString());
-				bw.close();
+				if(fs.isPathPresent(filePath)){
+		      		int version = Integer.parseInt(filePath.split("_")[1]);
+		      		version++;
+		      		BufferedWriter bw = fs.createFileToWrite(filePath+version,true);
+			      	bw.write(result.toString());
+			      	bw.close();
+		      		
+		      	}else{
+		      		BufferedWriter bw = fs.createFileToWrite(filePath+"_0",true);
+			      	bw.write(result.toString());
+			      	bw.close();
+		      	}
 				
 				LOG.debug("FINISHED KNN EXECUTION for"+trainingDataset+"|"+testDataset);
 	      	taskManager.setTaskStatus(task, TaskStatus.SUCCESS);

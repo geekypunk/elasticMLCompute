@@ -16,7 +16,7 @@ public class HDFS {
 		FileSystem hdfs;
 		Configuration configuration = new Configuration();
 		hdfs = FileSystem.get(new URI("hdfs://128.84.216.64:9000"), configuration );
-		hdfs.delete(new Path("hdfs://128.84.216.64:9000/admin100"));
+		hdfs.delete(new Path("hdfs://128.84.216.64:9000/admin/reports/groups2.train-groups2.test.chart"));
 	}
 
 }

@@ -1,16 +1,18 @@
 package com.cs5412.webservices.ml.dt;
 
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.cs5412.filesystem.IFileSystem;
 import com.cs5412.utils.Utils;
 
 public class ExecuteMain {
+	 private static final Logger LOG = LoggerFactory.getLogger(ExecuteMain.class);
 
 	public void Construct(String trainFile, String testFile, String outputfile, IFileSystem fs, ArrayList<Double> accuracy){
 		
@@ -50,7 +52,7 @@ public class ExecuteMain {
 		}
 		catch(Exception e)
 		{
-			System.out.println("Contruct: "+e);
+			LOG.debug("Error",e);
 		}
 	}
 	

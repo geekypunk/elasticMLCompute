@@ -346,7 +346,7 @@ public class KNN {
 	 */
 	public static void runClassification(String username, IFileSystem hdfs,
 			String trainFile, String testFile, int bestK) throws IOException {
-		String resultFile = hdfs.getUserPath(username)+Utils.linuxSeparator+"reports"+Utils.linuxSeparator+"output.txt";
+		String resultFile = hdfs.getUserPath(username)+Utils.linuxSeparator+"output"+Utils.linuxSeparator+"output.txt";
 		FSDataOutputStream fos = hdfs.createHDFSFile(resultFile,true);
 		BufferedWriter bw =new BufferedWriter(new OutputStreamWriter(fos));
 		List<Item> trainingInstances = parse(trainFile,hdfs);
