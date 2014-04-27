@@ -46,7 +46,7 @@ public class AutoScale {
 			}
 		}
 		String availableServer = availableServers.get(randomGenerator.nextInt(availableServers.size()));
-		String cmd = "echo \"disable server "+SERVER_POOL_NAME+"/"+availableServer+"\" | socat stdio "+HASOCKET;
+		String cmd = "echo \"enable server "+SERVER_POOL_NAME+"/"+availableServer+"\" | socat stdio "+HASOCKET;
 		lbShell.execute(cmd);
 		lbShell.disconnect();
 		

@@ -105,6 +105,7 @@ public class PerformanceMonitor extends TimerTask{
 			LOG.debug("Deregistering "+this.NODE_NAME);
 			lbShell = lbShell.connect();
 			lbShell.execute(CMD_DISABLE);
+			lbShell.disconnect();
 			//cmdExecutor.execute(CMD_DISABLE, PROCESS_EXEC_TIMEOUT);
 		    LOG.debug("SUCCESS :  Deregisteration of "+this.NODE_NAME);
 		} 

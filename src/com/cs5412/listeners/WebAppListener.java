@@ -20,6 +20,8 @@ import com.couchbase.client.CouchbaseClient;
 import com.cs5412.daemons.PerformanceMonitor;
 import com.cs5412.filesystem.HDFSFileSystemImpl;
 import com.cs5412.filesystem.IFileSystem;
+import com.cs5412.ssh.Machine;
+import com.cs5412.ssh.SSHAdaptor;
 import com.cs5412.utils.Utils;
 import com.google.gson.Gson;
 
@@ -30,6 +32,13 @@ import com.google.gson.Gson;
 @WebListener
 public class WebAppListener implements ServletContextListener {
 	static final Logger LOG = LoggerFactory.getLogger(WebAppListener.class);
+	private static SSHAdaptor lbShell;
+	private static Machine LOAD_BALANCER;
+	private String NODE_NAME;
+	private String SERVER_POOL_NAME="servers";
+	private String HASOCKET="/var/run/haproxy.stat";
+	private static String CMD_DISABLE;
+	private static String CMD_ENABLE;
     public WebAppListener() {
         // TODO Auto-generated constructor stub
     }
@@ -78,11 +87,21 @@ public class WebAppListener implements ServletContextListener {
 		    }
 		    /*End of Code added*/
 		  	application.setAttribute("couchbaseClient", couchbaseClient);	
-			
+		  
 		  	//Monitor server statistics to prevent OOM crash
 		  	PerformanceMonitor perfMonitor = new PerformanceMonitor(application);
 			Timer time = new Timer();
 			time.schedule(perfMonitor, 0,5*1000);
+			
+			this.NODE_NAME = SERVER_POOL_NAME+"/"+config.getString("NODE_NAME");
+			CMD_DISABLE  = "echo \"disable server "+this.NODE_NAME+"\" | socat stdio "+HASOCKET;
+		  	LOAD_BALANCER = new Machine(config.getString("LOAD_BALANCER_USER"), 
+					config.getString("LOAD_BALANCER_PWD"), 
+					config.getString("LOAD_BALANCER_IP"));
+			lbShell = new SSHAdaptor(LOAD_BALANCER);
+			lbShell = lbShell.connect();
+			lbShell.execute(CMD_DISABLE);
+			lbShell.disconnect();
 			
 		}catch(Exception e){
 			LOG.error("Error", e);
