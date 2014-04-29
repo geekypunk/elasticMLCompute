@@ -55,7 +55,7 @@ public class RandomForestService {
 	IFileSystem fs;
 	CouchbaseClient couchbaseClient;
 	Gson gson;
-	
+	private static String DT_WORK_DIR="dt";
 	@PostConstruct
     void initialize() {
 		taskManager = new TaskManager((CouchbaseClient)context.getAttribute("couchbaseClient"));
@@ -336,7 +336,7 @@ public class RandomForestService {
 		try{
 			IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
 			LOG.debug("Using "+trainingDataset+" to begin the service");
-			String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+"dt"+Utils.linuxSeparator+"work"+Utils.linuxSeparator+"crossvalidation";
+			String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+DT_WORK_DIR+Utils.linuxSeparator+"crossvalidation";
 			String trainFile = fs.getFilePathForUploads(trainingDataset, username);
 			
 			CrossValidation CV = new CrossValidation();
@@ -366,7 +366,7 @@ public class RandomForestService {
 		try{
 			IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
 			LOG.debug("Generating "+ i +" service");
-			String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+"dt"+Utils.linuxSeparator+"work"+Utils.linuxSeparator+"crossvalidation";
+			String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+DT_WORK_DIR+Utils.linuxSeparator+"crossvalidation";
 			ArrayList<Double> accuracy = new ArrayList<Double>();
 			
 			ExecuteMain EM = new ExecuteMain();
@@ -405,7 +405,7 @@ public class RandomForestService {
 		try{
 			IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
 			LOG.debug("Calculating the best service");
-			String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+"dt"+Utils.linuxSeparator+"work"+Utils.linuxSeparator+"crossvalidation";
+			String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+DT_WORK_DIR+Utils.linuxSeparator+"crossvalidation";
 			ArrayList<Double> avgAcc = new ArrayList<Double>();
 			
 			BestHeight BH = new BestHeight();
@@ -446,7 +446,7 @@ public class RandomForestService {
 		try{
 			IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
 			LOG.debug("Accuracy Service");
-			String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+"dt"+Utils.linuxSeparator+"work"+Utils.linuxSeparator+"crossvalidation";
+			String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+DT_WORK_DIR+Utils.linuxSeparator+"crossvalidation";
 			String trainFile = fs.getFilePathForUploads(trainingDataset, username);
 			String testFile = fs.getFilePathForUploads(testingDataset, username);
 			

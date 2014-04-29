@@ -56,7 +56,7 @@ public class KernelService {
 	private IFileSystem fs;
 	private CouchbaseClient couchbaseClient;
 	private Gson gson;
-	
+	private static String KERNEL_WORK_DIR="kernel";
 	@PostConstruct
     void initialize() {
 		taskManager = new TaskManager((CouchbaseClient)context.getAttribute("couchbaseClient"));
@@ -255,7 +255,7 @@ public class KernelService {
 		try{
 			IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
 			LOG.debug("Using "+trainingDataset+" to begin the service");
-			String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+"work"+Utils.linuxSeparator+"crossvalidation";
+			String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+KERNEL_WORK_DIR+Utils.linuxSeparator+"crossvalidation";
 			String trainFile = fs.getFilePathForUploads(trainingDataset, username);
 			
 			CrossValidationFiles.createFiles(trainFile, fs,crossvalidation);
@@ -285,7 +285,7 @@ public class KernelService {
 		try{
 			IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
 			LOG.debug("Creating the model files" + fileNum + " " + c);
-			String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+"work"+Utils.linuxSeparator+"crossvalidation";
+			String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+KERNEL_WORK_DIR+Utils.linuxSeparator+"crossvalidation";
 			String modelPath = crossvalidation+Utils.linuxSeparator+"model"+Utils.linuxSeparator;
 			
 			Model.create(crossvalidation +File.separator+ "SVM" , fileNum, c, kernelNum, kernelParam, modelPath,fs);
@@ -311,7 +311,7 @@ public class KernelService {
 		taskManager.setTaskStatus(task, TaskStatus.RUNNING);
 		try{
 			IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
-			String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+"work"+Utils.linuxSeparator+"crossvalidation";
+			String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+KERNEL_WORK_DIR+Utils.linuxSeparator+"crossvalidation";
 			String modelPath = crossvalidation+Utils.linuxSeparator+"model"+Utils.linuxSeparator;
 			
 			LOG.debug("Calculating bestC");

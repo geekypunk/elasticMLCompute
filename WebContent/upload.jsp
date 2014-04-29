@@ -88,7 +88,7 @@ for(Cookie cookie : cookies){
 							<li><a href="#"><i class="fa fa-user"></i> My Profile</a></li>
 							<li><a href="#"><i class="fa fa-cog"></i> Account Settings</a></li>
 							<li><a href="#"><i class="fa fa-eye"></i> Privacy Settings</a></li>
-							<li><a href="user/auth/logout"><i class="fa fa-power-off"></i> Log Out</a></li>
+							<li><a onclick="logout()" href="javascript:void(0);"><i class="fa fa-power-off"></i> Log Out</a></li>
 						</ul>
 					</li>
 					<!-- END USER LOGIN DROPDOWN -->
@@ -358,6 +358,27 @@ for(Cookie cookie : cookies){
 	<!-- Notification Script-->
 	<script src="js/notifications.js"></script>
 	<!-- END Notification Script-->
+
+	<script>
+
+	function logout(){
+		$.ajax({
+		    url : "user/auth/logout",
+		    type: "GET",
+		    success: function(data, textStatus, jqXHR)
+		    {
+		    	window.location.replace("login.jsp");	   
+				
+		    },
+		    error: function (jqXHR, textStatus, errorThrown)
+		    {
+		 			console.log(errorThrown);
+		    }
+		});
+
+	}
+
+	</script>
 	<!-- /JAVASCRIPTS -->
 </body>
 </html>

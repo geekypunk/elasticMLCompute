@@ -90,7 +90,7 @@ for(Cookie cookie : cookies){
 							<li><a href="#"><i class="fa fa-user"></i> My Profile</a></li>
 							<li><a href="#"><i class="fa fa-cog"></i> Account Settings</a></li>
 							<li><a href="#"><i class="fa fa-eye"></i> Privacy Settings</a></li>
-							<li><a href="user/auth/logout"><i class="fa fa-power-off"></i> Log Out</a></li>
+							<li><a onclick="logout()" href="javascript:void(0);"><i class="fa fa-power-off"></i> Log Out</a></li>
 						</ul>
 					</li>
 					<!-- END USER LOGIN DROPDOWN -->
@@ -163,9 +163,9 @@ for(Cookie cookie : cookies){
 									<div class="box-body">
 										<div class="tabbable header-tabs">
 										  <ul class="nav nav-tabs">
-											 <li><a href="#box_tab5" data-toggle="tab"><i class="fa fa-flask"></i> <span class="hidden-inline-mobile">Reports</span>&nbsp;<span class="badge badge-red font-11">3</span></a></li>
+											 <li><a href="#box_tab5" data-toggle="tab"><i class="fa fa-flask"></i> <span class="hidden-inline-mobile">Reports</span></a></li>
 											
-											 <li class="active"><a href="#box_tab4" data-toggle="tab"><i class="fa fa-home"></i> <span class="hidden-inline-mobile">Tasks</span> <span class="badge badge-blue font-11">3</span></a></li>
+											 <li class="active"><a href="#box_tab4" data-toggle="tab"><i class="fa fa-home"></i> <span class="hidden-inline-mobile">Tasks</span></a></li>
 										  </ul>
 										  <div class="tab-content">
 											 <div class="tab-pane fade in active" id="box_tab4">
@@ -524,9 +524,28 @@ row.push('<button class="btn btn-xs btn-primary" onclick=showChart('+'\''+data[k
 	        //});
 		}
     </script>
-   	
-    <!-- /Show Chart Modal -->
+   	<!-- /Show Chart Modal -->
 	
+	<script>
+
+	function logout(){
+		$.ajax({
+		    url : "user/auth/logout",
+		    type: "GET",
+		    success: function(data, textStatus, jqXHR)
+		    {
+		    	window.location.replace("login.jsp");	   
+				
+		    },
+		    error: function (jqXHR, textStatus, errorThrown)
+		    {
+		 			console.log(errorThrown);
+		    }
+		});
+
+	}
+
+	</script>
 	<!-- /JAVASCRIPTS -->
 </body>
 </html>

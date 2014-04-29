@@ -111,7 +111,7 @@ public class UserAuthService {
 	@Path("/logout")
 	@GET
 	@Consumes("application/x-www-form-urlencoded")
-	public void logout(
+	public Response logout(
 			@Context HttpServletRequest request,
 			@Context HttpServletResponse response
 			) throws Exception {
@@ -130,7 +130,7 @@ public class UserAuthService {
             session.invalidate();
         }
         //no encoding because we have invalidated the session
-        response.sendRedirect("/login.jsp");
+        return Response.status(200).entity("success").build();
 	
 	}
 	

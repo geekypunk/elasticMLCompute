@@ -258,6 +258,7 @@ for(Cookie cookie : cookies){
 		});
 	});
 	</script>
+	
 	<!-- /JAVASCRIPTS -->
 </body>
 </html>

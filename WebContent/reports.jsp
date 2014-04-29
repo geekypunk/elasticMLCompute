@@ -90,7 +90,7 @@ for(Cookie cookie : cookies){
 							<li><a href="#"><i class="fa fa-user"></i> My Profile</a></li>
 							<li><a href="#"><i class="fa fa-cog"></i> Account Settings</a></li>
 							<li><a href="#"><i class="fa fa-eye"></i> Privacy Settings</a></li>
-							<li><a href="user/auth/logout"><i class="fa fa-power-off"></i> Log Out</a></li>
+							<li><a onclick="logout()" href="javascript:void(0);"><i class="fa fa-power-off"></i> Log Out</a></li>
 						</ul>
 					</li>
 					<!-- END USER LOGIN DROPDOWN -->
@@ -130,10 +130,12 @@ for(Cookie cookie : cookies){
 								<ul class="sub">
 									<li><a class="" href="knn.jsp"><span class="sub-menu-text">KNN</span></a></li>
 									<li><a class="" href="svm.jsp"><span class="sub-menu-text">SVM</span></a></li>
+									<li><a class="" href="kernel.jsp"><span class="sub-menu-text">KERNEL</span></a></li>
+									<li><a class="" href="decisiontree.jsp"><span class="sub-menu-text">DECISION TREE</span></a></li>
+									<li><a class="" href="wsd.jsp"><span class="sub-menu-text">WSD</span></a></li>
 								</ul>
 							</li>
 							<!-- /ML ALGORITHM MENU -->
-							
 							<!-- REPORTS MENU -->
 							<li><a class="" href="reports.jsp"><i class="fa fa-bar-chart-o fa-fw"></i> <span class="menu-text">Reports</span></a></li>
 							<!-- /REPORTS MENU -->
@@ -417,7 +419,26 @@ row.push('<button class="btn btn-xs btn-primary" onclick=showChart('+'\''+data[k
     </script>
    	
     <!-- /Show Chart Modal -->
-	
+	<script>
+
+	function logout(){
+		$.ajax({
+		    url : "user/auth/logout",
+		    type: "GET",
+		    success: function(data, textStatus, jqXHR)
+		    {
+		    	window.location.replace("login.jsp");	   
+				
+		    },
+		    error: function (jqXHR, textStatus, errorThrown)
+		    {
+		 			console.log(errorThrown);
+		    }
+		});
+
+	}
+
+	</script>
 	<!-- /JAVASCRIPTS -->
 </body>
 </html>

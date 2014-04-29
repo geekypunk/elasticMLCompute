@@ -62,7 +62,7 @@ public class SVMService{
 	private IFileSystem fs;
 	private CouchbaseClient couchbaseClient;
 	private Gson gson;
-	
+	private static String SVM_WORK_DIR = "svm";
 	@PostConstruct
     void initialize() {
 		taskManager = new TaskManager((CouchbaseClient)context.getAttribute("couchbaseClient"));
@@ -172,6 +172,7 @@ public class SVMService{
 		    	svmTask1.setParentTaskId(parentIds);
 		    	taskManager.registerTask(svmTask1);
 		    	
+		    	
 		    	LOG.debug("Creating CV files");
 		    	
 				String taskUrl = loadBalancerAddress + wsURL1;
@@ -187,31 +188,9 @@ public class SVMService{
 		        LOG.debug(conn.getResponseCode() + "");
 		        
 		        LOG.debug("Creating Models");
-		        
-		        /*
-			    //Issue Async/Non blocking HTTP calls
-		        AsyncClientHttp client = new AsyncClientHttp();
-		        client.setRequests(loadBalancerAddress,wsURL2s);
-		        client.execute(true);
-		        client.close();
-		        */
+		     
 		        AsyncClientHttp.executeRequests(loadBalancerAddress, wsURL2s);
-		        /*
-		        CloseableHttpAsyncClient httpclient = HttpAsyncClients.createDefault();
-		        httpclient.start();
-		        Future<HttpResponse> future = null;
-		        HttpGet reqURL = null;
-		        HttpResponse resp = null;
-				for(int j=0;j<wsURL2s.length;j++) {
-			        reqURL = new HttpGet(loadBalancerAddress + wsURL2s[j]);
-			        future = httpclient.execute(reqURL, null);
-			        resp = future.get();
-			        LOG.debug(reqURL.getRequestLine() + "->" + resp.getStatusLine());
-				}
-		        future.get();
-		        httpclient.close();
-		        */
-		        
+		       		        
 		        LOG.debug("Calculating best trade off parameter c");
 		        
 		        taskUrl = loadBalancerAddress + wsURL3;
@@ -365,7 +344,7 @@ public class SVMService{
 		try{
 			IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
 			LOG.debug("Using "+trainingDataset+" to begin the service");
-			String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+"work"+Utils.linuxSeparator+"crossvalidation";
+			String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+SVM_WORK_DIR+Utils.linuxSeparator+"crossvalidation";
 			String trainFile = fs.getFilePathForUploads(trainingDataset, username);
 			
 			CrossValidationFiles.createFiles(trainFile, fs,crossvalidation);
@@ -394,7 +373,7 @@ public class SVMService{
 		try{
 			IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
 			LOG.debug("Creating the model files" + fileNum + " " + c);
-			String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+"work"+Utils.linuxSeparator+"crossvalidation";
+			String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+SVM_WORK_DIR+Utils.linuxSeparator+"crossvalidation";
 			String modelPath = crossvalidation+Utils.linuxSeparator+"model"+Utils.linuxSeparator;
 			
 			Model.create(crossvalidation +File.separator+ "SVM" , fileNum, c, "0", modelPath,fs);
@@ -420,7 +399,7 @@ public class SVMService{
 		taskManager.setTaskStatus(task, TaskStatus.RUNNING);
 		try{
 			IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
-			String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+"work"+Utils.linuxSeparator+"crossvalidation";
+			String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+SVM_WORK_DIR+Utils.linuxSeparator+"crossvalidation";
 			String modelPath = crossvalidation+Utils.linuxSeparator+"model"+Utils.linuxSeparator;
 			
 			LOG.debug("Calculating bestC");

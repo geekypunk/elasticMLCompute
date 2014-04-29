@@ -42,7 +42,6 @@ import org.slf4j.LoggerFactory;
 
 import com.couchbase.client.CouchbaseClient;
 import com.cs5412.filesystem.IFileSystem;
-import com.cs5412.http.AsyncClientHttp;
 import com.cs5412.taskmanager.TaskDao;
 import com.cs5412.taskmanager.TaskManager;
 import com.cs5412.taskmanager.TaskStatus;
@@ -62,7 +61,7 @@ public class KNNDistributedService{
 	IFileSystem fs;
 	CouchbaseClient couchbaseClient;
 	Gson gson;
-	
+	private static String KNN_WORK_DIR="knn";
 	@PostConstruct
     void initialize() {
 		taskManager = new TaskManager((CouchbaseClient)context.getAttribute("couchbaseClient"));
@@ -330,7 +329,7 @@ public class KNNDistributedService{
 		try{
 			IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
 			LOG.debug("Using "+trainingDataset+" to begin the service");
-			String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+"work"+Utils.linuxSeparator+"crossvalidation"+Utils.linuxSeparator;
+			String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+KNN_WORK_DIR+Utils.linuxSeparator+"crossvalidation"+Utils.linuxSeparator;
 			String trainFile = fs.getFilePathForUploads(trainingDataset, username);
 			
 			KNN.createFiles(trainFile, fs,crossvalidation);
@@ -358,7 +357,7 @@ public class KNNDistributedService{
 		try{
 			IFileSystem fs = (IFileSystem) context.getAttribute("fileSystem");
 			LOG.debug("Running crossvalidation with model no " + modelNo + " and k = " + k);
-			String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+"work"+Utils.linuxSeparator+"crossvalidation";
+			String crossvalidation = fs.getUserPath(username)+Utils.linuxSeparator+KNN_WORK_DIR+Utils.linuxSeparator+"crossvalidation";
 			String trainingDataHDFSPath = crossvalidation+Utils.linuxSeparator+"knn"+modelNo+".train";
 			String validationDataHDFSPath = crossvalidation+Utils.linuxSeparator+"knn"+modelNo+".valid";
 			
