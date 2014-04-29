@@ -84,15 +84,19 @@ public class PerformanceMonitor extends TimerTask{
 			long maxMemory = getMaxMemory();
 			long usedMemory = getUsedMemory();
 			long freeMemory = getFreeMemory();
-			LOG.info("Perf stats:"+" Max:"+maxMemory/(long)GB);
-			LOG.info("Perf stats:"+" Used:"+usedMemory/(long)GB);
-			LOG.info("Perf stats:"+" Free:"+freeMemory/(long)GB);
+			LOG.info("Perf stats:"+" Max:"+(double)maxMemory/GB);
+			LOG.info("Perf stats:"+" Used:"+(double)usedMemory/GB);
+			LOG.info("Perf stats:"+" Free:"+(double)freeMemory/GB);
 			if(this.isServerUp == true && usedMemory+USED_MEMORY_THRESHOLD>=maxMemory){
+				this.isServerUp = false;
 				deRegisterFromLB();
 				autoScaler.scaleUp();
 			}
 			else if(this.isServerUp == false && freeMemory>=FREE_MEMORY_THRESHOLD){
+				
+				this.isServerUp = true;
 				registerWithLB();
+			
 			}
 		} catch (Exception e) {
 			LOG.debug("Error",e);

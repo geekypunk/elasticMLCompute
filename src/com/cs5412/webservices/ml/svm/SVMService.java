@@ -8,9 +8,11 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -28,6 +30,10 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.LocatedFileStatus;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -78,159 +84,180 @@ public class SVMService{
 			@Context HttpServletResponse response
 			) throws Exception{
 		try{
-			LOG.debug("Using "+trainingDataset+" dataset for SVM");
-			HttpSession session = request.getSession(false);
-			String username = (String) session.getAttribute("user");
-			
-			ArrayList<ArrayList<Double>> accList = new ArrayList<ArrayList<Double>>();
-			String json = gson.toJson(accList);
-			couchbaseClient.set(username + "SVMAcc", json).get();
-					
-			
-	        String wsURL = "/ml/svm/runDistributedService";
-	        TaskDao svmTask = new TaskDao(username, "SVMRun for "+trainingDataset+"/"+testDataset, "complete", TaskStatus.RUNNING, false, wsURL);
-	        
-	    	svmTask.setTaskType(TaskType.ALGORITHM_EXEC.toString());
-	    	svmTask.setTaskDescription("Support Vector Machine algorithm");
-	    	svmTask.setParent(true);
-	    	taskManager.registerTask(svmTask);
-	    	
-	    	ArrayList<String> parentIds = new ArrayList<String>();
-	    	String wsURL1 = "/ml/svm/crossvalidation/createfiles" + "/" + username + "/" + trainingDataset;
-	    	TaskDao svmTask1 = new TaskDao(username, "SVMCreateFiles", "SVMCreateFiles", TaskStatus.INITIALIZED, false, wsURL1);
-	    	wsURL1 += "/" + svmTask1.getTaskId();
-	    	svmTask1.setWsURL(wsURL1);
-	    	svmTask1.setTaskType(TaskType.ALGORITHM_EXEC.toString());
-	    	svmTask1.setTaskDescription("Create the SVM cross validation files");
-	    	svmTask1.setSeen(true);
-	    	svmTask1.setParentTaskId(parentIds);
-	    	taskManager.registerTask(svmTask1);
-	    	
-	    	parentIds = new ArrayList<String>();
-	    	parentIds.add(svmTask1.getTaskId());
-	    	
-	    	ArrayList<String> mParentIds = new ArrayList<String>();
-	    	String[] wsURL2s = new String[35];
-	    	int k = 0;
-	        for(int i=1;i<=NUM_MODELS;i++){
-				for(int j=0;j<=6;j++) {
-					String wsURL2 = "/ml/svm/crossvalidation/createmodel" + "/" + username + "/" + j + "/" + i;
-		    		svmTask1 = new TaskDao(username, "CrossValidation " + i, "CV " + i, TaskStatus.INITIALIZED, false, wsURL2);
-		        	wsURL2 += "/" + svmTask1.getTaskId();
-		        	svmTask1.setWsURL(wsURL2);
-		        	wsURL2s[k] = wsURL2;
-		        	k++;
-		        	svmTask1.setTaskType(TaskType.ALGORITHM_EXEC.toString());
-		        	svmTask1.setTaskDescription("Begin the cross validation task " + i);
-		        	svmTask1.setSeen(true);
-		        	svmTask1.setParentTaskId(parentIds);
-		        	mParentIds.add(svmTask1.getTaskId());
-		        	taskManager.registerTask(svmTask1);
+			if(trainingDataset!=null && testDataset!=null && trainingDataset.trim().length()>1 &&  testDataset.trim().length()>1){
+				LOG.debug("Using "+trainingDataset+" dataset for SVM");
+				HttpSession session = request.getSession(false);
+				String username = (String) session.getAttribute("user");
+				
+				ArrayList<ArrayList<Double>> accList = new ArrayList<ArrayList<Double>>();
+				String json = gson.toJson(accList);
+				couchbaseClient.set(username + "SVMAcc", json).get();
+						
+				
+		        String wsURL = "/ml/svm/runDistributedService";
+		        TaskDao svmTask = new TaskDao(username, "SVMRun for "+trainingDataset+"/"+testDataset, "complete", TaskStatus.RUNNING, false, wsURL);
+		        
+		    	svmTask.setTaskType(TaskType.ALGORITHM_EXEC.toString());
+		    	svmTask.setTaskDescription("Support Vector Machine algorithm");
+		    	svmTask.setParent(true);
+		    	taskManager.registerTask(svmTask);
+		    	
+		    	ArrayList<String> parentIds = new ArrayList<String>();
+		    	String wsURL1 = "/ml/svm/crossvalidation/createfiles" + "/" + username + "/" + trainingDataset;
+		    	TaskDao svmTask1 = new TaskDao(username, "SVMCreateFiles", "SVMCreateFiles", TaskStatus.INITIALIZED, false, wsURL1);
+		    	wsURL1 += "/" + svmTask1.getTaskId();
+		    	svmTask1.setWsURL(wsURL1);
+		    	svmTask1.setTaskType(TaskType.ALGORITHM_EXEC.toString());
+		    	svmTask1.setTaskDescription("Create the SVM cross validation files");
+		    	svmTask1.setSeen(true);
+		    	svmTask1.setParentTaskId(parentIds);
+		    	taskManager.registerTask(svmTask1);
+		    	
+		    	parentIds = new ArrayList<String>();
+		    	parentIds.add(svmTask1.getTaskId());
+		    	
+		    	ArrayList<String> mParentIds = new ArrayList<String>();
+		    	String[] wsURL2s = new String[35];
+		    	int k = 0;
+		        for(int i=1;i<=NUM_MODELS;i++){
+					for(int j=0;j<=6;j++) {
+						String wsURL2 = "/ml/svm/crossvalidation/createmodel" + "/" + username + "/" + j + "/" + i;
+			    		svmTask1 = new TaskDao(username, "CrossValidation " + i, "CV " + i, TaskStatus.INITIALIZED, false, wsURL2);
+			        	wsURL2 += "/" + svmTask1.getTaskId();
+			        	svmTask1.setWsURL(wsURL2);
+			        	wsURL2s[k] = wsURL2;
+			        	k++;
+			        	svmTask1.setTaskType(TaskType.ALGORITHM_EXEC.toString());
+			        	svmTask1.setTaskDescription("Begin the cross validation task " + i);
+			        	svmTask1.setSeen(true);
+			        	svmTask1.setParentTaskId(parentIds);
+			        	mParentIds.add(svmTask1.getTaskId());
+			        	taskManager.registerTask(svmTask1);
+					}
+		        }
+		        
+		        String wsURL3 = "/ml/svm/crossvalidation/bestTradeOff/" + "/" + username;
+		    	svmTask1 = new TaskDao(username, "calcBestTradeOff", "calcBestTradeOff", TaskStatus.INITIALIZED, false, wsURL3);
+		    	wsURL3 += "/" + svmTask1.getTaskId();
+		    	svmTask1.setWsURL(wsURL3);
+		    	svmTask1.setTaskType(TaskType.ALGORITHM_EXEC.toString());
+		    	svmTask1.setTaskDescription("Calculation of the best tradeoff parameter c");
+		    	svmTask1.setSeen(true);
+		    	svmTask1.setParentTaskId(mParentIds);
+		    	taskManager.registerTask(svmTask1);
+		    	
+		    	parentIds = new ArrayList<String>();
+		    	parentIds.add(svmTask1.getTaskId());
+		    	
+		    	String wsURL4 = "/ml/svm/crossvalidation/predictTest" + "/" + username + "/" + trainingDataset + "/" + testDataset;
+		    	svmTask1 = new TaskDao(username, "predictTest", "predictTest", TaskStatus.INITIALIZED, false, wsURL4);
+		    	wsURL4 += "/" + svmTask1.getTaskId();
+		    	svmTask1.setWsURL(wsURL4);
+		    	svmTask1.setTaskType(TaskType.ALGORITHM_EXEC.toString());
+		    	svmTask1.setTaskDescription("Begin the prediction step");
+		    	svmTask1.setSeen(true);
+		    	svmTask1.setParentTaskId(parentIds);
+		    	taskManager.registerTask(svmTask1);
+		    	
+		    	parentIds = new ArrayList<String>();
+		    	parentIds.add(svmTask1.getTaskId());
+		    	
+		    	String wsURL5 = "/ml/svm/generateReport" + "/" + username + "/" + trainingDataset + "/" + testDataset;
+		    	svmTask1 = new TaskDao(username, "GenerateReport", "GenerateReport", TaskStatus.INITIALIZED, false, wsURL5);
+		    	wsURL5 += "/" + svmTask1.getTaskId() + "/" + svmTask.getTaskId();
+		    	svmTask1.setWsURL(wsURL5);
+		    	svmTask1.setTaskType(TaskType.ALGORITHM_EXEC.toString());
+		    	svmTask1.setTaskDescription("Begin the GenerateReport task");
+		    	svmTask1.setSeen(true);
+		    	svmTask1.setParentTaskId(parentIds);
+		    	taskManager.registerTask(svmTask1);
+		    	
+		    	LOG.debug("Creating CV files");
+		    	
+				String taskUrl = loadBalancerAddress + wsURL1;
+				URL url = new URL(taskUrl);
+				HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		        conn.setReadTimeout(1000000);
+		        conn.setConnectTimeout(1000000);
+		        conn.setRequestMethod("GET");
+		        conn.setUseCaches(false);
+		        conn.setDoInput(true);
+		        conn.setDoOutput(true);
+		        conn.connect();
+		        LOG.debug(conn.getResponseCode() + "");
+		        
+		        LOG.debug("Creating Models");
+		        
+		        /*
+			    //Issue Async/Non blocking HTTP calls
+		        AsyncClientHttp client = new AsyncClientHttp();
+		        client.setRequests(loadBalancerAddress,wsURL2s);
+		        client.execute(true);
+		        client.close();
+		        */
+		        AsyncClientHttp.executeRequests(loadBalancerAddress, wsURL2s);
+		        /*
+		        CloseableHttpAsyncClient httpclient = HttpAsyncClients.createDefault();
+		        httpclient.start();
+		        Future<HttpResponse> future = null;
+		        HttpGet reqURL = null;
+		        HttpResponse resp = null;
+				for(int j=0;j<wsURL2s.length;j++) {
+			        reqURL = new HttpGet(loadBalancerAddress + wsURL2s[j]);
+			        future = httpclient.execute(reqURL, null);
+			        resp = future.get();
+			        LOG.debug(reqURL.getRequestLine() + "->" + resp.getStatusLine());
 				}
-	        }
-	        
-	        String wsURL3 = "/ml/svm/crossvalidation/bestTradeOff/" + "/" + username;
-	    	svmTask1 = new TaskDao(username, "calcBestTradeOff", "calcBestTradeOff", TaskStatus.INITIALIZED, false, wsURL3);
-	    	wsURL3 += "/" + svmTask1.getTaskId();
-	    	svmTask1.setWsURL(wsURL3);
-	    	svmTask1.setTaskType(TaskType.ALGORITHM_EXEC.toString());
-	    	svmTask1.setTaskDescription("Calculation of the best tradeoff parameter c");
-	    	svmTask1.setSeen(true);
-	    	svmTask1.setParentTaskId(mParentIds);
-	    	taskManager.registerTask(svmTask1);
-	    	
-	    	parentIds = new ArrayList<String>();
-	    	parentIds.add(svmTask1.getTaskId());
-	    	
-	    	String wsURL4 = "/ml/svm/crossvalidation/predictTest" + "/" + username + "/" + trainingDataset + "/" + testDataset;
-	    	svmTask1 = new TaskDao(username, "predictTest", "predictTest", TaskStatus.INITIALIZED, false, wsURL4);
-	    	wsURL4 += "/" + svmTask1.getTaskId();
-	    	svmTask1.setWsURL(wsURL4);
-	    	svmTask1.setTaskType(TaskType.ALGORITHM_EXEC.toString());
-	    	svmTask1.setTaskDescription("Begin the prediction step");
-	    	svmTask1.setSeen(true);
-	    	svmTask1.setParentTaskId(parentIds);
-	    	taskManager.registerTask(svmTask1);
-	    	
-	    	parentIds = new ArrayList<String>();
-	    	parentIds.add(svmTask1.getTaskId());
-	    	
-	    	String wsURL5 = "/ml/svm/generateReport" + "/" + username + "/" + trainingDataset + "/" + testDataset;
-	    	svmTask1 = new TaskDao(username, "GenerateReport", "GenerateReport", TaskStatus.INITIALIZED, false, wsURL5);
-	    	wsURL5 += "/" + svmTask1.getTaskId() + "/" + svmTask.getTaskId();
-	    	svmTask1.setWsURL(wsURL5);
-	    	svmTask1.setTaskType(TaskType.ALGORITHM_EXEC.toString());
-	    	svmTask1.setTaskDescription("Begin the GenerateReport task");
-	    	svmTask1.setSeen(true);
-	    	svmTask1.setParentTaskId(parentIds);
-	    	taskManager.registerTask(svmTask1);
-	    	
-	    	LOG.debug("Creating CV files");
-	    	
-			String taskUrl = loadBalancerAddress + wsURL1;
-			URL url = new URL(taskUrl);
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-	        conn.setReadTimeout(1000000);
-	        conn.setConnectTimeout(1000000);
-	        conn.setRequestMethod("GET");
-	        conn.setUseCaches(false);
-	        conn.setDoInput(true);
-	        conn.setDoOutput(true);
-	        conn.connect();
-	        LOG.debug(conn.getResponseCode() + "");
-	        
-	        LOG.debug("Creating Models");
-	        
-		      //Issue Async/Non blocking HTTP calls
-	        AsyncClientHttp client = new AsyncClientHttp();
-	        client.setRequests(loadBalancerAddress,wsURL2s);
-	        client.execute();
-	        client.blockOnLastReq();
-	        client.close();
-	        
-	        LOG.debug("Calculating best trade off parameter c");
-	        
-	        taskUrl = loadBalancerAddress + wsURL3;
-	        url = new URL(taskUrl);
-	        conn = (HttpURLConnection) url.openConnection();
-	        conn.setReadTimeout(1000000);
-	        conn.setConnectTimeout(1000000);
-	        conn.setRequestMethod("GET");
-	        conn.setUseCaches(false);
-	        conn.setDoInput(true);
-	        conn.setDoOutput(true);
-	        conn.connect();
-	        LOG.debug(conn.getResponseCode() + "");
-	
-	        LOG.debug("Predicting the test");
-	        
-	        taskUrl = loadBalancerAddress + wsURL4;
-	        url = new URL(taskUrl);
-	        conn = (HttpURLConnection) url.openConnection();
-	        conn.setReadTimeout(1000000);
-	        conn.setConnectTimeout(1000000);
-	        conn.setRequestMethod("GET");
-	        conn.setUseCaches(false);
-	        conn.setDoInput(true);
-	        conn.setDoOutput(true);
-	        conn.connect();
-	        LOG.debug(conn.getResponseCode() + "");
-	        
-	        LOG.debug("Generating the report");
-	
-	        taskUrl = loadBalancerAddress + wsURL5;
-	        url = new URL(taskUrl);
-	        conn = (HttpURLConnection) url.openConnection();
-	        conn.setReadTimeout(1000000);
-	        conn.setConnectTimeout(1000000);
-	        conn.setRequestMethod("GET");
-	        conn.setUseCaches(false);
-	        conn.setDoInput(true);
-	        conn.setDoOutput(true);
-	        conn.connect();
-	        LOG.debug(conn.getResponseCode() + "");
-	        
-	        return Response.status(200).entity("").build();
+		        future.get();
+		        httpclient.close();
+		        */
+		        
+		        LOG.debug("Calculating best trade off parameter c");
+		        
+		        taskUrl = loadBalancerAddress + wsURL3;
+		        url = new URL(taskUrl);
+		        conn = (HttpURLConnection) url.openConnection();
+		        conn.setReadTimeout(1000000);
+		        conn.setConnectTimeout(1000000);
+		        conn.setRequestMethod("GET");
+		        conn.setUseCaches(false);
+		        conn.setDoInput(true);
+		        conn.setDoOutput(true);
+		        conn.connect();
+		        LOG.debug(conn.getResponseCode() + "");
+		
+		        LOG.debug("Predicting the test");
+		        
+		        taskUrl = loadBalancerAddress + wsURL4;
+		        url = new URL(taskUrl);
+		        conn = (HttpURLConnection) url.openConnection();
+		        conn.setReadTimeout(1000000);
+		        conn.setConnectTimeout(1000000);
+		        conn.setRequestMethod("GET");
+		        conn.setUseCaches(false);
+		        conn.setDoInput(true);
+		        conn.setDoOutput(true);
+		        conn.connect();
+		        LOG.debug(conn.getResponseCode() + "");
+		        
+		        LOG.debug("Generating the report");
+		
+		        taskUrl = loadBalancerAddress + wsURL5;
+		        url = new URL(taskUrl);
+		        conn = (HttpURLConnection) url.openConnection();
+		        conn.setReadTimeout(1000000);
+		        conn.setConnectTimeout(1000000);
+		        conn.setRequestMethod("GET");
+		        conn.setUseCaches(false);
+		        conn.setDoInput(true);
+		        conn.setDoOutput(true);
+		        conn.connect();
+		        LOG.debug(conn.getResponseCode() + "");
+		        
+		        return Response.status(200).entity("").build();
+			}else{
+				   return Response.status(200).entity("").build();
+			}
 		}
         catch (Exception e) {
         	LOG.debug("Error",e);

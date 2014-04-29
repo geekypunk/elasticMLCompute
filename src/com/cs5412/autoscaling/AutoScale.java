@@ -54,7 +54,7 @@ public class AutoScale {
 	
 	public static void main(String args[]) throws Exception{
 		CMD_DISABLE  = "echo \"disable server "+"servers/node2"+"\" | socat stdio "+HASOCKET;
-		CMD_ENABLE   = "echo \"enable server "+"servers/node2"+"\" | socat stdio "+HASOCKET;
+		CMD_ENABLE   = "echo \"enable server "+"servers/node1"+"\" | socat stdio "+HASOCKET;
 		lbShell = new SSHAdaptor(new Machine("kt466", "l", "128.84.216.68"));
 		String output;
 		
@@ -66,7 +66,7 @@ public class AutoScale {
 		
 		
 		lbShell = lbShell.connect();
-		lbShell.execute(CMD_DISABLE);
+		lbShell.execute(CMD_ENABLE);
 		lbShell.disconnect();
 		
 		

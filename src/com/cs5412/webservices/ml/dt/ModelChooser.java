@@ -141,7 +141,9 @@ public class ModelChooser {
 			InputStream fin = (InputStream) fs.readFile(fileName);
 			BufferedReader br = new BufferedReader(new InputStreamReader(fin));
 			String readline = br.readLine();
+			int i = 1;
 			while(readline != null) {
+				System.out.println(i);
 				String[] record = readline.split(" ");
 				TrainingNode tn = new TrainingNode();
 				int flag=0;
@@ -155,11 +157,16 @@ public class ModelChooser {
 						flag=1;
 						continue;
 					}
+					try{
 					String[] indx_val = index.split(":");
 					tn.setArray(Integer.parseInt(indx_val[0]),Integer.parseInt(indx_val[1]));	
+					}catch(Exception e){
+						System.out.println(e);
+					}
 				}
 				trData.add(tn);
 				readline=br.readLine();
+				i++;
 			}
 			br.close();
 		}

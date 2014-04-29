@@ -27,14 +27,11 @@ public class AsyncClientHttp {
 	private RequestConfig requestConfig;
 	private CloseableHttpAsyncClient httpclient;
 	private HttpGet[] requests;
-	private Future<HttpResponse> lastReqResponse;
+	
 	public AsyncClientHttp(){
-	    requestConfig = RequestConfig.custom()
-	        .setSocketTimeout(3000000)
-	        .setConnectTimeout(3000000).build();
-	    httpclient = HttpAsyncClients.custom()
-	        .setDefaultRequestConfig(requestConfig)
-	        .build();
+		
+		httpclient = HttpAsyncClients.createDefault();
+		
 	}
 	
 	public void setRequests(String urlPrefix,String[] urlList){
@@ -43,7 +40,43 @@ public class AsyncClientHttp {
 			requests[i] = new HttpGet(urlPrefix+urlList[i]);
 		}
 	}
-	
+	public static void executeRequests(String prefix, String[] reqs){
+		try{
+			 
+			CloseableHttpAsyncClient httpclient = HttpAsyncClients.createDefault();
+			   
+			httpclient.start();
+			Future<HttpResponse> future = null;
+			HttpGet reqURL = null;
+			HttpResponse resp = null;
+			for(int j=0;j<reqs.length;j++) {
+				reqURL = new HttpGet(prefix + reqs[j]);
+				future = httpclient.execute(reqURL, null);
+				resp = future.get();
+				LOG.debug(reqURL.getRequestLine() + "->" + resp.getStatusLine());
+			}
+			future.get();
+			httpclient.close();
+		}catch(Exception e){
+			LOG.error("Error",e);
+		}
+		
+	}
+	public void execute(boolean blockLast) throws InterruptedException, IOException{
+		try{
+			Future<HttpResponse> resp = null;;
+			httpclient.start();
+		    for (HttpGet request: requests) {
+	        	resp = httpclient.execute(request, null);
+	        }
+		    if(blockLast)
+		    	resp.get();
+	     }catch(Exception e){
+	    	 LOG.debug("Error in AsyncClientHttp execute method", e);
+	     }
+		
+	}
+	/*
 	public void execute() throws InterruptedException, IOException{
 		try{
 			httpclient.start();
@@ -76,13 +109,11 @@ public class AsyncClientHttp {
 	    	 
 	     }
 		
-	}
+	}*/
 
-	public void blockOnLastReq() throws InterruptedException, ExecutionException{
-		lastReqResponse.get();
-	}
 	public void close(){
 		try {
+			LOG.debug("Shutting down");
 			httpclient.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

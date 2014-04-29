@@ -188,11 +188,7 @@ public class KernelService {
 	        LOG.debug("Creating Models");
 	        
 		      //Issue Async/Non blocking HTTP calls
-	        AsyncClientHttp client = new AsyncClientHttp();
-	        client.setRequests(loadBalancerAddress,wsURL2s);
-	        client.execute();
-	        client.blockOnLastReq();
-	        client.close();
+	        AsyncClientHttp.executeRequests(loadBalancerAddress, wsURL2s);
 	        
 	        LOG.debug("Calculating best trade off parameter c");
 	        
