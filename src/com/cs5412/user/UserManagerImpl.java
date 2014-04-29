@@ -16,6 +16,7 @@ import com.cs5412.utils.Utils;
 import com.google.gson.Gson;
 
 /**
+ * <p><b>Implementation class for UserManager</b></p>
  * @author kt466
  *
  */

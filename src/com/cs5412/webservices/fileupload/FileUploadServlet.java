@@ -49,7 +49,7 @@ import com.cs5412.utils.HTTPConstants;
 import com.cs5412.utils.Utils;
 
 /**
- * A Java servlet that handles file upload from client.
+ * <p><b>Handles file upload from client.</b></p>
  * 
  * @author kt466
  */

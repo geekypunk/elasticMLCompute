@@ -25,8 +25,9 @@ import com.cs5412.taskmanager.TaskDao;
 import com.cs5412.taskmanager.TaskManager;
 
 /**
- * @author kt466
  * <p>Class for viewing and managing tasks</p>
+ * @author kt466
+ * 
  */
 @Path("/tasks")
 public class TasksService {

@@ -9,9 +9,10 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
 /**
- * 
+ * <p><b>Class used for generating password hashes. 
+ * Uses native Java implementation of "PBKDF2" algorithm as "PBKDF2WithHmacSHA1".</b></p>
  * @author kt466
- * Uses native Java implementation of "PBKDF2" algorithm as "PBKDF2WithHmacSHA1".
+ * 
  */
 public class PasswordHash {
 	

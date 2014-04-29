@@ -11,6 +11,7 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
 /**
+ * <p><b>Serialization class for Task object, to be used by Gson<b></p>
  * @author kt466
  *
  */

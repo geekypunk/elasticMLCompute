@@ -1,6 +1,7 @@
 package com.cs5412.user;
 
 /**
+ * <p><b>POJO for representing a registered user</b></p>
  * @author kt466
  *
  */

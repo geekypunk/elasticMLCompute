@@ -104,6 +104,11 @@ public class PerformanceMonitor extends TimerTask{
 		
 	}
 	
+	/**
+	 * Deregister this node from the load balancer by establishing an SSH tunnel to the unix socket exposed by HAProxy 
+	 * load balancer
+	 * @throws Exception
+	 */
 	private void deRegisterFromLB() throws Exception{
 		try {
 			LOG.debug("Deregistering "+this.NODE_NAME);
@@ -127,6 +132,11 @@ public class PerformanceMonitor extends TimerTask{
         
 	}
 	
+	/**
+	 * Register this node from the load balancer by establishing an SSH tunnel to the unix socket exposed by HAProxy 
+	 * load balancer
+	 * @throws Exception
+	 */
 	private void registerWithLB(){
 		
 		try {

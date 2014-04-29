@@ -6,6 +6,7 @@ import java.util.List;
 import com.cs5412.utils.Utils;
 
 /**
+ * <p><b>Represent a Task object, the basic unit for fault-tolerance</b></p>
  * @author kt466
  *
  */

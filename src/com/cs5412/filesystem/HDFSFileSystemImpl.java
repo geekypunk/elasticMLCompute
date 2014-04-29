@@ -24,6 +24,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.RemoteIterator;
 
 /**
+ * Implementation class for IFileSystem
  * @author kt466
  *
  */

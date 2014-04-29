@@ -1,6 +1,7 @@
 package com.cs5412.utils;
 
 /**
+ * Constants used in FileUpload
  * @author kt466
  *
  */

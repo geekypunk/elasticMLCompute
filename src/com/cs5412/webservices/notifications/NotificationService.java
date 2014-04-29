@@ -25,6 +25,7 @@ import com.cs5412.taskmanager.TaskDao;
 import com.cs5412.taskmanager.TaskManager;
 
 /**
+ * <p><b>This class complements the notification service on the client</b></p>
  * @author kt466
  *
  */

@@ -1,30 +1,24 @@
-/**
- * Class exposing the Apache commons CloseableHttpAsyncClient functionality for aynchronous,non-blocking HTTP requests
- */
 package com.cs5412.http;
 
 import java.io.IOException;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * <p><b>Class exposing the Apache Commons CloseableHttpAsyncClient functionality for aynchronous,
+ * non-blocking HTTP requests</b></p>
  * @author kt466
  *
  */
 public class AsyncClientHttp {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(AsyncClientHttp.class);
-	private RequestConfig requestConfig;
 	private CloseableHttpAsyncClient httpclient;
 	private HttpGet[] requests;
 	

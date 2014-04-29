@@ -1,6 +1,7 @@
 package com.cs5412.taskmanager;
 
 /**
+ * <p><b>Enum for task type</b></p>
  * @author kt466
  *
  */

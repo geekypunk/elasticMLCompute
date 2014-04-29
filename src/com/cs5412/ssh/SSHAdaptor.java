@@ -12,6 +12,11 @@ import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 
+/**
+ * <p><b>This class provides functionality to establish an SSH tunnel to a given Machine.</b></p>
+ * @author kt466
+ *
+ */
 public class SSHAdaptor {
     private JSch jsch;
     private ChannelExec channelExec;

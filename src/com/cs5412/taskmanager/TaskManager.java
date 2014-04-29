@@ -15,6 +15,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 /**
+ * <p><b>This class implements the ITaskManager. Uses CouchBase for storing Task Objects.</b></p>
  * @author kt466
  *
  */

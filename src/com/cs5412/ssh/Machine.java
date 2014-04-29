@@ -1,6 +1,7 @@
 package com.cs5412.ssh;
 
 /**
+ * <p><b>Represents a machine. To be used by SSHAdaptor</p></b>
  * @author kt466
  *
  */

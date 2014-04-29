@@ -26,6 +26,7 @@ import com.cs5412.utils.Utils;
 import com.google.gson.Gson;
 
 /**
+ * All initial setup jobs are done here.
  * @author kt466
  *
  */

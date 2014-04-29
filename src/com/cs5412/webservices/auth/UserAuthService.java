@@ -26,6 +26,7 @@ import com.cs5412.user.UserManager;
 import com.cs5412.user.UserManagerImpl;
 
 /**
+ * <p><b>This class supports the register/login/logout fuctionality on the client side</b><p>
  * @author kt466
  *
  */

@@ -8,6 +8,7 @@ import java.util.Enumeration;
 import java.util.UUID;
 
 /**
+ * Utility methods
  * @author kt466
  *
  */
@@ -28,6 +29,11 @@ public class Utils {
 		
 	}
 	
+	/**
+	 * Get the IP address
+	 * @return
+	 * @throws SocketException
+	 */
 	public static String getIP() throws SocketException{
 		String ip = null;
 		Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
@@ -46,13 +52,5 @@ public class Utils {
 		return ip;
 	}
 
-	public static void main(String[] args)throws Exception{
-		System.out.println(Utils.getIP());
-	}
-	
-	public static void sendHTTPAsyncReqs(){
-		
-		
-	}
 	
 }
