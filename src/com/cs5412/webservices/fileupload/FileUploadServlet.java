@@ -190,6 +190,59 @@ public class FileUploadServlet extends HttpServlet {
                             }
                             result.put("files", array);
                             request.setAttribute("message",message.toString());
+                        }else if("http".equalsIgnoreCase(extensionOf(fileName))){
+                        	
+                        	InputStream uploadedStream = item.getInputStream();
+                            BufferedReader br = new BufferedReader(new InputStreamReader(uploadedStream));
+                            String line = null;
+                            List<String> urls = new ArrayList<String>();
+                            
+                            while((line=br.readLine())!=null){
+                            	urls.add(line);
+                            }
+
+                            JSONArray array = new JSONArray(); 	
+                            StringBuffer message = new StringBuffer();
+                            
+                            for(String fileLocationURL: urls){
+	                            String uploadFileName = getFileName(fileLocationURL);
+
+	                       		if(isAlreadyUploaded(uploadFileName,uploadedFiles)){
+	                       			JSONObject jsono = createJsonObjWithErrorMsgS3(uploadFileName,"Duplicate File!");
+		 	                    	array.put(jsono);
+		                        } else{
+		                        	
+		                        	TaskDao uploadTask = new TaskDao(username, uploadFileName, "upload", TaskStatus.RUNNING, false, "/upload");
+		                        	uploadTask.setTaskType(TaskType.DATASET_UPLOAD.toString());
+		                        	uploadTask.setTaskDescription(uploadFileName);
+		                        	uploadTask.setParent(true);
+		                        	
+		                        	try{
+			                        	taskManager.registerTask(uploadTask);
+			                        	URL url = new URL(fileLocationURL);
+			                        	URLConnection  uConn = url.openConnection();
+			                        	InputStream inputStream = uConn.getInputStream();
+				                        String filePath = fs.getFilePathForUploads(uploadFileName, username);
+				                        fs.createFile(inputStream, filePath);
+				                        message.append("Uploaded "+uploadFileName+" successfully!");
+				                        
+				                        //TODO change createFile API to return number of bytes read
+				                        uConn = url.openConnection();
+			                        	inputStream = uConn.getInputStream();
+			                        	int size = getSize(uConn, inputStream);
+				                        JSONObject jsono = createJsonObjHTTP(uploadFileName,size);
+				                    	array.put(jsono);
+				                    	taskManager.setTaskStatus(uploadTask, TaskStatus.SUCCESS);
+		                        	}catch(Exception e){
+		                        		  LOG.error("Error",e);
+		                        		message.append("Could not upload "+uploadFileName);
+		                        		taskManager.setTaskStatus(uploadTask, TaskStatus.FAILURE);
+		                        	}
+		                        }
+	                       		//http file upload end
+                            }
+                            result.put("files", array);
+                            request.setAttribute("message",message.toString());
                         }else{
 	                        JSONObject jsono = new JSONObject();
 	                        if(isAlreadyUploaded(fileName,uploadedFiles)){
@@ -246,6 +299,21 @@ public class FileUploadServlet extends HttpServlet {
      
     }
     
+	private int getSize(URLConnection uConn, InputStream inputStream) throws IOException {
+    	inputStream = uConn.getInputStream();
+    	 int bytesRead,bytesWritten = 0,size=1024;
+         byte[] buf = new byte[size];
+         while ((bytesRead = inputStream.read(buf)) != -1) {
+             bytesWritten += bytesRead;
+         }
+		return bytesWritten;
+	}
+
+	private String getFileName(String fileLocationURL) {
+    	int lastIndexOfSlash = fileLocationURL.lastIndexOf('/');
+		return fileLocationURL.substring(lastIndexOfSlash+1).trim();
+	}
+
     private String[] getS3FileParameters(String fileName) {
     	fileName=fileName.replaceAll("https://", "");
     	fileName=fileName.replaceAll("http://", "");
@@ -342,6 +410,17 @@ public class FileUploadServlet extends HttpServlet {
         jsono.put("deleteType", "DELETE");
         return jsono;
     }
+    
+    private JSONObject createJsonObjHTTP(String item, int size) throws JSONException {
+    	JSONObject jsono = new JSONObject();
+    	jsono.put("name", item);
+    	jsono.put("size", size);
+        jsono.put("url", Utils.SERVER_URL+"FileUpload?getfile=" + item);
+        jsono.put("thumbnailUrl", "js/jquery-upload/img/document_thumbnail.PNG");
+        jsono.put("deleteUrl", Utils.SERVER_URL+"FileUpload?"+HTTPConstants.DELETE_DATASET+"=" + item);
+        jsono.put("deleteType", "DELETE");
+        return jsono;
+	}
     private JSONObject createJsonObjWithErrorMsg(FileItem item,String message) throws JSONException{
     	JSONObject jsono = new JSONObject();
     	jsono.put("error", message);
