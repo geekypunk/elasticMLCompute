@@ -184,9 +184,6 @@ for(Cookie cookie : cookies){
 										  </div>
 										  <button type="submit" id="btn-load-complete" class="btn btn-success" data-complete-text="Run again!" data-loading-text="Running...">Run!</button>
 									   </form>
-									   <br/>
-									   <button id="btn-chart" class="btn btn-success" data-complete-text="Refresh" data-loading-text="Refresh...">Display Chart</button>
-									   <br/>
 									 
 									  
 									  

@@ -53,7 +53,6 @@
 			}else{
 				label = "";
 			}
-//		    alert(label);
 		    
 		    $("#kernelParam").html(label);
 		});

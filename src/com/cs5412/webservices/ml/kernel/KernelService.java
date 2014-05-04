@@ -74,7 +74,7 @@ public class KernelService {
 			@FormParam("trainingDataset") String trainingDataset,
 			@FormParam("testDataset") String testDataset,
 			@FormParam("kernelType") String kernelType,
-			@FormParam("kernelParam") String kernelParam,
+			@FormParam("kernelValue") String kernelParam,
 			@Context ServletContext context,
 			@Context HttpServletRequest request,
 			@Context HttpServletResponse response

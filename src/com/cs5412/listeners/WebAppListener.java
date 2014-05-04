@@ -85,7 +85,7 @@ public class WebAppListener implements ServletContextListener {
 		  	application.setAttribute("couchbaseClient", couchbaseClient);	
 		  
 		  	//Monitor server statistics to prevent OOM crash
-		   	PerformanceMonitor perfMonitor = new PerformanceMonitor(application);
+		/*   	PerformanceMonitor perfMonitor = new PerformanceMonitor(application);
 			Timer time = new Timer();
 			time.schedule(perfMonitor, 0,5*1000);
 			
@@ -99,7 +99,7 @@ public class WebAppListener implements ServletContextListener {
 				lbShell = lbShell.connect();
 				lbShell.execute(CMD_DISABLE);
 				lbShell.disconnect();
-			}
+			}*/
 			
 		}catch(Exception e){
 			LOG.error("Error", e);
