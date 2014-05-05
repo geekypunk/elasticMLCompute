@@ -86,8 +86,12 @@ public class KNNDistributedService{
 		HttpSession session = request.getSession(false);
 		String username = (String) session.getAttribute("user");
 		
+		long startTime = System.currentTimeMillis();
+		String json = gson.toJson(startTime);
+		couchbaseClient.set(username + "knnStartTime", json).get();
+		
 		Map<Integer,ArrayList<Double>> accList = new HashMap<Integer,ArrayList<Double>>();
-		String json = gson.toJson(accList);
+		json = gson.toJson(accList);
 		couchbaseClient.set(username + "KNNAcc", json).get();
 		
 		TaskManager taskManager = new TaskManager((CouchbaseClient)context.getAttribute("couchbaseClient"));
@@ -306,6 +310,10 @@ public class KNNDistributedService{
 				LOG.debug("FINISHED KNN EXECUTION for"+trainingDataset+"|"+testDataset);
 	      	taskManager.setTaskStatus(task, TaskStatus.SUCCESS);
 	      	taskManager.setTaskStatus(masterTask, TaskStatus.SUCCESS);
+			collectionType = new TypeToken<Long>(){}.getType();
+			long startTime = gson.fromJson((String) couchbaseClient.get(username + "knnStartTime"), collectionType);	
+	      	long endTime = System.currentTimeMillis();
+	      	LOG.debug("Time elapsed in KNN execution (user: " + username + ") : " + (endTime - startTime)/(double)1000 + " seconds");
 	      }catch(Exception e){
 	    	  taskManager.setTaskStatus(task, TaskStatus.FAILURE);
 	      	LOG.debug("Error: " + e);

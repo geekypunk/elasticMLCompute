@@ -21,8 +21,11 @@ public class Model {
 		else if(kernel.equals("2")) args[4] = "-g";          //Radial Basis Function
 		else if(kernel.equals("3")) args[4] = "-s";          //Sigmoid Function
 		args[5] = kernelParam;
-		SVMLightInterface svmInterface = new SVMLightInterface();
-		SVMLightModel model = svmInterface.trainModel(fvVector, args);
+		SVMLightModel model = null;
+		synchronized(Model.class){
+			SVMLightInterface svmInterface = new SVMLightInterface();
+			model = svmInterface.trainModel(fvVector, args);
+		}
 		String path = modelPath + "Model" + fileNum + "" + (tradeOffNum + 1) + ".model";
 		BufferedWriter bw =  fs.createFileToWrite(path,true);
 		model.writeModelToHDFSFile(bw);
