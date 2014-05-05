@@ -89,8 +89,12 @@ public class SVMService{
 				HttpSession session = request.getSession(false);
 				String username = (String) session.getAttribute("user");
 				
+				long startTime = System.currentTimeMillis();
+				String json = gson.toJson(startTime);
+				couchbaseClient.set(username + "svmStartTime", json).get();
+				
 				ArrayList<ArrayList<Double>> accList = new ArrayList<ArrayList<Double>>();
-				String json = gson.toJson(accList);
+				json = gson.toJson(accList);
 				couchbaseClient.set(username + "SVMAcc", json).get();
 						
 				
@@ -321,6 +325,11 @@ public class SVMService{
 	      	bw.close();
 	      	taskManager.setTaskStatus(task, TaskStatus.SUCCESS);
 	      	taskManager.setTaskStatus(masterTask, TaskStatus.SUCCESS);
+	      	
+			collectionType = new TypeToken<Long>(){}.getType();
+			long startTime = gson.fromJson((String) couchbaseClient.get(username + "svmStartTime"), collectionType);	
+	      	long endTime = System.currentTimeMillis();
+	      	LOG.debug("Time elapsed in SVM execution (user: " + username + ") : " + (endTime - startTime)/(double)1000 + " seconds");
 	      }catch(Exception e){
 	    	  taskManager.setTaskStatus(task, TaskStatus.FAILURE);
 	      	LOG.debug("Error: " + e);

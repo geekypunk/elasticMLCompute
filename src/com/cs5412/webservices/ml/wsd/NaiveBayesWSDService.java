@@ -90,8 +90,12 @@ public class NaiveBayesWSDService {
 		HttpSession session = request.getSession(false);
 		String username = (String) session.getAttribute("user");
 		
+		long startTime = System.currentTimeMillis();
+		String json = gson.toJson(startTime);
+		couchbaseClient.set(username + "wsdStartTime", json).get();
+		
 		List<WSDConfig> accList = new ArrayList<WSDConfig>();
-		String json = gson.toJson(accList);
+		json = gson.toJson(accList);
 		couchbaseClient.set(username + "WSDAcc", json).get();
 		
 		TaskManager taskManager = new TaskManager((CouchbaseClient)context.getAttribute("couchbaseClient"));
@@ -366,6 +370,11 @@ public class NaiveBayesWSDService {
 				LOG.debug("FINISHED WSD EXECUTION for"+trainingDataset+"|"+testDataset);
 	      	taskManager.setTaskStatus(task, TaskStatus.SUCCESS);
 	      	taskManager.setTaskStatus(masterTask, TaskStatus.SUCCESS);
+	      	
+			collectionType = new TypeToken<Long>(){}.getType();
+			long startTime = gson.fromJson((String) couchbaseClient.get(username + "wsdStartTime"), collectionType);	
+	      	long endTime = System.currentTimeMillis();
+	      	LOG.debug("Time elapsed in word sense disambiguation execution (user: " + username + ") : " + (endTime - startTime)/(double)1000 + " seconds");
 	      }catch(Exception e){
 	    	  taskManager.setTaskStatus(task, TaskStatus.FAILURE);
 	      	LOG.debug("Error: " + e);

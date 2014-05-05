@@ -89,8 +89,12 @@ public class KernelService {
 			HttpSession session = request.getSession(false);
 			String username = (String) session.getAttribute("user");
 			
+			long startTime = System.currentTimeMillis();
+			String json = gson.toJson(startTime);
+			couchbaseClient.set(username + "kernelStartTime", json).get();
+			
 			ArrayList<ArrayList<Double>> accList = new ArrayList<ArrayList<Double>>();
-			String json = gson.toJson(accList);
+			json = gson.toJson(accList);
 			couchbaseClient.set(username + "KernelAcc", json).get();
 			
 	        String wsURL = "/ml/kernel/runDistributedService/" + kernelType + "/" + kernelParam;
@@ -432,6 +436,11 @@ public class KernelService {
 	      	bw.close();
 	      	taskManager.setTaskStatus(task, TaskStatus.SUCCESS);
 	      	taskManager.setTaskStatus(masterTask, TaskStatus.SUCCESS);
+	      	
+			collectionType = new TypeToken<Long>(){}.getType();
+			long startTime = gson.fromJson((String) couchbaseClient.get(username + "kernelStartTime"), collectionType);	
+	      	long endTime = System.currentTimeMillis();
+	      	LOG.debug("Time elapsed in Kernel execution (user: " + username + ") : " + (endTime - startTime)/(double)1000 + " seconds");
 	      }catch(Exception e){
 	    	  taskManager.setTaskStatus(task, TaskStatus.FAILURE);
 	      	LOG.debug("Error: " + e);
