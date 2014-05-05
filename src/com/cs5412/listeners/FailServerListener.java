@@ -11,6 +11,12 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 
 import com.cs5412.daemons.FailedServerHandle;
 
+
+/**
+ * Listener that triggers the failed server poller at a fixed interval of time
+ * @author pms255
+ *
+ */
 @WebListener
 public class FailServerListener implements ServletContextListener{
 	FailedServerHandle fsTask;

@@ -6,7 +6,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * <p><b>TaskManager semantics. Provides the "Log Before Execution" functionality to complement fault-tolerance. 
  * Uses session store(CouchBase) for persistence</b></p>
- * @author kt466
+ * @author kt466/pms255
  *
  */
 public interface ITaskManager {
@@ -57,6 +57,13 @@ public interface ITaskManager {
 	 */
 	void markAllAsSeen(String username) throws InterruptedException, ExecutionException;
 	
+	/**
+	 * Remove the parent dependency by removing the task id which has successfully completed from the tasks parent id list
+	 * if it exists. This is a method specifically aiding the fault tolerance flow.
+	 * @param taskId
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
 	void removeParentDependency(String taskId, String username)throws Exception;
 	
 	/**

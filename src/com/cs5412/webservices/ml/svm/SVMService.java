@@ -51,6 +51,11 @@ import com.cs5412.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+/**
+ * Restful service for running SVM
+ * @author pms255
+ *
+ */
 @Path("/svm")
 public class SVMService{
 	static final Logger LOG = LoggerFactory.getLogger(SVMService.class);
@@ -73,6 +78,18 @@ public class SVMService{
 		gson = new Gson();
 	}
 	
+	/**
+	 * Parent API responsible for splitting the parent task and registering the subtasks in couchBase.
+	 * The subtasks are then submitted to the load balancer. Parallel tasks are identified and submitted to the
+	 * loadbalancer in asynchronized fashion.
+	 * @param trainingDataset
+	 * @param testDataset
+	 * @param context
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/runDistributedService")
 	@POST
 	@Consumes("application/x-www-form-urlencoded")
@@ -248,6 +265,14 @@ public class SVMService{
 		}
 	}
 	
+	/**
+	 * Get the report given the report id
+	 * @param reportId
+	 * @param context
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/getReport/{reportId}")
 	@GET
 	public Response getReportData(
@@ -262,6 +287,19 @@ public class SVMService{
 		return Response.status(200).entity(fs.readFileToString(path)).build();
 	}
 	
+	/**
+	 * Generate the report
+	 * @param username
+	 * @param trainingDataset
+	 * @param testingDataset
+	 * @param taskId
+	 * @param masterTaskId
+	 * @param context
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/generateReport/{username}/{trainingDataset}/{testingDataset}/{taskId}/{masterTaskId}")
 	@GET
 	public Response generateReport(
@@ -338,6 +376,15 @@ public class SVMService{
 		return Response.status(200).entity("Hello World!").build();		
 	}
 	
+	/**
+	 * Create the SVM files
+	 * @param username
+	 * @param trainingDataset
+	 * @param taskId
+	 * @param context
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/crossvalidation/createfiles/{username}/{trainingDataSet}/{taskId}")
 	@GET
 	public Response createSVMFiles(
@@ -367,6 +414,16 @@ public class SVMService{
 	}
 	
 	
+	/**
+	 * Create the Model files
+	 * @param username
+	 * @param c
+	 * @param taskId
+	 * @param fileNum
+	 * @param context
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/crossvalidation/createmodel/{username}/{c}/{fileNum}/{taskId}")
 	@GET
 	public Response createModel(
@@ -395,6 +452,14 @@ public class SVMService{
 		return Response.status(200).entity("Hello").build();
 	}
 	
+	/**
+	 * Perform 5-cross validation
+	 * @param username
+	 * @param taskId
+	 * @param context
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/crossvalidation/bestTradeOff/{username}/{taskId}")
 	@GET
 	public Response crossvalidation(
@@ -434,6 +499,15 @@ public class SVMService{
 		return Response.status(200).entity("Hello").build();
 	}
 	
+	/**Predict the test
+	 * @param username
+	 * @param taskId
+	 * @param trainingDataSet
+	 * @param testingDataSet
+	 * @param context
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/crossvalidation/predictTest/{username}/{trainingDataSet}/{testingDataSet}/{taskId}")
 	@GET
 	public Response testPrediction(
@@ -465,6 +539,13 @@ public class SVMService{
 	}
 
 	
+	/**Get the training data set for SVM
+	 * @param context
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/getTrainingDataSets")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -491,6 +572,13 @@ public class SVMService{
 		return Response.status(200).entity(filesJson.toString()).build();
 	}
 	
+	/**Get the Test data sets for SVM
+	 * @param context
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/getTestDataSets")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)

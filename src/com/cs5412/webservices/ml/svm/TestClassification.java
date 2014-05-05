@@ -9,6 +9,11 @@ import jnisvmlight.LabeledFeatureVector;
 import jnisvmlight.SVMLightInterface;
 import jnisvmlight.SVMLightModel;
 
+/**
+ * APIS to classify the validation data using Kernel
+ * @author pms255
+ *
+ */
 public class TestClassification {
 	public static double C[] = {0.0001,0.0005,0.001,0.005,0.01,0.05,0.1};
 	
@@ -59,6 +64,14 @@ public class TestClassification {
 		return model;
 	}
 	
+	/**
+	 * Perform test data classification
+	 * @param fs
+	 * @param crossvalidation
+	 * @param modelPath
+	 * @param of
+	 * @return
+	 */
 	public static void testClassify(int tradeOffNum, String kernel, IFileSystem fs, String username,String trainFile, String testOutputFile, String testFile){
 		try{
 		

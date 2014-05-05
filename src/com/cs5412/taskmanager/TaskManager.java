@@ -16,7 +16,7 @@ import com.google.gson.reflect.TypeToken;
 
 /**
  * <p><b>This class implements the ITaskManager. Uses CouchBase for storing Task Objects.</b></p>
- * @author kt466
+ * @author kt466/pms255
  *
  */
 public class TaskManager implements ITaskManager{
@@ -38,6 +38,7 @@ public class TaskManager implements ITaskManager{
 			LOG.error("Error: ", e);
 		}
 	}
+	
 	
 	@Override
 	public void registerTask(TaskDao task) throws InterruptedException, ExecutionException {
@@ -99,7 +100,7 @@ public class TaskManager implements ITaskManager{
 	
 	@Override
 	public void markAllAsSeen(String username) throws InterruptedException, ExecutionException {
-		List<TaskDao> allUserTasks = getAllTasksForUser(username);
+		List<TaskDao> allUserTasks = getFinishedAndUnseenByUserId(username);
 		for(TaskDao task : allUserTasks){
 			markAsSeen(task.getTaskId());
 		}

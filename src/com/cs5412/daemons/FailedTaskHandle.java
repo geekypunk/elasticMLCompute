@@ -23,6 +23,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+
+/**
+ * Daemon aiding fault tolerance. Get the failed tasks registered in the couchBase. Reconstruct the webservice URL
+ * using the load balancer address as the host name. Send the faulted task URL to the load balancer which will select 
+ * an appropriate application server to run the faulted task.
+ * @author pms255
+ *
+ */
 public class FailedTaskHandle extends TimerTask{
 	private String loadBalancerAddress;
 	private CouchbaseClient couchbaseClient;
@@ -40,6 +48,8 @@ public class FailedTaskHandle extends TimerTask{
 	    taskManager = new TaskManager(couchbaseClient);
 	    loadBalancerAddress = config.getString("LOAD_BALANCER_URI");
 	}
+	
+
 	@Override
 	public void run() {
 		System.out.println("Handle of the failed tasks");

@@ -7,7 +7,7 @@ import com.cs5412.utils.Utils;
 
 /**
  * <p><b>Represent a Task object, the basic unit for fault-tolerance</b></p>
- * @author kt466
+ * @author kt466/pms255
  *
  */
 public class TaskDao {
@@ -27,18 +27,30 @@ public class TaskDao {
 	//private HttpServletRequest httpRequest
 	List<Integer> subTasks = new ArrayList<Integer>();
 	
+	/**
+	 * @return the hostVersion
+	 */
 	public String getHostVersion() {
 		return hostVersion;
 	}
 
+	/**
+	 * @param hostVersion the hostVersion to set
+	 */
 	public void setHostVersion(String hostVersion) {
 		this.hostVersion = hostVersion;
 	}
 	
+	/**
+	 * @return the hostAddress
+	 */
 	public String getHostAddress() {
 		return hostAddress;
 	}
 
+	/**
+	 * @param hostAddress the hostAddress to set
+	 */
 	public void setHostAddress(String hostAddress) {
 		this.hostAddress = hostAddress;
 	}
@@ -193,10 +205,16 @@ public class TaskDao {
 		this.parentTaskIds = parentTaskIds;
 	}
 
+	/**
+	 * @return the task wsurl
+	 */
 	public String getWsURL() {
 		return wsURL;
 	}
 
+	/**
+	 * @param wsurl the wsurl to set
+	 */
 	public void setWsURL(String wsURL) {
 		this.wsURL = wsURL;
 	}

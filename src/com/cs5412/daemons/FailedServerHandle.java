@@ -24,6 +24,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+
+/**
+ * Daemon aiding fault tolerance. Polls all the initialized/running/non-parent task's registered host.
+ * If polling fails for 2 successive ping's, mark the task objects task status to FAILURE.
+ * If the task object's host version does not match the host machines host version mark the task objects task status to FAILURE.
+ * @author pms255
+ *
+ */
 public class FailedServerHandle extends TimerTask{
 	private CouchbaseClient couchbaseClient;
 	private Gson gson;
