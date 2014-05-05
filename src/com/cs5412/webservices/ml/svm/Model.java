@@ -21,13 +21,13 @@ public class Model {
 		args[1] = (new Double(C[tradeOffNum])).toString();
 		args[2] = "-t";
 		args[3] = "0";
-//		SVMLightModel model = null;
-//		synchronized(Model.class){
-//			SVMLightInterface svmInterface = new SVMLightInterface();
-//			model = svmInterface.trainModel(fvVector, args);
-//		}
-		SVMLightInterface svmInterface = new SVMLightInterface();
-		SVMLightModel model = svmInterface.trainModel(fvVector, args);
+		SVMLightModel model = null;
+		synchronized(Model.class){
+			SVMLightInterface svmInterface = new SVMLightInterface();
+			model = svmInterface.trainModel(fvVector, args);
+		}
+//		SVMLightInterface svmInterface = new SVMLightInterface();
+//		SVMLightModel model = svmInterface.trainModel(fvVector, args);
 		String path = modelPath + "Model" + fileNum + "" + (tradeOffNum + 1) + ".model";
 		BufferedWriter bw =  fs.createFileToWrite(path,true);
 		model.writeModelToHDFSFile(bw);
