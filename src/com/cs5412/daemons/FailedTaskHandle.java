@@ -64,7 +64,7 @@ public class FailedTaskHandle extends TimerTask{
 		    		taskCASValue = taskCASObj.getCas();
 		    		taskCASJson = (String)taskCASObj.getValue();
 		    		repairTask = gson.fromJson(taskCASJson,TaskDao.class);
-			    	if(repairTask.getStatus()== TaskStatus.FAILURE){
+			    	if(repairTask.getStatus() == TaskStatus.FAILURE && repairTask.getParentTaskId().size() == 0){
 			    		foundFailed = true;
 			    		repairTask.setHostAddress("dummy");
 			    		//Check if someone already changed this task's status
