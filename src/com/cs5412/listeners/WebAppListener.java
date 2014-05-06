@@ -90,6 +90,20 @@ public class WebAppListener implements ServletContextListener {
 		    /*End of Code added*/
 		  	application.setAttribute("couchbaseClient", couchbaseClient);	
 		  
+		  	if(config.getString("SERVER_MODE").equalsIgnoreCase("UP")){
+		  		
+		  		this.NODE_NAME = SERVER_POOL_NAME+"/"+config.getString("NODE_NAME");
+		  		CMD_ENABLE  = "echo \"enable server "+this.NODE_NAME+"\" | socat stdio "+HASOCKET;
+			  	LOAD_BALANCER = new Machine(config.getString("LOAD_BALANCER_USER"), 
+						config.getString("LOAD_BALANCER_PWD"), 
+						config.getString("LOAD_BALANCER_IP"));
+				lbShell = new SSHAdaptor(LOAD_BALANCER);
+				lbShell = lbShell.connect();
+				lbShell.execute(CMD_ENABLE);
+				lbShell.disconnect();
+		  		
+		  	}
+		  	
 		  	if(config.getBoolean("IS_ELASTIC")){
 			  	//Monitor server statistics to prevent OOM crash
 			   	PerformanceMonitor perfMonitor = new PerformanceMonitor(application);
