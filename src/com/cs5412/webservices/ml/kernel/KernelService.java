@@ -261,6 +261,14 @@ public class KernelService {
 		}
 	}
 	
+	/**Create the kernel files
+	 * @param username
+	 * @param trainingDataset
+	 * @param taskId
+	 * @param context
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/crossvalidation/createfiles/{username}/{trainingDataSet}/{taskId}")
 	@GET
 	public Response createKernelFiles(
@@ -289,6 +297,17 @@ public class KernelService {
 		return Response.status(200).entity("Hello").build();
 	}
 	
+	/**Create the Model files
+	 * @param username
+	 * @param c
+	 * @param taskId
+	 * @param fileNum
+	 * @param kernelNum
+	 * @param kernelParam
+	 * @param context
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/crossvalidation/createmodel/{username}/{c}/{fileNum}/{kernelNum}/{kernelParam}/{taskId}")
 	@GET
 	public Response createModel(
@@ -319,6 +338,13 @@ public class KernelService {
 		return Response.status(200).entity("Hello").build();
 	}
 	
+	/**Perform cross validation
+	 * @param username
+	 * @param taskId
+	 * @param context
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/crossvalidation/bestTradeOff/{username}/{taskId}")
 	@GET
 	public Response crossvalidation(
@@ -358,6 +384,17 @@ public class KernelService {
 		return Response.status(200).entity("Hello").build();
 	}
 	
+	/**Predict the test 
+	 * @param username
+	 * @param taskId
+	 * @param trainingDataSet
+	 * @param testingDataSet
+	 * @param kernelNum
+	 * @param kernelParam
+	 * @param context
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/crossvalidation/predictTest/{username}/{trainingDataSet}/{testingDataSet}/{kernelNum}/{kernelParam}/{taskId}")
 	@GET
 	public Response testPrediction(
@@ -390,6 +427,18 @@ public class KernelService {
 		return Response.status(200).entity("Hello").build();
 	}
 	
+	/**Generate the report
+	 * @param username
+	 * @param trainingDataset
+	 * @param testingDataset
+	 * @param taskId
+	 * @param masterTaskId
+	 * @param context
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/generateReport/{username}/{trainingDataset}/{testingDataset}/{taskId}/{masterTaskId}")
 	@GET
 	public Response generateReport(
@@ -466,6 +515,14 @@ public class KernelService {
 		return Response.status(200).entity("Hello World!").build();		
 	}
 	
+	/**Get the report data
+	 * @param reportId
+	 * @param context
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/getReport/{reportId}")
 	@GET
 	public Response getReportData(
@@ -482,6 +539,13 @@ public class KernelService {
 		return Response.status(200).entity(fs.readFileToString(path)).build();
 	}
 	
+	/**Get the training data sets for kernel
+	 * @param context
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/getTrainingDataSets")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -510,6 +574,13 @@ public class KernelService {
 		return Response.status(200).entity(filesJson.toString()).build();
 	}
 	
+	/**Get the test data sets for kernel
+	 * @param context
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/getTestDataSets")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)

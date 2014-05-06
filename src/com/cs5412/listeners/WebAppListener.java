@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.couchbase.client.CouchbaseClient;
+import com.couchbase.client.CouchbaseConnectionFactoryBuilder;
 import com.cs5412.daemons.PerformanceMonitor;
 import com.cs5412.filesystem.HDFSFileSystemImpl;
 import com.cs5412.filesystem.IFileSystem;
@@ -61,9 +62,14 @@ public class WebAppListener implements ServletContextListener {
 			List<URI> hosts = Arrays.asList(
 				      new URI(config.getString("COUCH_URI")+"/pools")
 				    );
-		    CouchbaseClient couchbaseClient = new CouchbaseClient(
-		    		hosts, config.getString("COUCH_BUCKET_NAME"), config.getString("COUCH_BUCKET_PWD"));
-		    
+		    /*CouchbaseClient couchbaseClient = new CouchbaseClient(
+		    		hosts, config.getString("COUCH_BUCKET_NAME"), config.getString("COUCH_BUCKET_PWD"));*/
+		
+		    CouchbaseConnectionFactoryBuilder cfb = new CouchbaseConnectionFactoryBuilder();
+			cfb.setOpTimeout(10000); // wait up to 10 seconds for an operation to succeed
+			cfb.setOpQueueMaxBlockTime(5000); // wait up to 5 seconds when trying to enqueue an operation
+			CouchbaseClient couchbaseClient = 
+					new CouchbaseClient(cfb.buildCouchbaseConnection(hosts,"default", ""));
 		   
 		    /*Code added to add all users task status */
 		    Gson gson = new Gson();
