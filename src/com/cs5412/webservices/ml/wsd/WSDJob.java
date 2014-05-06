@@ -8,6 +8,11 @@ import com.cs5412.filesystem.IFileSystem;
 import com.cs5412.webservices.ml.wsd.domain.TestWord;
 import com.cs5412.webservices.ml.wsd.domain.Word;
 
+/**
+ * Runs WSD job
+ * @author pbp36
+ *
+ */
 public class WSDJob implements Runnable{
 	
 	int CO_WINDOW;

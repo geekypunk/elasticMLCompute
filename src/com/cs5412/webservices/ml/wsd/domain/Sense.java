@@ -1,5 +1,10 @@
 package com.cs5412.webservices.ml.wsd.domain;
 
+/**
+ * Class that holds Sense information
+ * @author pbp36
+ *
+ */
 public class Sense {
 	int senseId;
 	int predictedSenseId;

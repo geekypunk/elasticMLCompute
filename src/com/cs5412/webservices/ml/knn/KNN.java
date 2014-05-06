@@ -21,6 +21,11 @@ import com.cs5412.filesystem.IFileSystem;
 import com.cs5412.utils.Utils;
 
 
+/**
+ * Class that implements core functionality for KNN
+ * @author pbp36
+ *
+ */
 public class KNN {
 	final static int NUM_FOLDS = 5;
 	static final Logger LOG = LoggerFactory.getLogger(KNN.class);
@@ -221,7 +226,7 @@ public class KNN {
 	}
 	
 	/**
-	 * 
+	 * Find majority label amongst k nearest neighbors
 	 * @param kNearestItems
 	 * @return
 	 */
@@ -249,7 +254,7 @@ public class KNN {
 	}
 
 	/**
-	 * 
+	 * Computes cosine similarity
 	 * @param testInstance
 	 * @param trainingInstance
 	 * @return
@@ -280,8 +285,9 @@ public class KNN {
 		
 		return numerator/denominator;
 	}
+	
 	/**
-	 * 
+	 * Creates cross validation files
 	 * @param trainFile
 	 * @param fs
 	 * @param crossvalidationBasePath
@@ -320,7 +326,7 @@ public class KNN {
 	}
 	
 	/**
-	 * 
+	 * Runs validation for given k
 	 * @param trainingDataHDFSPath
 	 * @param validationDataHDFSPath
 	 * @param k

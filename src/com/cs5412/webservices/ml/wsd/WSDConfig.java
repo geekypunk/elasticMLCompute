@@ -1,5 +1,10 @@
 package com.cs5412.webservices.ml.wsd;
 
+/**
+ * Class that holds results for parameter setting
+ * @author pbp36
+ *
+ */
 public class WSDConfig implements Comparable<WSDConfig>{
 	
 	int CO_WINDOW;

@@ -8,7 +8,11 @@ import org.slf4j.LoggerFactory;
 
 import com.cs5412.filesystem.IFileSystem;
 import com.cs5412.webservices.fileupload.FileUploadServlet;
-
+/**
+ * Creates the Cross Validation Files
+ * @author pms255
+ *
+ */
 public class CrossValidationFiles {
 	static final Logger LOG = LoggerFactory.getLogger(FileUploadServlet.class);
 	private static void getAllTrain(ArrayList<String> allTrain, String file, IFileSystem fs) {
@@ -40,7 +44,12 @@ public class CrossValidationFiles {
 			LOG.debug("Exception caught: " + e.getLocalizedMessage());
 		}
 	}
-	
+	/**
+	 * Create files required for 5-cross validation
+	 * @param trainingDataset
+	 * @param fs
+	 * @param crossvalidation
+	 */
 	public static void createFiles(String trainFile, IFileSystem fs, String crossvalidation) {
 		ArrayList<String> allTrain = new ArrayList<String>();
 		getAllTrain(allTrain, trainFile, fs);

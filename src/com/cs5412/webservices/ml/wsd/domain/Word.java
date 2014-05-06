@@ -5,6 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Class that holds Training Word instance
+ * @author pbp36
+ *
+ */
 public class Word {
 	
 	String word;

@@ -3,6 +3,11 @@ package com.cs5412.webservices.ml.knn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 
+ * @author pbp36
+ *
+ */
 public class Metric {
 	static final Logger LOG = LoggerFactory.getLogger(Metric.class);
 	double accuracy;

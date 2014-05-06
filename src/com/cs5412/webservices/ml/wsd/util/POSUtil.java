@@ -1,7 +1,5 @@
 package com.cs5412.webservices.ml.wsd.util;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,6 +8,11 @@ import opennlp.tools.postag.POSModel;
 import opennlp.tools.postag.POSTaggerME;
 import opennlp.tools.util.InvalidFormatException;
 
+/**
+ * Class that does POS tagging
+ * @author pbp36
+ *
+ */
 public class POSUtil {
 	static POSTaggerME tagger;
 	

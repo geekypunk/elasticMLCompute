@@ -1,5 +1,10 @@
 package com.cs5412.webservices.ml.wsd.domain;
 
+/**
+ * Class that holds Test Word instance
+ * @author pbp36
+ *
+ */
 public class TestWord {
 	String wordText;
 	Sense sense;

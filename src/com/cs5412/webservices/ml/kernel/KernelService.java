@@ -45,6 +45,11 @@ import com.cs5412.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+/**
+ * Restful service for running Kernel
+ * @author pms255
+ *
+ */
 @Path("/kernel")
 public class KernelService {
 	static final Logger LOG = LoggerFactory.getLogger(KernelService.class);
@@ -67,6 +72,18 @@ public class KernelService {
 		gson = new Gson();
 	}
 	
+	/**
+	 * Parent API responsible for splitting the parent task and registering the subtasks in couchBase.
+	 * The subtasks are then submitted to the load balancer. Parallel tasks are identified and submitted to the
+	 * loadbalancer in asynchronized fashion.
+	 * @param trainingDataset
+	 * @param testDataset
+	 * @param context
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/runDistributedService")
 	@POST
 	@Consumes("application/x-www-form-urlencoded")

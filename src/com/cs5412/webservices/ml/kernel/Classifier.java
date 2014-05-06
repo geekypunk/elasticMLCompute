@@ -8,6 +8,12 @@ import java.util.*;
 import com.cs5412.filesystem.IFileSystem;
 import com.cs5412.webservices.ml.svm.GetFeatureVector;
 
+
+/**
+ * APIS to classify the validation data using Kernel
+ * @author pms255
+ *
+ */
 public class Classifier {
 	public static ArrayList<ArrayList<Double>> valAccuracies = new ArrayList<ArrayList<Double>>();
 	public static ArrayList<Double> avgValAccuracies = new ArrayList<Double>();
@@ -48,7 +54,14 @@ public class Classifier {
 			e.printStackTrace();
 		}
 	}
-	
+	/**
+	 * Perform validation data classification
+	 * @param fs
+	 * @param crossvalidation
+	 * @param modelPath
+	 * @param of
+	 * @return
+	 */
 	public static String valClassifyCaller(IFileSystem fs, String crossvalidation, String modelPath, String of){
 		of = crossvalidation+File.separator+"output"+File.separator+of;
 		valClassify(1, modelPath, crossvalidation, of, fs);

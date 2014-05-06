@@ -8,6 +8,11 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
 
+/**
+ * Class that helps serializing WSDCongig 
+ * @author pbp36
+ *
+ */
 public class WSDConfigAdaptor implements JsonSerializer<WSDConfig> {
 
  @Override

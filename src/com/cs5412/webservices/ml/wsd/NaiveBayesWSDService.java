@@ -50,6 +50,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+/**
+ * WSD distributed service implementation
+ * @author pbp36
+ *
+ */
 @Path("/wsd")
 public class NaiveBayesWSDService {
 	static final Logger LOG = LoggerFactory.getLogger(NaiveBayesWSDService.class);
@@ -61,6 +66,9 @@ public class NaiveBayesWSDService {
 	CouchbaseClient couchbaseClient;
 	Gson gson;
 	
+	/**
+	 * does initialization for WSD service
+	 */
 	@PostConstruct
     void initialize() {
 		taskManager = new TaskManager((CouchbaseClient)context.getAttribute("couchbaseClient"));
@@ -74,6 +82,17 @@ public class NaiveBayesWSDService {
 	    gson = gsonBuilder.create();
     }
 	
+	/**
+	 * Entry point for WSD Service
+	 * @param trainingDataset
+	 * @param validationDataset
+	 * @param testDataset
+	 * @param context
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/runDistributedService")
 	@POST
 	@Consumes("application/x-www-form-urlencoded")
@@ -213,6 +232,15 @@ public class NaiveBayesWSDService {
         return Response.status(200).entity("").build();
 	}
 	
+	/**
+	 * Returns report for given report id
+	 * @param reportId
+	 * @param context
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/getReport/{reportId}")
 	@GET
 	public Response getReportData(
@@ -230,6 +258,14 @@ public class NaiveBayesWSDService {
 	}
 	
 	
+	/**
+	 * Returns training data sets
+	 * @param context
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/getTrainingDataSets")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -256,6 +292,14 @@ public class NaiveBayesWSDService {
 		return Response.status(200).entity(filesJson.toString()).build();
 	}
 	
+	/**
+	 * Returns test data sets
+	 * @param context
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/getTestDataSets")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -282,6 +326,19 @@ public class NaiveBayesWSDService {
 		return Response.status(200).entity(filesJson.toString()).build();
 	}
 	
+	/**
+	 * Generates report for current WSD run
+	 * @param username
+	 * @param trainingDataset
+	 * @param testDataset
+	 * @param taskId
+	 * @param masterTaskId
+	 * @param context
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/generateReport/{username}/{trainingDataset}/{testingDataset}/{taskId}/{masterTaskId}")
 	@GET
 	public Response generateReport(
@@ -383,6 +440,16 @@ public class NaiveBayesWSDService {
 		return Response.status(200).entity("Hello World!").build();		
 	}
 
+	/**
+	 * tunes parameters for current run
+	 * @param username
+	 * @param trainingDataset
+	 * @param validationDataset
+	 * @param taskId
+	 * @param context
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/tuneparameters/{username}/{trainingDataset}/{validationDataset}/{taskId}")
 	@GET
 	public Response tuneParameters(
@@ -428,6 +495,18 @@ public class NaiveBayesWSDService {
 		return Response.status(200).entity("Hello").build();
 	}
 	
+	/**
+	 * tunes parameter for given coWindow and clWindow
+	 * @param username
+	 * @param trainingDataset
+	 * @param validationDataset
+	 * @param coWindow
+	 * @param clWindow
+	 * @param taskId
+	 * @param context
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/tuneparametersub/{username}/{trainingDataset}/{validationDataset}/{coWindow}/{clWindow}/{taskId}")
 	@GET
 	public Response tuneParameterSub(
@@ -472,6 +551,16 @@ public class NaiveBayesWSDService {
 		return Response.status(200).entity("Hello").build();
 	}
 	
+	/**
+	 * Classifies test data using best parameter setting found in cross validation phase
+	 * @param username
+	 * @param trainingDataSet
+	 * @param testingDataSet
+	 * @param taskId
+	 * @param context
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/classify/{username}/{trainingDataSet}/{testingDataSet}/{taskId}")
 	@GET
 	public Response classify(

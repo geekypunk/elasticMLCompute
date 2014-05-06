@@ -50,6 +50,12 @@ import com.cs5412.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+
+/**
+ * KNN distributed service implementation
+ * @author pbp36
+ *
+ */
 @Path("/knn")
 public class KNNDistributedService{
 	static final Logger LOG = LoggerFactory.getLogger(KNNDistributedService.class);
@@ -72,6 +78,16 @@ public class KNNDistributedService{
 		gson = new Gson();
 	}
 	
+	/**
+	 * This is an entry point for KNN distributed service
+	 * @param trainingDataset
+	 * @param testDataset
+	 * @param context
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/runDistributedService")
 	@POST
 	@Consumes("application/x-www-form-urlencoded")
@@ -103,7 +119,6 @@ public class KNNDistributedService{
         TaskDao knnTask = new TaskDao(username, "KNNRun", "complete", TaskStatus.RUNNING, false, wsURL);
     	knnTask.setTaskType(TaskType.ALGORITHM_EXEC.toString());
     	knnTask.setTaskDescription("K-Nearest Neighbor Algorithm");
-    	knnTask.setParent(true);
     	taskManager.registerTask(knnTask);
     	
     	ArrayList<String> parentIds = new ArrayList<String>();
@@ -165,6 +180,7 @@ public class KNNDistributedService{
     	knnReportGenerationTask.setParentTaskId(parentIds);
     	taskManager.registerTask(knnReportGenerationTask);
     	
+    	knnTask.setParent(true);
     	LOG.debug("Creating CV files");
     	
 		String taskUrl = loadBalancerAddress + wsCreateFilesForCVURL;
@@ -234,6 +250,14 @@ public class KNNDistributedService{
         return Response.status(200).entity("").build();
 	}
 	
+	/**
+	 * This method returns report associated with report id
+	 * @param reportId
+	 * @param context
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/getReport/{reportId}")
 	@GET
 	public Response getReportData(
@@ -248,6 +272,19 @@ public class KNNDistributedService{
 		return Response.status(200).entity(fs.readFileToString(path)).build();
 	}
 	
+	/**
+	 * This method generates report for current run
+	 * @param username
+	 * @param trainingDataset
+	 * @param testDataset
+	 * @param taskId
+	 * @param masterTaskId
+	 * @param context
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/generateReport/{username}/{trainingDataset}/{testingDataset}/{taskId}/{masterTaskId}")
 	@GET
 	public Response generateReport(
@@ -322,6 +359,15 @@ public class KNNDistributedService{
 		return Response.status(200).entity("Hello World!").build();		
 	}
 	
+	/**
+	 * This method creates files required for cross validation for current run
+	 * @param username
+	 * @param trainingDataset
+	 * @param taskId
+	 * @param context
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/crossvalidation/createfiles/{username}/{trainingDataSet}/{taskId}")
 	@GET
 	public Response createKNNCVFiles(
@@ -350,6 +396,16 @@ public class KNNDistributedService{
 		return Response.status(200).entity("Hello").build();
 	}
 	
+	/**
+	 * This method runs cross validation for current run
+	 * @param username
+	 * @param k
+	 * @param modelNo
+	 * @param taskId
+	 * @param context
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/runcrossvalidation/{username}/{k}/{modelNo}/{taskId}")
 	@GET
 	public Response runCrossValidatation(
@@ -390,6 +446,16 @@ public class KNNDistributedService{
 		return Response.status(200).entity("Hello").build();
 	}
 	
+	/**
+	 * This method classifies test data using best k found in validation step
+	 * @param username
+	 * @param trainingDataSet
+	 * @param testingDataSet
+	 * @param taskId
+	 * @param context
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/classify/{username}/{trainingDataSet}/{testingDataSet}/{taskId}")
 	@GET
 	public Response classify(
@@ -424,6 +490,11 @@ public class KNNDistributedService{
 	}
 
 	
+	/**
+	 * This method returns best k
+	 * @param knnAccMap
+	 * @return
+	 */
 	private int getBestK(Map<Integer, ArrayList<Double>> knnAccMap) {
 		Map<Integer, Double> avgAccMap  = new HashMap<Integer, Double>();
 		
@@ -451,6 +522,14 @@ public class KNNDistributedService{
 		return maxK;
 	}
 
+	/**
+	 * This method returns training data sets
+	 * @param context
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/getTrainingDataSets")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -477,6 +556,14 @@ public class KNNDistributedService{
 		return Response.status(200).entity(filesJson.toString()).build();
 	}
 	
+	/**
+	 * This method returns test datasets
+	 * @param context
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/getTestDataSets")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
