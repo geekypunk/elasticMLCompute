@@ -97,7 +97,7 @@ public class FailedServerHandle extends TimerTask{
 			    	        		LOG.debug(td.getWsURL());
 			    	        		taskManager.setTaskStatus(td, TaskStatus.FAILURE);
 			    	        	}
-			    	        	startFailedServer(hostAddr);
+			    	        	//startFailedServer(hostAddr);
 		    	        	}catch(Exception e1){
 		    	        		
 		    	        		LOG.debug("Server: " + hostAddr + " down");
