@@ -9,6 +9,11 @@ import java.net.URL;
 import java.util.*;
 import org.slf4j.Logger;
 
+/**
+ * this is done for executing the actions in parallel
+ * @author rb723
+ *
+ */
 public class ParallelDTJob implements Runnable{
     private Logger LOG;
 	private String username;

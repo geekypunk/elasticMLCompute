@@ -5,6 +5,12 @@ import java.io.*;
 
 import com.cs5412.filesystem.IFileSystem;
 
+/**
+ * this is for choosing the model
+ * This is  executed after choosing the best height
+ * @author kt466
+ *
+ */
 public class ModelChooser {
 	
 	private String[] LookUp = new String[2000];
@@ -136,6 +142,12 @@ public class ModelChooser {
 		return (1+Math.max(Height(d.firstChild),Height(d.secondChild)));
 	}
 	
+	/**
+	 * this code handles if the word is already visited or considered for splitting
+	 * @param trData
+	 * @param fileName
+	 * @param fs
+	 */
 	public void setwords(ArrayList<TrainingNode> trData, String fileName, IFileSystem fs) {
 		try{
 			InputStream fin = (InputStream) fs.readFile(fileName);
@@ -173,6 +185,14 @@ public class ModelChooser {
 
 	}
 	
+	/**
+	 * this code is executed to cut the tree short and stop early
+	 * @param trData
+	 * @param root
+	 * @param number
+	 * @param earlystop
+	 * @return
+	 */
 	public double earlystopping(ArrayList<TrainingNode> trData, DecisionTreeNode root, int number, int earlystop)
 	{
 		int [] temparraystore = new int[2000];

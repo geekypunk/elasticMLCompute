@@ -1,6 +1,11 @@
 package com.cs5412.webservices.ml.dt;
 
 
+/**
+ * this defines the classes
+ * @author rb723
+ *
+ */
 public class TrainingNode{
 	private int trainClassNum;
 	private int[] words;

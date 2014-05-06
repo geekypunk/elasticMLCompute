@@ -218,7 +218,7 @@ for(Cookie cookie : cookies){
 														</div>
 													</div>
 													<div class="box-body">
-														<table id="datatable2" cellpadding="0" cellspacing="0" border="0" class="datatable table table-striped table-bordered table-hover" style="width:900px !important;">
+														<table id="datatable2" cellpadding="0" cellspacing="0" border="0" class="datatable table table-striped table-bordered table-hover" style="width:1500px !important;">
 															<thead>
 																<tr>
 																	<th>Report name</th>

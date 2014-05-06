@@ -44,6 +44,11 @@ import com.cs5412.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+/**
+ * This is the service code for the random forest.
+ * @author rb723
+ *
+ */
 @Path("/dTree")
 public class RandomForestService {
 	static final Logger LOG = LoggerFactory.getLogger(RandomForestService.class);
@@ -66,6 +71,18 @@ public class RandomForestService {
 		gson = new Gson();
     }
 	
+	/**
+	 * Parent API responsible for splitting the parent task and registering the subtasks in couchBase.
+	 * The subtasks are then submitted to the load balancer. Parallel tasks are identified and submitted to the
+	 * loadbalancer in asynchronized fashion.
+	 * @param trainingDataset
+	 * @param testDataset
+	 * @param context
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/runDistributedService")
 	@POST
 	@Consumes("application/x-www-form-urlencoded")
@@ -96,7 +113,7 @@ public class RandomForestService {
 	        TaskDao dtTask = new TaskDao(username, "Decision Tree execution for "+trainingDataset+"/"+testDataset, "complete", TaskStatus.RUNNING, false, wsURL);
 	    	dtTask.setTaskType(TaskType.ALGORITHM_EXEC.toString());
 	    	dtTask.setTaskDescription("Decision Tree algorithm");
-	    	dtTask.setParent(true);
+	    	
 	    	taskManager.registerTask(dtTask);
 	    	
 	    	ArrayList<String> parentIds = new ArrayList<String>();
@@ -165,6 +182,8 @@ public class RandomForestService {
 	    	dtTask1.setSeen(true);
 	    	dtTask1.setParentTaskId(parentIds);
 	    	taskManager.registerTask(dtTask1);
+	    	
+	    	dtTask.setParent(true);
 	    	
 	    	String taskUrl = loadBalancerAddress + wsURL1;
 			URL url = new URL(taskUrl);
@@ -242,6 +261,19 @@ public class RandomForestService {
 		return Response.status(200).entity(fs.readFileToString(path)).build();
 	}
 	
+	/**
+	 * generate the report
+	 * @param username
+	 * @param trainingDataset
+	 * @param testingDataset
+	 * @param taskId
+	 * @param masterTaskId
+	 * @param context
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/generateReport/{username}/{trainingDataset}/{testingDataset}/{taskId}/{masterTaskId}")
 	@GET
 	public Response generateReport(
@@ -328,6 +360,15 @@ public class RandomForestService {
 		return Response.status(200).entity("Hello World!").build();		
 	}
 	
+	/**
+	 * this begins the decision tree service
+	 * @param username
+	 * @param trainingDataset
+	 * @param taskId
+	 * @param context
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/beginService/{username}/{trainingDataSet}/{taskId}")
 	@GET
 	public Response beginService(
@@ -358,6 +399,15 @@ public class RandomForestService {
 		return Response.status(200).entity("Hello World1").build();
 	}
 	
+	/**
+	 * this generates the service for decision tree
+	 * @param username
+	 * @param i
+	 * @param taskId
+	 * @param context
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/generateEachService/{username}/{i}/{taskId}")
 	@GET
 	public Response generateEachService(
@@ -398,6 +448,14 @@ public class RandomForestService {
 		return Response.status(200).entity("Hello World!").build();
 	}
 	
+	/**
+	 * This calculates the best height
+	 * @param username
+	 * @param taskId
+	 * @param context
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/calcBestService/{username}/{taskId}")
 	@GET
 	public Response calcBestService(
@@ -438,6 +496,16 @@ public class RandomForestService {
 		return Response.status(200).entity("Hello World!").build();
 	}
 	
+	/**
+	 * Calculate accuracy for Decision tree
+	 * @param username
+	 * @param trainingDataset
+	 * @param testingDataset
+	 * @param taskId
+	 * @param context
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/AccuracyService/{username}/{trainingDataset}/{testingDataset}/{taskId}")
 	@GET
 	public Response AccuracyService(
@@ -473,6 +541,14 @@ public class RandomForestService {
 		return Response.status(200).entity("Hello World").build();
 	}
 		
+	/**
+	 * get the training data set for decision tree
+	 * @param context
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/getTrainingDataSets")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -502,6 +578,14 @@ public class RandomForestService {
 		return Response.status(200).entity(filesJson.toString()).build();
 	}
 	
+	/**
+	 * get the test data sets for decision tree
+	 * @param context
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
 	@Path("/getTestDataSets")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)

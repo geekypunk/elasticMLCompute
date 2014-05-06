@@ -193,6 +193,7 @@ for(Cookie cookie : cookies){
 													<th>Task Type</th>
 													<th>Task Description</th>
 													<th>Status</th>
+													<!--<th>Last Updated</th> -->
 												</tr>
 											</thead>
 											<tbody>
@@ -202,6 +203,7 @@ for(Cookie cookie : cookies){
 													<th>Task Type</th>
 													<th>Task Description</th>
 													<th>Status</th>
+													<!--<th>Last Updated</th> -->
 												</tr>
 											</tfoot>
 										</table>
@@ -288,12 +290,14 @@ for(Cookie cookie : cookies){
 			    row.push(getTaskTypeIcon(data[key].taskType)+data[key].taskType);
 			    row.push(data[key].taskDescription);
 			    row.push(getTaskStatusIcon(data[key].status));
+			    //row.push(data[key].lastUpdatedAt);
 			    r.push(row);
 			   
 			}
 			$("#datatable1").dataTable().fnDestroy();
        		$('#datatable1').dataTable({
-                "sPaginationType": "bs_full"
+                "sPaginationType": "bs_full",
+                "aaSorting": []
             }).fnAddData(r);
     
            
@@ -332,6 +336,7 @@ for(Cookie cookie : cookies){
 				    row.push(getTaskTypeIcon(data[key].taskType)+data[key].taskType);
 				    row.push(data[key].taskDescription);
 				    row.push(getTaskStatusIcon(data[key].status));
+				    //row.push(data[key].lastUpdatedAt);
 				    r.push(row);
 				   
 				}

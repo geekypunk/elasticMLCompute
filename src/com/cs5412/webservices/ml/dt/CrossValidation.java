@@ -12,6 +12,12 @@ import java.util.Collections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This performs the cross validation.
+ * 5 fold cross validation
+ * @author rb723
+ *
+ */
 public class CrossValidation {
 	static final Logger LOG = LoggerFactory.getLogger(FileUploadServlet.class);
 	public void createCrossValidationFiles(String FileName, IFileSystem fs, String crossvalidation)

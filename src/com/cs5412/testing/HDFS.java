@@ -16,10 +16,14 @@ public class HDFS {
 		FileSystem hdfs;
 		Configuration configuration = new Configuration();
 		hdfs = FileSystem.get(new URI("hdfs://128.84.216.64:9000"), configuration );
-		hdfs.delete(new Path("hdfs://128.84.216.64:9000/admin/kernel"));
-		hdfs.delete(new Path("hdfs://128.84.216.64:9000/admin/svm"));
-		hdfs.delete(new Path("hdfs://128.84.216.64:9000/admin/knn"));
-		hdfs.delete(new Path("hdfs://128.84.216.64:9000/admin/dt"));
+		hdfs.delete(new Path("hdfs://128.84.216.64:9000/admin101/kernel"));
+		hdfs.delete(new Path("hdfs://128.84.216.64:9000/admin101/svm"));
+		hdfs.delete(new Path("hdfs://128.84.216.64:9000/admin101/knn"));
+		hdfs.delete(new Path("hdfs://128.84.216.64:9000/admin101/dt"));
+		
+		hdfs.delete(new Path("hdfs://128.84.216.64:9000/admin101/reports"));
+		hdfs.mkdirs(new Path("hdfs://128.84.216.64:9000/admin101/reports"));
+		
 		
 	}
 

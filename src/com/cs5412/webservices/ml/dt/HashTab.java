@@ -2,6 +2,11 @@ package com.cs5412.webservices.ml.dt;
 
 import java.util.*;
 
+/**
+ * This is for data object storage
+ * @author rb723
+ *
+ */
 public class HashTab implements Comparator<HashTab>{
 	private int positionnumber;
 	private double infogain;

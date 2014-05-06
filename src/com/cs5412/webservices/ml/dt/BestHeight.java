@@ -5,13 +5,21 @@ import java.util.ArrayList;
 
 import com.cs5412.filesystem.IFileSystem;
 import com.cs5412.utils.Utils;
-
-public class BestHeight {
-	private int CrossValidations;
+ 
+/**
+ * This is the Decision tree code which finds the best height for which the tree gives the best test accuracy.
+ * This is done by cross validation by checking for best height
+ * @author rb723
+ *
+ */
+public class BestHeight { private int CrossValidations;
 	private Double[] Accuracy;
 	private int numHeights;
 	private int[] heights;
 	
+	/**
+	 * constructor
+	 */
 	public BestHeight()
 	{
 		CrossValidations = 5;
@@ -25,6 +33,12 @@ public class BestHeight {
 		}
 	}
 	
+	/**
+	 * constructor
+	 * @param num
+	 * @param height
+	 * @param labelHeights
+	 */
 	public BestHeight(int num, int height, int[] labelHeights)
 	{
 		CrossValidations = num;
@@ -37,6 +51,13 @@ public class BestHeight {
 		}
 	}
 	
+	/**
+	 * Calculate the accuarcy.
+	 * @param crossvalidation
+	 * @param fs
+	 * @param avgAcc
+	 * @return
+	 */
 	public int calculateAccuracy(String crossvalidation, IFileSystem fs, ArrayList<Double> avgAcc)
 	{
 		BufferedReader[] br = new BufferedReader[CrossValidations];

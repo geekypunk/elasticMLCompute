@@ -11,6 +11,11 @@ import org.slf4j.LoggerFactory;
 import com.cs5412.filesystem.IFileSystem;
 import com.cs5412.utils.Utils;
 
+/**
+ * this is the calling code which initializes the code
+ * @author rb723
+ *
+ */
 public class ExecuteMain {
 	 private static final Logger LOG = LoggerFactory.getLogger(ExecuteMain.class);
 
@@ -56,6 +61,14 @@ public class ExecuteMain {
 		}
 	}
 	
+/**
+ * this calculates the final test accuracy
+ * @param trainFile
+ * @param testFile
+ * @param height
+ * @param fs
+ * @param crossvalidation
+ */
 public void FinalAccuracy(String trainFile, String testFile, int height, IFileSystem fs, String crossvalidation){
 		
 		Queue<DecisionTreeNode> queue = new LinkedList<DecisionTreeNode>();

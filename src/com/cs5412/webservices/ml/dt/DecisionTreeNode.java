@@ -2,6 +2,11 @@ package com.cs5412.webservices.ml.dt;
 
 import java.util.*;
 
+/**
+ * this class defines the structure for the decision tree node
+ * @author rb723
+ *
+ */
 public class DecisionTreeNode {
 	private ArrayList<TrainingNode> trNodeArray;
 	public DecisionTreeNode firstChild;
@@ -108,6 +113,13 @@ public class DecisionTreeNode {
 		return res;
 	}
 	
+	/**
+	 * this calculates the info gain which decides the best node for splitting
+	 * @param classPresent1
+	 * @param classAbsent1
+	 * @param total
+	 * @return
+	 */
 	public double CalcInfoGain(int[] classPresent1, int[] classAbsent1, int total)
 	{
 		double result= 0.0;
@@ -142,6 +154,10 @@ public class DecisionTreeNode {
 		return result;
 	}
 	
+	/**
+	 * This decides the split.
+	 * @return
+	 */
 	public int IdentifySplit()
 	{
 		int [] classPresent = new int[4];

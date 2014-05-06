@@ -1,6 +1,8 @@
 package com.cs5412.webservices.tasks;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -60,12 +62,14 @@ public class TasksService {
 		}
 		JSONArray result = new JSONArray();
 		JSONObject taskObj;
+		Collections.reverse(parentTasks);
 		for(TaskDao task : parentTasks){
 			taskObj = new JSONObject();
 			taskObj.put("taskId", task.getTaskId());
 			taskObj.put("taskType", task.getTaskType());
 			taskObj.put("taskDescription", task.getTaskDescription());
 			taskObj.put("status", task.getStatus());
+			taskObj.put("lastUpdatedAt", new Date());
 			result.put(taskObj);
 		}
 		return Response.status(200).entity(result.toString()).build();

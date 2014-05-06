@@ -228,7 +228,6 @@ public class FileUploadServlet extends HttpServlet {
 				                        fs.createFile(inputStream, filePath);
 				                        message.append("Uploaded "+uploadFileName+" successfully!");
 				                        
-				                        //TODO change createFile API to return number of bytes read
 				                        uConn = url.openConnection();
 			                        	inputStream = uConn.getInputStream();
 			                        	int size = getSize(uConn, inputStream);
@@ -360,7 +359,6 @@ public class FileUploadServlet extends HttpServlet {
     		LOG.info("SERVER UP!");
 			
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
     		LOG.error("Error",e);
 
 		}
@@ -396,7 +394,7 @@ public class FileUploadServlet extends HttpServlet {
         jsono.put("size", item.getSize());
         jsono.put("type", item.getContentType());
         jsono.put("url", Utils.SERVER_URL+"FileUpload?getfile=" + item.getName());
-        jsono.put("thumbnailUrl", "js/jquery-upload/img/document_thumbnail.PNG");
+        jsono.put("thumbnailUrl", "img/document_thumbnail.png");
         jsono.put("deleteUrl", Utils.SERVER_URL+"FileUpload?"+HTTPConstants.DELETE_DATASET+"=" + item.getName());
         jsono.put("deleteType", "DELETE");
         return jsono;
@@ -407,7 +405,7 @@ public class FileUploadServlet extends HttpServlet {
     	jsono.put("size", objectMetadata.getContentLength());
         jsono.put("type", objectMetadata.getContentType());
         jsono.put("url", Utils.SERVER_URL+"FileUpload?getfile=" + item);
-        jsono.put("thumbnailUrl", "js/jquery-upload/img/document_thumbnail.PNG");
+        jsono.put("thumbnailUrl", "img/document_thumbnail.png");
         jsono.put("deleteUrl", Utils.SERVER_URL+"FileUpload?"+HTTPConstants.DELETE_DATASET+"=" + item);
         jsono.put("deleteType", "DELETE");
         return jsono;
@@ -479,7 +477,7 @@ public class FileUploadServlet extends HttpServlet {
 		        jsono.put("size", file.getLen());
 		        jsono.put("type", "file");
 		        jsono.put("url", Utils.SERVER_URL+"FileUpload?getfile=" + file.getPath().getName());
-		        jsono.put("thumbnailUrl", "js/jquery-upload/img/document_thumbnail.PNG");
+		        jsono.put("thumbnailUrl", "img/document_thumbnail.png");
 		        jsono.put("deleteUrl", Utils.SERVER_URL+"FileUpload?"+HTTPConstants.DELETE_DATASET+"=" + file.getPath().getName());
 		        jsono.put("deleteType", "DELETE");
 		        filesJSONArray.put(jsono);
