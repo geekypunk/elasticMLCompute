@@ -32,7 +32,7 @@ public class PerformanceMonitor extends TimerTask{
 	private static final long USED_MEMORY_THRESHOLD = 1*GB;
 	
 	//5GB
-	private static final long FREE_MEMORY_THRESHOLD = 2*GB;
+	private static final long FREE_MEMORY_THRESHOLD = 1*GB;
 
 	private PropertiesConfiguration config;
 	private String NODE_NAME;
@@ -87,15 +87,17 @@ public class PerformanceMonitor extends TimerTask{
 			LOG.info("Perf stats:"+" Max:"+(double)maxMemory/GB);
 			LOG.info("Perf stats:"+" Used:"+(double)usedMemory/GB);
 			LOG.info("Perf stats:"+" Free:"+(double)freeMemory/GB);
-			if(this.isServerUp == true && usedMemory+USED_MEMORY_THRESHOLD>=maxMemory){
-				this.isServerUp = false;
+			if(this.isServerUp == true && usedMemory+USED_MEMORY_THRESHOLD>=maxMemory && !this.config.getBoolean("IS_RESERVE")){
+				
 				deRegisterFromLB();
 				autoScaler.scaleUp();
+				this.isServerUp = false;
 			}
 			else if(this.isServerUp == false && freeMemory>=FREE_MEMORY_THRESHOLD){
 				
-				this.isServerUp = true;
+				
 				registerWithLB();
+				this.isServerUp = true;
 			
 			}
 		} catch (Exception e) {

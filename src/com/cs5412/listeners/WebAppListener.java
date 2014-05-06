@@ -90,22 +90,24 @@ public class WebAppListener implements ServletContextListener {
 		    /*End of Code added*/
 		  	application.setAttribute("couchbaseClient", couchbaseClient);	
 		  
-		  	//Monitor server statistics to prevent OOM crash
-		/*   	PerformanceMonitor perfMonitor = new PerformanceMonitor(application);
-			Timer time = new Timer();
-			time.schedule(perfMonitor, 0,5*1000);
-			
-			if(config.getString("SERVER_MODE").equalsIgnoreCase("MAINT")){
-				this.NODE_NAME = SERVER_POOL_NAME+"/"+config.getString("NODE_NAME");
-				CMD_DISABLE  = "echo \"disable server "+this.NODE_NAME+"\" | socat stdio "+HASOCKET;
-			  	LOAD_BALANCER = new Machine(config.getString("LOAD_BALANCER_USER"), 
-						config.getString("LOAD_BALANCER_PWD"), 
-						config.getString("LOAD_BALANCER_IP"));
-				lbShell = new SSHAdaptor(LOAD_BALANCER);
-				lbShell = lbShell.connect();
-				lbShell.execute(CMD_DISABLE);
-				lbShell.disconnect();
-			}*/
+		  	if(config.getBoolean("IS_ELASTIC")){
+			  	//Monitor server statistics to prevent OOM crash
+			   	PerformanceMonitor perfMonitor = new PerformanceMonitor(application);
+				Timer time = new Timer();
+				time.schedule(perfMonitor, 0,5*1000);
+				
+				if(config.getString("SERVER_MODE").equalsIgnoreCase("MAINT")){
+					this.NODE_NAME = SERVER_POOL_NAME+"/"+config.getString("NODE_NAME");
+					CMD_DISABLE  = "echo \"disable server "+this.NODE_NAME+"\" | socat stdio "+HASOCKET;
+				  	LOAD_BALANCER = new Machine(config.getString("LOAD_BALANCER_USER"), 
+							config.getString("LOAD_BALANCER_PWD"), 
+							config.getString("LOAD_BALANCER_IP"));
+					lbShell = new SSHAdaptor(LOAD_BALANCER);
+					lbShell = lbShell.connect();
+					lbShell.execute(CMD_DISABLE);
+					lbShell.disconnect();
+				}
+		  	}
 			
 		}catch(Exception e){
 			LOG.error("Error", e);
