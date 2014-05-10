@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -21,8 +21,7 @@
 	<link rel="stylesheet" type="text/css" href="js/datatables/media/css/jquery.dataTables.min.css" />
 	<link rel="stylesheet" type="text/css" href="js/datatables/media/assets/css/datatables.min.css" />
 	<link rel="stylesheet" type="text/css" href="js/datatables/extras/TableTools/media/css/TableTools.min.css" />
-	<!-- FONTS -->
-	<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
+	<link href='css/fonts.css' rel='stylesheet' type='text/css'>
 	<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
 </head>
 <body>
@@ -91,7 +90,7 @@ for(Cookie cookie : cookies){
 							<li><a href="#"><i class="fa fa-user"></i> My Profile</a></li>
 							<li><a href="#"><i class="fa fa-cog"></i> Account Settings</a></li>
 							<li><a href="#"><i class="fa fa-eye"></i> Privacy Settings</a></li>
-							<li><a href="user/auth/logout"><i class="fa fa-power-off"></i> Log Out</a></li>
+							<li><a onclick="logout()" href="javascript:void(0);"><i class="fa fa-power-off"></i> Log Out</a></li>
 						</ul>
 					</li>
 					<!-- END USER LOGIN DROPDOWN -->
@@ -131,10 +130,12 @@ for(Cookie cookie : cookies){
 								<ul class="sub">
 									<li><a class="" href="knn.jsp"><span class="sub-menu-text">KNN</span></a></li>
 									<li><a class="" href="svm.jsp"><span class="sub-menu-text">SVM</span></a></li>
+									<li><a class="" href="kernel.jsp"><span class="sub-menu-text">KERNEL</span></a></li>
+									<li><a class="" href="decisiontree.jsp"><span class="sub-menu-text">DECISION TREE</span></a></li>
+									<li><a class="" href="wsd.jsp"><span class="sub-menu-text">WSD</span></a></li>
 								</ul>
 							</li>
 							<!-- /ML ALGORITHM MENU -->
-							
 							<!-- REPORTS MENU -->
 							<li><a class="" href="reports.jsp"><i class="fa fa-bar-chart-o fa-fw"></i> <span class="menu-text">Reports</span></a></li>
 							<!-- /REPORTS MENU -->
@@ -192,6 +193,7 @@ for(Cookie cookie : cookies){
 													<th>Task Type</th>
 													<th>Task Description</th>
 													<th>Status</th>
+													<!--<th>Last Updated</th> -->
 												</tr>
 											</thead>
 											<tbody>
@@ -201,6 +203,7 @@ for(Cookie cookie : cookies){
 													<th>Task Type</th>
 													<th>Task Description</th>
 													<th>Status</th>
+													<!--<th>Last Updated</th> -->
 												</tr>
 											</tfoot>
 										</table>
@@ -239,6 +242,7 @@ for(Cookie cookie : cookies){
 	<script type="text/javascript" src="js/jQuery-Cookie/jquery.cookie.min.js"></script>
 	<!-- CUSTOM SCRIPT -->
 	<script src="js/script.js"></script>
+	<script src="js/notifications.js"></script>
 	<!-- DATA TABLES -->
 	<script type="text/javascript" src="js/datatables/media/js/jquery.dataTables.min.js"></script>
 	<script type="text/javascript" src="js/datatables/media/assets/js/datatables.min.js"></script>
@@ -286,12 +290,14 @@ for(Cookie cookie : cookies){
 			    row.push(getTaskTypeIcon(data[key].taskType)+data[key].taskType);
 			    row.push(data[key].taskDescription);
 			    row.push(getTaskStatusIcon(data[key].status));
+			    //row.push(data[key].lastUpdatedAt);
 			    r.push(row);
 			   
 			}
 			$("#datatable1").dataTable().fnDestroy();
        		$('#datatable1').dataTable({
-                "sPaginationType": "bs_full"
+                "sPaginationType": "bs_full",
+                "aaSorting": []
             }).fnAddData(r);
     
            
@@ -324,16 +330,21 @@ for(Cookie cookie : cookies){
 		    success: function(data, textStatus, jqXHR)
 		    {
 		    	var r = new Array(), j = -1;
+				var row;
 				for (var key=0, size=data.length; key<size; key++){
-				    r[++j] ='<tr><td>';
-				    r[++j] = getTaskTypeIcon(data[key].taskType)+data[key].taskType;
-				    r[++j] = '</td><td>';
-				    r[++j] = data[key].taskDescription;
-				    r[++j] = '</td><td>';
-				    r[++j] = getTaskStatusIcon(data[key].status);
-				    r[++j] = '</td></tr>';
+					row = new Array();
+				    row.push(getTaskTypeIcon(data[key].taskType)+data[key].taskType);
+				    row.push(data[key].taskDescription);
+				    row.push(getTaskStatusIcon(data[key].status));
+				    //row.push(data[key].lastUpdatedAt);
+				    r.push(row);
+				   
 				}
-	 			$('#datatable1>tbody').html(r.join('')); 
+		
+				$("#datatable1").dataTable().fnClearTable();
+	       		$('#datatable1').dataTable().fnAddData(r);
+	     
+	 			
 		    },
 		    error: function (jqXHR, textStatus, errorThrown)
 		    {
@@ -342,7 +353,26 @@ for(Cookie cookie : cookies){
 		});
 	});
 	</script>
-	
+	<script>
+
+	function logout(){
+		$.ajax({
+		    url : "user/auth/logout",
+		    type: "GET",
+		    success: function(data, textStatus, jqXHR)
+		    {
+		    	window.location.replace("login.jsp");	   
+				
+		    },
+		    error: function (jqXHR, textStatus, errorThrown)
+		    {
+		 			console.log(errorThrown);
+		    }
+		});
+
+	}
+
+	</script>
 	<!-- /JAVASCRIPTS -->
 </body>
 </html>

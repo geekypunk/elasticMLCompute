@@ -1,7 +1,5 @@
 package com.cs5412.webservices.ml.knn;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

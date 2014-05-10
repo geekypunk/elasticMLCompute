@@ -67,8 +67,8 @@ var SVMCharts = function () {
                         },
                         yaxis: {
                             ticks:7,
-							min: 0.6,
-                            max: 0.8
+							min: 0.2,
+                            max: 1.0
                             
                         }
                     });

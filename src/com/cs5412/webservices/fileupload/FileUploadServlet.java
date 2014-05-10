@@ -1,9 +1,15 @@
+
 package com.cs5412.webservices.fileupload;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletConfig;
@@ -14,13 +20,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.core.Context;
 
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadBase.FileSizeLimitExceededException;
 import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.LocatedFileStatus;
 import org.json.JSONArray;
@@ -29,17 +36,22 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.S3Object;
 import com.couchbase.client.CouchbaseClient;
-import com.cs5412.dataobjects.TaskDao;
 import com.cs5412.filesystem.IFileSystem;
-import com.cs5412.utils.HTTPConstants;
-import com.cs5412.utils.ServerConstants;
-import com.cs5412.utils.TaskType;
+import com.cs5412.taskmanager.TaskDao;
 import com.cs5412.taskmanager.TaskManager;
 import com.cs5412.taskmanager.TaskStatus;
+import com.cs5412.taskmanager.TaskType;
+import com.cs5412.utils.HTTPConstants;
+import com.cs5412.utils.Utils;
 
 /**
- * A Java servlet that handles file upload from client.
+ * <p><b>Handles file upload from client.</b></p>
  * 
  * @author kt466
  */
@@ -51,6 +63,7 @@ public class FileUploadServlet extends HttpServlet {
     ServletContext ctx;
     IFileSystem fs;
     TaskManager taskManager;
+    PropertiesConfiguration config;
     ProgressListener progressListener = new ProgressListener(){
     	   public void update(long pBytesRead, long pContentLength, int pItems) {
     	       LOG.info("We are currently reading item " + pItems);
@@ -64,15 +77,15 @@ public class FileUploadServlet extends HttpServlet {
     };
     
     //Initialize global objects
-    public void init(ServletConfig config)
+    public void init(ServletConfig servConfig)
             throws ServletException{
-    	super.init(config);
+    	super.init(servConfig);
     	ctx = getServletContext();
     	fs = (IFileSystem) ctx.getAttribute("fileSystem");
 		taskManager = new TaskManager((CouchbaseClient)ctx.getAttribute("couchbaseClient"));
-
-    	
+		config = (PropertiesConfiguration)ctx.getAttribute("config");
     }
+
     /**
      * Upon receiving file upload submission, parses the request to read
      * upload data and saves the file on disk.
@@ -99,17 +112,17 @@ public class FileUploadServlet extends HttpServlet {
 	        // configures upload settings
 	        DiskFileItemFactory factory = new DiskFileItemFactory();
 	        // sets memory threshold - beyond which files are stored in disk, controls in-memory storage 
-	        factory.setSizeThreshold(ServerConstants.MEMORY_THRESHOLD);
+	        factory.setSizeThreshold(config.getInt("MEMORY_THRESHOLD"));
 	        // sets temporary location to store files
-	        factory.setRepository(new File(ServerConstants.getUploadDirTmp()));
+	        factory.setRepository(FileUtils.getTempDirectory());
 	 
 	        ServletFileUpload upload = new ServletFileUpload(factory);
 	         
 	        // sets maximum size of upload file
-	        upload.setFileSizeMax(ServerConstants.MAX_FILE_SIZE);
+	        upload.setFileSizeMax(config.getInt("MAX_FILE_SIZE"));
 	         
 	        // sets maximum size of request (include file + form data)
-	        upload.setSizeMax(ServerConstants.MAX_REQUEST_SIZE);
+	        upload.setSizeMax(config.getInt("MAX_REQUEST_SIZE"));
 	        upload.setProgressListener(progressListener);
 	 
             List<FileItem> formItems = upload.parseRequest(request);
@@ -126,36 +139,145 @@ public class FileUploadServlet extends HttpServlet {
                         System.out.println("File field " + name + " with file name "
                             + item.getName() + " detected.");
                         String fileName = new File(item.getName()).getName();
-                        JSONObject jsono = new JSONObject();
-                        if(isAlreadyUploaded(fileName,uploadedFiles)){
-                        	jsono = createJsonObjWithErrorMsg(item,"Duplicate File!");
-                        	JSONArray array = new JSONArray();
- 	                    	array.put(jsono);
- 	                    	result.put("files", array);
-                        } else{
+                        
+                        if("s3".equalsIgnoreCase(extensionOf(fileName))){
                         	
-                        	TaskDao uploadTask = new TaskDao(username, fileName, "upload", TaskStatus.RUNNING, false);
-                        	uploadTask.setHttpRequest(request);
-                        	uploadTask.setTaskType(TaskType.DATASET_UPLOAD);
-                        	uploadTask.setTaskDescription(fileName);
+                        	InputStream uploadedStream = item.getInputStream();
+                            BufferedReader br = new BufferedReader(new InputStreamReader(uploadedStream));
+                            String line = null;
+                            List<String> urls = new ArrayList<String>();
+                            
+                            while((line=br.readLine())!=null){
+                            	urls.add(line);
+                            }
+
+                            AmazonS3 s3Client = new AmazonS3Client();
+                            JSONArray array = new JSONArray(); 				//filesUploadResult
+                            StringBuffer message = new StringBuffer();
+                            
+                            for(String fileLocationURL: urls){
+	                            String[] tokens = getS3FileParameters(fileLocationURL);
+	                         	String bucketName = tokens[0];
+	                       		String s3FileName = tokens[1];
+	                       		
+	                       		//s3 file upload start
+	                       		if(isAlreadyUploaded(s3FileName,uploadedFiles)){
+	                       			JSONObject jsono = createJsonObjWithErrorMsgS3(s3FileName,"Duplicate File!");
+		 	                    	array.put(jsono);
+		                        } else{
+		                        	
+		                        	TaskDao uploadTask = new TaskDao(username, s3FileName, "upload", TaskStatus.RUNNING, false, "/upload");
+		                        	uploadTask.setTaskType(TaskType.DATASET_UPLOAD.toString());
+		                        	uploadTask.setTaskDescription(s3FileName);
+		                        	uploadTask.setParent(true);
+		                        	
+		                        	try{
+			                        	taskManager.registerTask(uploadTask);
+			                        	S3Object object = s3Client.getObject(new GetObjectRequest(bucketName, s3FileName));
+				                        InputStream uploadedStreamS3 = object.getObjectContent();
+				                        String filePath = fs.getFilePathForUploads(s3FileName, username);
+				                        fs.createFile(uploadedStreamS3, filePath);
+				                        message.append("Uploaded "+s3FileName+" successfully!");
+				                        JSONObject jsono = createJsonObjS3(s3FileName,object.getObjectMetadata());
+				                    	array.put(jsono);
+				                    	//result.put("files", array);
+				                    	taskManager.setTaskStatus(uploadTask, TaskStatus.SUCCESS);
+		                        	}catch(Exception e){
+		                        		  LOG.error("Error",e);
+		                        		message.append("Could not upload "+s3FileName);
+		                        		taskManager.setTaskStatus(uploadTask, TaskStatus.FAILURE);
+		                        	}
+		                        }
+	                       		//s3 file upload end
+                            }
+                            result.put("files", array);
+                            request.setAttribute("message",message.toString());
+                        }else if("http".equalsIgnoreCase(extensionOf(fileName))){
                         	
-                        	try{
-	                        	taskManager.registerTask(uploadTask);
-	                        	jsono = createJsonObj(item);
-		                        InputStream uploadedStream = item.getInputStream();
-		                        String filePath = fs.getFilePathForUploads(fileName, username);
-		                        fs.createFile(uploadedStream, filePath);
-		                        request.setAttribute("message",
-		                            "Upload has been done successfully!");
-		                        JSONArray array = new JSONArray();
-		                    	array.put(jsono);
-		                    	result.put("files", array);
-		                    	taskManager.setTaskStatus(uploadTask, TaskStatus.SUCCESS);
-                        	}catch(Exception e){
-                        		taskManager.setTaskStatus(uploadTask, TaskStatus.FAILURE);
-                        	}
+                        	InputStream uploadedStream = item.getInputStream();
+                            BufferedReader br = new BufferedReader(new InputStreamReader(uploadedStream));
+                            String line = null;
+                            List<String> urls = new ArrayList<String>();
+                            
+                            while((line=br.readLine())!=null){
+                            	urls.add(line);
+                            }
+
+                            JSONArray array = new JSONArray(); 	
+                            StringBuffer message = new StringBuffer();
+                            
+                            for(String fileLocationURL: urls){
+	                            String uploadFileName = getFileName(fileLocationURL);
+
+	                       		if(isAlreadyUploaded(uploadFileName,uploadedFiles)){
+	                       			JSONObject jsono = createJsonObjWithErrorMsgS3(uploadFileName,"Duplicate File!");
+		 	                    	array.put(jsono);
+		                        } else{
+		                        	
+		                        	TaskDao uploadTask = new TaskDao(username, uploadFileName, "upload", TaskStatus.RUNNING, false, "/upload");
+		                        	uploadTask.setTaskType(TaskType.DATASET_UPLOAD.toString());
+		                        	uploadTask.setTaskDescription(uploadFileName);
+		                        	uploadTask.setParent(true);
+		                        	
+		                        	try{
+			                        	taskManager.registerTask(uploadTask);
+			                        	URL url = new URL(fileLocationURL);
+			                        	URLConnection  uConn = url.openConnection();
+			                        	InputStream inputStream = uConn.getInputStream();
+				                        String filePath = fs.getFilePathForUploads(uploadFileName, username);
+				                        fs.createFile(inputStream, filePath);
+				                        message.append("Uploaded "+uploadFileName+" successfully!");
+				                        
+				                        uConn = url.openConnection();
+			                        	inputStream = uConn.getInputStream();
+			                        	int size = getSize(uConn, inputStream);
+				                        JSONObject jsono = createJsonObjHTTP(uploadFileName,size);
+				                    	array.put(jsono);
+				                    	taskManager.setTaskStatus(uploadTask, TaskStatus.SUCCESS);
+		                        	}catch(Exception e){
+		                        		  LOG.error("Error",e);
+		                        		message.append("Could not upload "+uploadFileName);
+		                        		taskManager.setTaskStatus(uploadTask, TaskStatus.FAILURE);
+		                        	}
+		                        }
+	                       		//http file upload end
+                            }
+                            result.put("files", array);
+                            request.setAttribute("message",message.toString());
+                        }else{
+	                        JSONObject jsono = new JSONObject();
+	                        if(isAlreadyUploaded(fileName,uploadedFiles)){
+	                        	jsono = createJsonObjWithErrorMsg(item,"Duplicate File!");
+	                        	JSONArray array = new JSONArray();
+	 	                    	array.put(jsono);
+	 	                    	result.put("files", array);
+	                        } else{
+	                        	
+	                        	TaskDao uploadTask = new TaskDao(username, fileName, "upload", TaskStatus.RUNNING, false, "/upload");
+	                        	//uploadTask.setHttpRequest(request);
+	                        	uploadTask.setTaskType(TaskType.DATASET_UPLOAD.toString());
+	                        	uploadTask.setTaskDescription(fileName);
+	                        	uploadTask.setParent(true);
+	                        	
+	                        	try{
+		                        	taskManager.registerTask(uploadTask);
+		                        	jsono = createJsonObj(item);
+			                        InputStream uploadedStream = item.getInputStream();
+			                        String filePath = fs.getFilePathForUploads(fileName, username);
+			                        fs.createFile(uploadedStream, filePath);
+			                        request.setAttribute("message",
+			                            "Upload has been done successfully!");
+			                        JSONArray array = new JSONArray();
+			                    	array.put(jsono);
+			                    	result.put("files", array);
+			                    	taskManager.setTaskStatus(uploadTask, TaskStatus.SUCCESS);
+	                        	}catch(Exception e){
+	                        		  LOG.error("Error",e);
+	                        		taskManager.setTaskStatus(uploadTask, TaskStatus.FAILURE);
+	                        	}
+	                        }
                         }
-                    }
+                    }// end of main else 
                 }
             }
             System.out.println("File sent!");
@@ -165,11 +287,11 @@ public class FileUploadServlet extends HttpServlet {
         } catch (FileSizeLimitExceededException e) {
             request.setAttribute("message",
                     "There was an error: " + e.getMessage());
-            LOG.error("Error",e.getFieldName());
+            LOG.debug("Error",e);
         }catch(Exception ex){
         	request.setAttribute("message",
                     "There was an error: " + ex.getMessage());
-            LOG.error("Error",ex.getCause());
+        	LOG.debug("Error",ex);
         }
         finally{
         	writer.write(result.toString());
@@ -177,6 +299,30 @@ public class FileUploadServlet extends HttpServlet {
         }
      
     }
+    
+	private int getSize(URLConnection uConn, InputStream inputStream) throws IOException {
+    	inputStream = uConn.getInputStream();
+    	 int bytesRead,bytesWritten = 0,size=1024;
+         byte[] buf = new byte[size];
+         while ((bytesRead = inputStream.read(buf)) != -1) {
+             bytesWritten += bytesRead;
+         }
+		return bytesWritten;
+	}
+
+	private String getFileName(String fileLocationURL) {
+    	int lastIndexOfSlash = fileLocationURL.lastIndexOf('/');
+		return fileLocationURL.substring(lastIndexOfSlash+1).trim();
+	}
+
+    private String[] getS3FileParameters(String fileName) {
+    	fileName=fileName.replaceAll("https://", "");
+    	fileName=fileName.replaceAll("http://", "");
+    	fileName=fileName.replaceAll(".s3.amazonaws.com", "");
+    	fileName=fileName.replaceAll("s3.amazonaws.com/", "");
+    	return fileName.split("/");
+	}
+    
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
 	        throws ServletException, IOException{
     	HttpSession session = request.getSession();
@@ -213,7 +359,6 @@ public class FileUploadServlet extends HttpServlet {
     		LOG.info("SERVER UP!");
 			
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
     		LOG.error("Error",e);
 
 		}
@@ -248,12 +393,34 @@ public class FileUploadServlet extends HttpServlet {
     	jsono.put("name", item.getName());
         jsono.put("size", item.getSize());
         jsono.put("type", item.getContentType());
-        jsono.put("url", ServerConstants.SERVER_URL+"FileUpload?getfile=" + item.getName());
-        jsono.put("thumbnailUrl", "js/jquery-upload/img/document_thumbnail.PNG");
-        jsono.put("deleteUrl", ServerConstants.SERVER_URL+"FileUpload?"+HTTPConstants.DELETE_DATASET+"=" + item.getName());
+        jsono.put("url", Utils.SERVER_URL+"FileUpload?getfile=" + item.getName());
+        jsono.put("thumbnailUrl", "img/document_thumbnail.png");
+        jsono.put("deleteUrl", Utils.SERVER_URL+"FileUpload?"+HTTPConstants.DELETE_DATASET+"=" + item.getName());
         jsono.put("deleteType", "DELETE");
         return jsono;
     }
+    private JSONObject createJsonObjS3(String item, ObjectMetadata objectMetadata) throws JSONException{
+    	JSONObject jsono = new JSONObject();
+    	jsono.put("name", item);
+    	jsono.put("size", objectMetadata.getContentLength());
+        jsono.put("type", objectMetadata.getContentType());
+        jsono.put("url", Utils.SERVER_URL+"FileUpload?getfile=" + item);
+        jsono.put("thumbnailUrl", "img/document_thumbnail.png");
+        jsono.put("deleteUrl", Utils.SERVER_URL+"FileUpload?"+HTTPConstants.DELETE_DATASET+"=" + item);
+        jsono.put("deleteType", "DELETE");
+        return jsono;
+    }
+    
+    private JSONObject createJsonObjHTTP(String item, int size) throws JSONException {
+    	JSONObject jsono = new JSONObject();
+    	jsono.put("name", item);
+    	jsono.put("size", size);
+        jsono.put("url", Utils.SERVER_URL+"FileUpload?getfile=" + item);
+        jsono.put("thumbnailUrl", "js/jquery-upload/img/document_thumbnail.PNG");
+        jsono.put("deleteUrl", Utils.SERVER_URL+"FileUpload?"+HTTPConstants.DELETE_DATASET+"=" + item);
+        jsono.put("deleteType", "DELETE");
+        return jsono;
+	}
     private JSONObject createJsonObjWithErrorMsg(FileItem item,String message) throws JSONException{
     	JSONObject jsono = new JSONObject();
     	jsono.put("error", message);
@@ -266,7 +433,16 @@ public class FileUploadServlet extends HttpServlet {
         jsono.put("deleteType", "DELETE");
         return jsono;
     }
-    
+    private JSONObject createJsonObjWithErrorMsgS3(String item,String message) throws JSONException{
+    	JSONObject jsono = new JSONObject();
+    	jsono.put("error", message);
+    	jsono.put("name", item);
+        jsono.put("url", "");
+        jsono.put("thumbnailUrl", "");
+        jsono.put("deleteUrl", "");
+        jsono.put("deleteType", "DELETE");
+        return jsono;
+    }
     private JSONObject createDeleteFileJson(String fileName,boolean flag) throws JSONException{
     	JSONObject result = new JSONObject();
     	JSONArray array = new JSONArray();
@@ -300,19 +476,24 @@ public class FileUploadServlet extends HttpServlet {
 				jsono.put("name", file.getPath().getName());
 		        jsono.put("size", file.getLen());
 		        jsono.put("type", "file");
-		        jsono.put("url", ServerConstants.SERVER_URL+"FileUpload?getfile=" + file.getPath().getName());
-		        jsono.put("thumbnailUrl", "js/jquery-upload/img/document_thumbnail.PNG");
-		        jsono.put("deleteUrl", ServerConstants.SERVER_URL+"FileUpload?"+HTTPConstants.DELETE_DATASET+"=" + file.getPath().getName());
+		        jsono.put("url", Utils.SERVER_URL+"FileUpload?getfile=" + file.getPath().getName());
+		        jsono.put("thumbnailUrl", "img/document_thumbnail.png");
+		        jsono.put("deleteUrl", Utils.SERVER_URL+"FileUpload?"+HTTPConstants.DELETE_DATASET+"=" + file.getPath().getName());
 		        jsono.put("deleteType", "DELETE");
 		        filesJSONArray.put(jsono);
 			}
 		}
 		
 		}catch(Exception e){
-			e.printStackTrace();
+			LOG.debug("Error",e);
 		}finally{
 			
 		}
     	return filesJSONArray;
 	 }
+    
+    private String extensionOf(String fileName){
+		int lastIndexOfPeriod = fileName.lastIndexOf('.');
+		return fileName.substring(lastIndexOfPeriod+1);
+	}
 }

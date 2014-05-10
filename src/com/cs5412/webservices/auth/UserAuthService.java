@@ -1,5 +1,6 @@
 package com.cs5412.webservices.auth;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -23,8 +24,12 @@ import com.couchbase.client.CouchbaseClient;
 import com.cs5412.filesystem.IFileSystem;
 import com.cs5412.user.UserManager;
 import com.cs5412.user.UserManagerImpl;
-import com.google.common.collect.Maps;
 
+/**
+ * <p><b>This class supports the register/login/logout fuctionality on the client side</b><p>
+ * @author kt466
+ *
+ */
 @Path("/auth")
 public class UserAuthService {
 
@@ -54,14 +59,14 @@ public class UserAuthService {
 			@Context HttpServletResponse response
 			) throws Exception {
 		
-		Map<String,String> params = Maps.newHashMap();
+		Map<String,String> params = new HashMap<String, String>();
 		params.put("fullName", name);
 		params.put("email", email);
 		params.put("username", username);
 		params.put("password", password);
 		userManager.createUser(params);
 		userManager.createHDFSNamespace(fs,username);
-		userManager.createEmptyTaskList(username);
+//		userManager.createEmptyTaskList(username);
 		//Create session and login the user
 		HttpSession session = request.getSession();
 	    session.setAttribute("user", username);
@@ -71,7 +76,6 @@ public class UserAuthService {
 	    //setting cookie to expiry in 30 mins
 	    //loginCookie.setMaxAge(30*60);
 	    response.addCookie(loginCookie);
-	    //response.sendRedirect("/elasticMLCompute/index.jsp");
 		return Response.status(200).entity("success").build();
 				
 				
@@ -97,7 +101,6 @@ public class UserAuthService {
 		    //setting cookie to expiry in 30 mins
 		    //loginCookie.setMaxAge(30*60);
 		     response.addCookie(loginCookie);
-		     //response.sendRedirect("/elasticMLCompute/index.jsp");
 		     return Response.status(200).entity("success").build();
 		}else{
 			return Response.status(200).entity("failure").build();
@@ -109,7 +112,7 @@ public class UserAuthService {
 	@Path("/logout")
 	@GET
 	@Consumes("application/x-www-form-urlencoded")
-	public void logout(
+	public Response logout(
 			@Context HttpServletRequest request,
 			@Context HttpServletResponse response
 			) throws Exception {
@@ -117,22 +120,18 @@ public class UserAuthService {
 		response.setContentType("text/html");
         Cookie[] cookies = request.getCookies();
         if(cookies != null){
-        for(Cookie cookie : cookies){
-            if(cookie.getName().equals("JSESSIONID")){
-                System.out.println("JSESSIONID="+cookie.getValue());
-            }
-            cookie.setMaxAge(0);
-            response.addCookie(cookie);
-        }
+	        for(Cookie cookie : cookies){
+	            cookie.setMaxAge(0);
+	            response.addCookie(cookie);
+	        }
         }
         //invalidate the session if exists
         HttpSession session = request.getSession(false);
-        System.out.println("User="+session.getAttribute("user"));
         if(session != null){
             session.invalidate();
         }
         //no encoding because we have invalidated the session
-        response.sendRedirect("/elasticMLCompute/login.jsp");
+        return Response.status(200).entity("success").build();
 	
 	}
 	

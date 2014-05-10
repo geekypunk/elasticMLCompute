@@ -15,10 +15,13 @@
 	<link rel="stylesheet" type="text/css"  href="css/responsive.css" >
 	
 	<link href="font-awesome/css/font-awesome.min.css" rel="stylesheet">
+	<!-- DATA TABLES -->
+	<link rel="stylesheet" type="text/css" href="js/datatables/media/css/jquery.dataTables.min.css" />
+	<link rel="stylesheet" type="text/css" href="js/datatables/media/assets/css/datatables.min.css" />
+	<link rel="stylesheet" type="text/css" href="js/datatables/extras/TableTools/media/css/TableTools.min.css" />
 	<!-- DATE RANGE PICKER -->
 	<link rel="stylesheet" type="text/css" href="js/bootstrap-daterangepicker/daterangepicker-bs3.css" />
-	<!-- FONTS -->
-	<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
+	<link href='css/fonts.css' rel='stylesheet' type='text/css'>
 	<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
 </head>
 <body>
@@ -69,10 +72,10 @@ for(Cookie cookie : cookies){
 								
 							</li>
 							
-							
+							<!--
 							<li class="footer">
 								<a href="#">See all notifications <i class="fa fa-arrow-circle-right"></i></a>
-							</li>
+							</li>-->
 						</ul>
 					</li>
 					
@@ -87,7 +90,7 @@ for(Cookie cookie : cookies){
 							<li><a href="#"><i class="fa fa-user"></i> My Profile</a></li>
 							<li><a href="#"><i class="fa fa-cog"></i> Account Settings</a></li>
 							<li><a href="#"><i class="fa fa-eye"></i> Privacy Settings</a></li>
-							<li><a href="user/auth/logout"><i class="fa fa-power-off"></i> Log Out</a></li>
+							<li><a onclick="logout()" href="javascript:void(0);"><i class="fa fa-power-off"></i> Log Out</a></li>
 						</ul>
 					</li>
 					<!-- END USER LOGIN DROPDOWN -->
@@ -127,6 +130,9 @@ for(Cookie cookie : cookies){
 								<ul class="sub">
 									<li><a class="" href="knn.jsp"><span class="sub-menu-text">KNN</span></a></li>
 									<li><a class="" href="svm.jsp"><span class="sub-menu-text">SVM</span></a></li>
+									<li><a class="" href="kernel.jsp"><span class="sub-menu-text">KERNEL</span></a></li>
+									<li><a class="" href="decisiontree.jsp"><span class="sub-menu-text">DECISION TREE</span></a></li>
+									<li><a class="" href="wsd.jsp"><span class="sub-menu-text">WSD</span></a></li>
 								</ul>
 							</li>
 							<!-- /ML ALGORITHM MENU -->
@@ -148,15 +154,123 @@ for(Cookie cookie : cookies){
 					<div id="content" class="col-lg-12">
 						<!-- PAGE HEADER-->
 						<div class="row">
-							<div class="col-sm-12">
-								<div class="page-header">
-									
-									<div class="clearfix">
-										<h3 class="content-title pull-left">ML Compute DashBoard</h3>
+							<div class="col-md-12">
+								<!-- BOX -->
+								<div class="box border">
+									<div class="box-title">
+										<h4><i class="fa fa-columns"></i><span class="hidden-inline-mobile">DashBoard</span></h4>
 									</div>
-									<!-- <div class="description">Blank Page</div> -->
+									<div class="box-body">
+										<div class="tabbable header-tabs">
+										  <ul class="nav nav-tabs">
+											 <li><a href="#box_tab5" data-toggle="tab"><i class="fa fa-flask"></i> <span class="hidden-inline-mobile">Reports</span></a></li>
+											
+											 <li class="active"><a href="#box_tab4" data-toggle="tab"><i class="fa fa-home"></i> <span class="hidden-inline-mobile">Tasks</span></a></li>
+										  </ul>
+										  <div class="tab-content">
+											 <div class="tab-pane fade in active" id="box_tab4">
+												<!-- BOX -->
+												<div class="box border green">
+													<div class="box-title">
+														<h4><i class="fa fa-table"></i>Tasks</h4>
+														<div class="tools hidden-xs">
+															
+															<a href="javascript:;" class="reload">
+																<i class="fa fa-refresh"></i>
+															</a>
+															
+														</div>
+													</div>
+													<div class="box-body">
+														<table id="datatable1" cellpadding="0" cellspacing="0" border="0" class="datatable table table-striped table-bordered table-hover">
+															<thead>
+																<tr>
+																	<th>Task Type</th>
+																	<th>Task Description</th>
+																	<th>Status</th>
+																</tr>
+															</thead>
+															<tbody>
+															</tbody>
+															<tfoot>
+																<tr>
+																	<th>Task Type</th>
+																	<th>Task Description</th>
+																	<th>Status</th>
+																</tr>
+															</tfoot>
+														</table>
+													</div>
+												</div>
+												<!-- /BOX -->
+											 </div>
+											 <div class="tab-pane fade" id="box_tab5">
+												<!-- BOX -->
+												<div class="box border green">
+													<div class="box-title">
+														<h4><i class="fa fa-table"></i>Reports</h4>
+														<div class="tools hidden-xs">
+															
+															<a href="javascript:;" class="reload">
+																<i class="fa fa-refresh"></i>
+															</a>
+															
+														</div>
+													</div>
+													<div class="box-body">
+														<table id="datatable2" cellpadding="0" cellspacing="0" border="0" class="datatable table table-striped table-bordered table-hover" style="width:1500px !important;">
+															<thead>
+																<tr>
+																	<th>Report name</th>
+																	<th>Size</th>
+																	<th>Created At</th>
+																	<th></th>
+																</tr>
+															</thead>
+															<tbody>
+																
+															</tbody>
+															<tfoot>
+																<tr>
+																	<th>Report name</th>
+																	<th>Size</th>
+																	<th>Created At</th>
+																	<th></th>
+																</tr>
+															</tfoot>
+														</table>
+													</div>
+												</div>
+												<!-- /BOX -->
+											 </div>
+											 
+										  </div>
+									   </div>
+									</div>
 								</div>
+								<!-- /BOX -->
 							</div>
+							<!-- SVM CHART -->
+							<div class="col-md-12" id="svmChart" style="display:none;">
+								<!-- BOX -->
+								<div class="box border blue" style="width:90%">
+									<div class="box-title">
+										<h4><i class="fa fa-signal"></i>Interactive Chart</h4>
+										<div class="tools">
+											
+											<a href="javascript:;" class="reload">
+												<i class="fa fa-refresh"></i>
+											</a>
+											
+										</div>
+									</div>
+									<div class="box-body">
+										<div id="chart_2" class="chart"></div>
+									</div>
+								</div>
+								<!-- /BOX -->
+							</div>
+							<!-- /SVM CHART -->
 						</div>
 						<!-- /PAGE HEADER -->
 					</div>
@@ -173,29 +287,73 @@ for(Cookie cookie : cookies){
 	<script src="js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 	<!-- BOOTSTRAP -->
 	<script src="bootstrap-dist/js/bootstrap.min.js"></script>
-	
-		
-	<!-- DATE RANGE PICKER -->
-	<script src="js/bootstrap-daterangepicker/moment.min.js"></script>
-	
-	<script src="js/bootstrap-daterangepicker/daterangepicker.min.js"></script>
-	<!-- SLIMSCROLL -->
+	<!-- FLOT CHARTS -->
+	<script src="js/flot/jquery.flot.min.js"></script>
+	<script src="js/flot/jquery.flot.time.min.js"></script>
+    <script src="js/flot/jquery.flot.selection.min.js"></script>
+	<script src="js/flot/jquery.flot.resize.min.js"></script>
+    <script src="js/flot/jquery.flot.pie.min.js"></script>
+    <script src="js/flot/jquery.flot.stack.min.js"></script>
+    <script src="js/flot/jquery.flot.crosshair.min.js"></script>
+    <!-- SLIMSCROLL -->
 	<script type="text/javascript" src="js/jQuery-slimScroll-1.3.0/jquery.slimscroll.min.js"></script><script type="text/javascript" src="js/jQuery-slimScroll-1.3.0/slimScrollHorizontal.min.js"></script>
+	<!-- BLOCK UI -->
+	<script type="text/javascript" src="js/jQuery-BlockUI/jquery.blockUI.min.js"></script>
+	<script src="js/svm.charts.js"></script>
+	<!-- DATA TABLES -->
+	<script type="text/javascript" src="js/datatables/media/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" src="js/datatables/media/assets/js/datatables.min.js"></script>
+	<script type="text/javascript" src="js/datatables/extras/TableTools/media/js/TableTools.min.js"></script>
+	<script type="text/javascript" src="js/datatables/extras/TableTools/media/js/ZeroClipboard.min.js"></script>
 	<!-- COOKIE -->
 	<script type="text/javascript" src="js/jQuery-Cookie/jquery.cookie.min.js"></script>
-	<!-- CUSTOM SCRIPT -->
+	<!-- Notification Script-->
+	<script src="js/notifications.js"></script>
 	<script src="js/script.js"></script>
-	<script>
+    <script>
 		jQuery(document).ready(function() {		
-			App.setPage("widgets_box");  //Set current page
 			App.init(); //Initialise plugins and elements
 		});
 	</script>
-	<!-- Notification Script-->
-	<script src="js/notifications.js"></script>
 	<script>
+	function getTaskTypeIcon(type){
+
+		if(type==="Dataset Upload")
+			return '<i class="fa fa-cloud-upload"></i>';
+		else if(type==="Algorithm Execution")
+			return '<i class="fa fa-tasks"></i>';
+		else
+			return '';
+	}	
+	function getTaskStatusIcon(status){
+
+		if(status==="SUCCESS")
+			return '<span class="label label-info">SUCCESS</span>';
+		else if(status==="RUNNING")
+			return '<span class="label label-warning">RUNNING</span>';
+		else if(status==="FAILURE")
+			return '<span class="label label-danger">FAILURE</span>';
+	}
+
+	$('#datatable1').dataTable({
+                "sPaginationType": "bs_full"
+    });
+    $('#datatable2').dataTable({
+                "sPaginationType": "bs_full"
+    });
+           
+    $('.datatable').each(function(){
+        var datatable = $(this);
+        // SEARCH - Add the placeholder for Search and Turn this into in-line form control
+        var search_input = datatable.closest('.dataTables_wrapper').find('div[id$=_filter] input');
+        search_input.attr('placeholder', 'Search');
+        search_input.addClass('form-control input-sm');
+        // LENGTH - Inline-Form control
+        var length_sel = datatable.closest('.dataTables_wrapper').find('div[id$=_length] select');
+        length_sel.addClass('form-control input-sm');
+    });
 	$.ajax({
-	    url : "ui/notifications/getFinishedTasks",
+	    url : "taskui/tasks/getAllTasks",
 	    type: "GET",
 	    dataType : "json",
 	    data : {
@@ -203,23 +361,67 @@ for(Cookie cookie : cookies){
 	    },
 	    success: function(data, textStatus, jqXHR)
 	    {
-	    	handleNewNotifications(data);
+	    	var r = new Array(), j = -1;
+			var row;
+			for (var key=0, size=data.length; key<size; key++){
+				row = new Array();
+			    row.push(getTaskTypeIcon(data[key].taskType)+data[key].taskType);
+			    row.push(data[key].taskDescription);
+			    row.push(getTaskStatusIcon(data[key].status));
+			    r.push(row);
+			   
+			}
+			$('#datatable1').dataTable().fnAddData(r);	
+			/*
+			$("#datatable1").dataTable().fnDestroy();
+       		$('#datatable1').dataTable({
+                "sPaginationType": "bs_full"
+            }).fnAddData(r);
+    
+           
+	        $('.datatable').each(function(){
+	            var datatable = $(this);
+	            // SEARCH - Add the placeholder for Search and Turn this into in-line form control
+	            var search_input = datatable.closest('.dataTables_wrapper').find('div[id$=_filter] input');
+	            search_input.attr('placeholder', 'Search');
+	            search_input.addClass('form-control input-sm');
+	            // LENGTH - Inline-Form control
+	            var length_sel = datatable.closest('.dataTables_wrapper').find('div[id$=_length] select');
+	            length_sel.addClass('form-control input-sm');
+	        });*/
+ 			
 	    },
 	    error: function (jqXHR, textStatus, errorThrown)
 	    {
 	 			console.log(errorThrown);
 	    }
 	});
-	$( "#header-notification" ).click(function() {
+
+	$("#box_tab4").find(".reload").click(function(){
   		$.ajax({
-		    url : "ui/notifications/markAllAsSeen",
+		    url : "taskui/tasks/getAllTasks",
 		    type: "GET",
+		    dataType : "json",
 		    data : {
 		    	
 		    },
 		    success: function(data, textStatus, jqXHR)
 		    {
-		    	
+		    	var r = new Array(), j = -1;
+				var row;
+				for (var key=0, size=data.length; key<size; key++){
+					row = new Array();
+				    row.push(getTaskTypeIcon(data[key].taskType)+data[key].taskType);
+				    row.push(data[key].taskDescription);
+				    row.push(getTaskStatusIcon(data[key].status));
+				    r.push(row);
+				   
+				}
+		
+				$("#datatable1").dataTable().fnClearTable();
+	       		$('#datatable1').dataTable().fnAddData(r);
+	     
+	 			
 		    },
 		    error: function (jqXHR, textStatus, errorThrown)
 		    {
@@ -228,7 +430,122 @@ for(Cookie cookie : cookies){
 		});
 	});
 	</script>
-	<!-- END Notification Script-->
+	<script>
+	$.ajax({
+	    url : "reportsui/reports/getAllReports",
+	    type: "GET",
+	    dataType : "json",
+	    data : {
+	    	
+	    },
+	    success: function(data, textStatus, jqXHR)
+	    {
+	    	var r = new Array(), j = -1;
+			var row;
+			for (var key=0, size=data.length; key<size; key++){
+				row = new Array();
+			    row.push(data[key].name);
+			    row.push(data[key].size);
+			    row.push(data[key].createdAt);
+			   row.push('<button class="btn btn-xs btn-primary" onclick=showChart('+'\''+data[key].name+'\''+')>VISUALIZE</button>');
+			    r.push(row);
+			   
+			}
+			$('#datatable2').dataTable().fnAddData(r);	
+			/*
+	 		$("#datatable2").dataTable().fnDestroy();
+       		$('#datatable2').dataTable({
+               "sPaginationType": "bs_full"
+         	}).fnAddData(r);
+            $('.datatable').each(function(){
+	            var datatable = $(this);
+	            // SEARCH - Add the placeholder for Search and Turn this into in-line form control
+	            var search_input = datatable.closest('.dataTables_wrapper').find('div[id$=_filter] input');
+	            search_input.attr('placeholder', 'Search');
+	            search_input.addClass('form-control input-sm');
+	            // LENGTH - Inline-Form control
+	            var length_sel = datatable.closest('.dataTables_wrapper').find('div[id$=_length] select');
+	            length_sel.addClass('form-control input-sm');
+	        });*/
+	    },
+	    error: function (jqXHR, textStatus, errorThrown)
+	    {
+	 			console.log(errorThrown);
+	    }
+	});
+
+	$("#box_tab5").find(".reload").click(function(){
+  		$.ajax({
+		    url : "reportsui/reports/getAllReports",
+		    type: "GET",
+		    dataType : "json",
+		    data : {
+		    	
+		    },
+		    success: function(data, textStatus, jqXHR)
+		    {
+		    	var r = new Array(), j = -1;
+				var row;
+				for (var key=0, size=data.length; key<size; key++){
+					row = new Array();
+				    row.push(data[key].name);
+				    row.push(data[key].size);
+				    row.push(data[key].createdAt);
+row.push('<button class="btn btn-xs btn-primary" onclick=showChart('+'\''+data[key].name+'\''+')>VISUALIZE</button>');
+				    r.push(row);
+				   
+				}
+				$("#datatable2").dataTable().fnClearTable();
+	       		$('#datatable2').dataTable().fnAddData(r);
+		    },
+		    error: function (jqXHR, textStatus, errorThrown)
+		    {
+		 			console.log(errorThrown);
+		    }
+		});
+	});
+	</script>
+	
+	<!-- Show Chart Modal -->
+	<script>
+		function showChart(reportId){
+			//$('#'+reportId).click(function() {
+				$.ajax({
+						type: "GET",
+						dataType: "text",
+						url: "reportsui/reports/getReport/"+reportId,
+						success: function (d) {
+							$('#svmChart').show();
+							SVMCharts.displayChart(d);
+							//bootbox.alert($('#chart_2').html());
+						}
+					});
+				
+	        //});
+		}
+    </script>
+   	<!-- /Show Chart Modal -->
+	
+	<script>
+
+	function logout(){
+		$.ajax({
+		    url : "user/auth/logout",
+		    type: "GET",
+		    success: function(data, textStatus, jqXHR)
+		    {
+		    	window.location.replace("login.jsp");	   
+				
+		    },
+		    error: function (jqXHR, textStatus, errorThrown)
+		    {
+		 			console.log(errorThrown);
+		    }
+		});
+
+	}
+
+	</script>
 	<!-- /JAVASCRIPTS -->
 </body>
 </html>

@@ -3,99 +3,126 @@ package com.cs5412.taskmanager;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.couchbase.client.CouchbaseClient;
-import com.cs5412.dataobjects.TaskDao;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.cs5412.utils.Utils;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+/**
+ * <p><b>This class implements the ITaskManager. Uses CouchBase for storing Task Objects.</b></p>
+ * @author kt466/pms255
+ *
+ */
 public class TaskManager implements ITaskManager{
-
+	static final Logger LOG = LoggerFactory.getLogger(TaskManager.class);
 	private CouchbaseClient couchbaseClient;
 	private Gson gson;
+	private String hostVersion = null;
 	public TaskManager(CouchbaseClient client){
-		couchbaseClient = client;
-		gson = new Gson();
-		
+		hostVersion = null;
+		gson = null;
+		try{
+			couchbaseClient = client;
+			final GsonBuilder gsonBuilder = new GsonBuilder();
+		    gsonBuilder.registerTypeAdapter(TaskDao.class, new TaskDaoAdaptor());
+		    gsonBuilder.setPrettyPrinting();
+		    gson = gsonBuilder.create();
+		    hostVersion = (Integer) couchbaseClient.get(Utils.getIP()) + "";
+		}catch(Exception e){
+			LOG.error("Error: ", e);
+		}
 	}
-
+	
+	
 	@Override
 	public void registerTask(TaskDao task) throws InterruptedException, ExecutionException {
-		// TODO Auto-generated method stub
-		String username = task.getUserId();
-		Map<Integer,TaskDao> tasks = getUserTasksMap(username);
-		tasks.put(task.getTaskId(), task);
-		couchbaseClient.set(username+"Tasks", gson.toJson(tasks)).get();
-		
+		task.setHostVersion(hostVersion);
+		couchbaseClient.set(task.getTaskId(), gson.toJson(task)).get();
+		Type type = new TypeToken<ArrayList<String>>(){}.getType();
+		ArrayList<String> taskIds = gson.fromJson((String) couchbaseClient.get("AllUserTaskIds"), type);
+		taskIds.add(task.getTaskId());
+		couchbaseClient.set("AllUserTaskIds", gson.toJson(taskIds)).get();
 	}
-
-	@Override
-	public TaskDao getTaskById(int id,String username) {
-		Map<Integer,TaskDao> tasks = getUserTasksMap(username);
-		return tasks.get(id);
-		
-	}
-
-	@Override
-	public List<TaskDao> getAllTasksForUser(String username){
-		
-		return new ArrayList<TaskDao>(getUserTasksMap(username).values());
-	}
+	
 	@Override
 	public void setTaskStatus(TaskDao task,TaskStatus status) throws InterruptedException, ExecutionException {
-		
-		Map<Integer,TaskDao> tasks = getUserTasksMap(task.getUserId());
-		TaskDao _task = tasks.get(task.getTaskId());
+		task.setHostVersion(hostVersion);
+		Type type = new TypeToken<TaskDao>(){}.getType();
+		TaskDao _task = gson.fromJson((String) couchbaseClient.get(task.getTaskId()), type);
 		_task.setStatus(status);
-		couchbaseClient.set(_task.getUserId()+"Tasks", gson.toJson(tasks)).get();
-		
-		
+		couchbaseClient.set(task.getTaskId(), gson.toJson(_task)).get();
 	}
-
-	
 	
 	@Override
-	public void markAsSeen(String taskId) {
-		// TODO Auto-generated method stub
-		TaskDao task = (TaskDao) couchbaseClient.get(taskId);
-		task.setSeen(true);
+	public TaskDao getTaskById(String id) {
+		Type type = new TypeToken<TaskDao>(){}.getType();
+		TaskDao task = gson.fromJson((String) couchbaseClient.get(id), type);
+		return task;
 	}
-
+	
+	@Override
+	public List<TaskDao> getAllTasksForUser(String username){
+		List<TaskDao> returnList = new ArrayList<TaskDao>();
+		Type type = new TypeToken<ArrayList<String>>(){}.getType();
+		ArrayList<String> taskIds = gson.fromJson((String) couchbaseClient.get("AllUserTaskIds"), type);
+		for(String td : taskIds){
+			TaskDao task = getTaskById(td);
+			if(task.getUserId().equals(username)) returnList.add(task);
+		}
+		return returnList;
+	}
+	
+	@Override
+	public void markAsSeen(String taskId) throws InterruptedException, ExecutionException {
+		Type type = new TypeToken<TaskDao>(){}.getType();
+		TaskDao task = gson.fromJson((String) couchbaseClient.get(taskId), type);
+		task.setSeen(true);
+		couchbaseClient.set(taskId, gson.toJson(task)).get();
+	}
+	
 	@Override
 	public List<TaskDao>  getFinishedAndUnseenByUserId(String username) {
-		// TODO Auto-generated method stub
-		Map<Integer,TaskDao> tasks = getUserTasksMap(username);
-		List<TaskDao> unfinished = Lists.newArrayList();
-		TaskDao task;
-		for (Entry<Integer, TaskDao> entry : tasks.entrySet()) {
-			task = entry.getValue();
+		List<TaskDao> unfinished = new ArrayList<TaskDao>();
+		List<TaskDao> allUserTasks = getAllTasksForUser(username);
+		for(TaskDao task : allUserTasks){
 			if(task.getStatus() == TaskStatus.SUCCESS && !task.isSeen()){
 				unfinished.add(task);
 			}
 		}
-		return unfinished;
-		
+		return unfinished;	
 	}
-
-	private Map<Integer,TaskDao> getUserTasksMap(String username){
-		
-		Type type = new TypeToken<Map<Integer,TaskDao>>(){}.getType();
-		Map<Integer,TaskDao> tasks = Maps.newHashMap();
-		tasks = gson.fromJson((String) couchbaseClient.get(username+"Tasks"), type);
-		return tasks;
-	}
-
+	
 	@Override
 	public void markAllAsSeen(String username) throws InterruptedException, ExecutionException {
-		Map<Integer,TaskDao> tasks = getUserTasksMap(username);
-		for (Entry<Integer, TaskDao> entry : tasks.entrySet()) {
-			entry.getValue().setSeen(true);
+		List<TaskDao> allUserTasks = getFinishedAndUnseenByUserId(username);
+		for(TaskDao task : allUserTasks){
+			markAsSeen(task.getTaskId());
 		}
-		couchbaseClient.set(username+"Tasks", gson.toJson(tasks)).get();
+	}
+	
+	@Override
+	public void removeParentDependency(String taskId, String username)throws Exception{
+		List<TaskDao> allUserTasks = getAllTasksForUser(username);
+		for(TaskDao task : allUserTasks){
+			if(task.getParentTaskId().contains(taskId)){
+				task.getParentTaskId().remove(taskId);
+				couchbaseClient.set(task.getTaskId(), gson.toJson(task));
+			}
+		}
+	}
+	
+	@Override
+	public void removeTaskById(String taskId)throws InterruptedException, ExecutionException {
+		Type type = new TypeToken<ArrayList<String>>(){}.getType();
+		ArrayList<String> taskIds = gson.fromJson((String) couchbaseClient.get("AllUserTaskIds"), type);
+		taskIds.remove(taskId);
+		couchbaseClient.set("AllUserTaskIds", gson.toJson(taskIds)).get();
+		couchbaseClient.delete(taskId);
 	}
 }

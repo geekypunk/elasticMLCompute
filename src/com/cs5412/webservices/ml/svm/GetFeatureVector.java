@@ -1,12 +1,22 @@
 package com.cs5412.webservices.ml.svm;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.util.ArrayList;
 
 import jnisvmlight.LabeledFeatureVector;
 
+/**
+ * Get the feature vector representation of data (training/test)
+ * @author pms255
+ *
+ */
 public class GetFeatureVector {
+	
+	/**
+	 * Read the feature vector from file to feature vector
+	 * @param trainFilein
+	 * @return
+	 */
 	public static LabeledFeatureVector[] readFileToFV(BufferedReader trainFilein){
 		ArrayList<LabeledFeatureVector> fvList = new ArrayList<LabeledFeatureVector>();
 		try{

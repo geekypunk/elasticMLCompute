@@ -5,7 +5,11 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-/*KNN Item*/
+
+/**
+ * @author pbp36
+ * Represents training/test instance. It assumes input data to be in SVMLite format
+ */
 public class Item implements Comparable<Item>{
 	static final Logger LOG = LoggerFactory.getLogger(Item.class);
 	int itemId;
@@ -26,6 +30,9 @@ public class Item implements Comparable<Item>{
 		return new Double(item.getCosineSimilarity()).compareTo(this.getCosineSimilarity());
 	}
 	
+	/**
+	 * Normalizes feature value map for removing bias
+	 */
 	public void normalize(){
 		Map<Integer, Double> features = getFeatureValueMap();
 		
@@ -35,6 +42,9 @@ public class Item implements Comparable<Item>{
 		}
 	}
 	
+	/**
+	 * This method computes l2norm used in computing cosine similarity metric
+	 */
 	public void computeL2Norm() {
 		
 		Map<Integer, Double> features = getFeatureValueMap();

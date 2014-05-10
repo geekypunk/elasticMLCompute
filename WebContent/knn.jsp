@@ -25,8 +25,7 @@
 	<link rel="stylesheet" type="text/css" href="js/uniform/css/uniform.default.min.css" />
 
 	<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
-	<!-- FONTS -->
-	<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
+	<link href='css/fonts.css' rel='stylesheet' type='text/css'>	
 </head>
 <body>
 <%
@@ -94,7 +93,7 @@ for(Cookie cookie : cookies){
 							<li><a href="#"><i class="fa fa-user"></i> My Profile</a></li>
 							<li><a href="#"><i class="fa fa-cog"></i> Account Settings</a></li>
 							<li><a href="#"><i class="fa fa-eye"></i> Privacy Settings</a></li>
-							<li><a href="user/auth/logout"><i class="fa fa-power-off"></i> Log Out</a></li>
+							<li><a onclick="logout()" href="javascript:void(0);"><i class="fa fa-power-off"></i> Log Out</a></li>
 						</ul>
 					</li>
 					<!-- END USER LOGIN DROPDOWN -->
@@ -134,6 +133,9 @@ for(Cookie cookie : cookies){
 								<ul class="sub">
 									<li><a class="" href="knn.jsp"><span class="sub-menu-text">KNN</span></a></li>
 									<li><a class="" href="svm.jsp"><span class="sub-menu-text">SVM</span></a></li>
+									<li><a class="" href="kernel.jsp"><span class="sub-menu-text">KERNEL</span></a></li>
+									<li><a class="" href="decisiontree.jsp"><span class="sub-menu-text">DECISION TREE</span></a></li>
+									<li><a class="" href="wsd.jsp"><span class="sub-menu-text">WSD</span></a></li>
 								</ul>
 							</li>
 							<!-- /ML ALGORITHM MENU -->
@@ -165,7 +167,7 @@ for(Cookie cookie : cookies){
 										
 									</div>
 									<div class="box-body">
-										<form id="svmForm" class="form-horizontal">
+										<form id="knnForm" class="form-horizontal">
 										  <div class="form-group">
 											 <label class="col-md-2 control-label" for="e1">Training Data<span class="required"></span></label> 
 											 <div class="col-md-10">
@@ -185,9 +187,6 @@ for(Cookie cookie : cookies){
 										  <button type="submit" id="btn-load-complete" class="btn btn-success" data-complete-text="Run again!" data-loading-text="Running...">Run!</button>
 										  
 									   </form>
-									   <br/>
-									   <button id="btn-chart" class="btn btn-success" data-complete-text="Refresh" data-loading-text="Refresh...">Display Chart</button>
-									   <br/>
 									 
 									  
 									  
@@ -196,8 +195,8 @@ for(Cookie cookie : cookies){
 								</div>
 								<!-- /BOX -->
 							</div>
-							<!-- SVM CHART -->
-							<div class="col-md-12" id="svmChart" style="display:none;">
+							<!-- KNN CHART -->
+							<div class="col-md-12" id="knnChart" style="display:none;">
 								<!-- BOX -->
 								<div class="box border blue" style="width:90%">
 									<div class="box-title">
@@ -223,7 +222,7 @@ for(Cookie cookie : cookies){
 								</div>
 								<!-- /BOX -->
 							</div>
-							<!-- /SVM CHART -->
+							<!-- /KNN CHART -->
 						</div>
 						<!-- /ADVANCED -->
 						<!-- /PAGE HEADER -->
@@ -322,6 +321,26 @@ for(Cookie cookie : cookies){
 	});
 	</script>
 	<!-- END Notification Script-->
+	<script>
+
+	function logout(){
+		$.ajax({
+		    url : "user/auth/logout",
+		    type: "GET",
+		    success: function(data, textStatus, jqXHR)
+		    {
+		    	window.location.replace("login.jsp");	   
+				
+		    },
+		    error: function (jqXHR, textStatus, errorThrown)
+		    {
+		 			console.log(errorThrown);
+		    }
+		});
+
+	}
+
+	</script>
 	<!-- /JAVASCRIPTS -->
 </body>
 </html>

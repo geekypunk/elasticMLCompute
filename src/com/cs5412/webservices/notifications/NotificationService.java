@@ -21,8 +21,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.couchbase.client.CouchbaseClient;
-import com.cs5412.dataobjects.TaskDao;
+import com.cs5412.taskmanager.TaskDao;
 import com.cs5412.taskmanager.TaskManager;
+
+/**
+ * <p><b>This class complements the notification service on the client</b></p>
+ * @author kt466
+ *
+ */
 @Path("/notifications")
 public class NotificationService {
 	
@@ -35,6 +41,13 @@ public class NotificationService {
 		taskManager = new TaskManager((CouchbaseClient)context.getAttribute("couchbaseClient"));
 
     }
+	
+	@Path("/poller")
+	@GET
+	public Response isAlive(){
+		return Response.status(200).entity("Hello").build();
+	}
+	
 	/**
 	 * Get finished and unseen tasks
 	 */

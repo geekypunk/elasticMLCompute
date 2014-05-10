@@ -26,6 +26,11 @@ import com.couchbase.client.CouchbaseClient;
 import com.cs5412.filesystem.IFileSystem;
 import com.cs5412.taskmanager.TaskManager;
 
+/**
+ * <p><b>This class supports the Reports page on the client</b></p>
+ * @author kt466
+ *
+ */
 @Path("/reports")
 public class ReportsService {
 	static final Logger LOG = LoggerFactory.getLogger(ReportsService.class);
@@ -41,7 +46,7 @@ public class ReportsService {
     }
 	@Path("/getAllReports")
 	@GET
-	public Response getllReports(
+	public Response getAllReports(
 			@Context HttpServletRequest request,
 			@Context HttpServletResponse response
 			) throws Exception {

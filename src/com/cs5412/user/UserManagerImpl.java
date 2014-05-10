@@ -1,25 +1,25 @@
 package com.cs5412.user;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-
-import jersey.repackaged.com.google.common.collect.Lists;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.couchbase.client.CouchbaseClient;
-import com.cs5412.dataobjects.TaskDao;
-import com.cs5412.dataobjects.UserDao;
 import com.cs5412.filesystem.IFileSystem;
 import com.cs5412.listeners.WebAppListener;
-import com.cs5412.utils.PasswordHash;
-import com.google.common.collect.Maps;
+import com.cs5412.taskmanager.TaskDao;
+import com.cs5412.utils.Utils;
 import com.google.gson.Gson;
 
+/**
+ * <p><b>Implementation class for UserManager</b></p>
+ * @author kt466
+ *
+ */
 public class UserManagerImpl implements UserManager{
 
 	static final Logger LOG = LoggerFactory.getLogger(WebAppListener.class);
@@ -61,17 +61,17 @@ public class UserManagerImpl implements UserManager{
 	public void createHDFSNamespace(IFileSystem fs,String username) throws IOException {
 		// TODO Auto-generated method stub
 		fs.getUserPath(username);
-		fs.createDir(fs.getUserPath(username).toString()+File.separator+"train", true);
-		fs.createDir(fs.getUserPath(username).toString()+File.separator+"test", true);
-		fs.createDir(fs.getUserPath(username).toString()+File.separator+"reports", true);
-		fs.createDir(fs.getUserPath(username).toString()+File.separator+"others", true);
+		fs.createDir(fs.getUserPath(username).toString()+Utils.linuxSeparator+"train", true);
+		fs.createDir(fs.getUserPath(username).toString()+Utils.linuxSeparator+"test", true);
+		fs.createDir(fs.getUserPath(username).toString()+Utils.linuxSeparator+"reports", true);
+		fs.createDir(fs.getUserPath(username).toString()+Utils.linuxSeparator+"others", true);
 	}
 	
 	@Override
 	public void createEmptyTaskList(String username) throws InterruptedException, ExecutionException {
 		// TODO Auto-generated method stub
 		//List<TaskDao> tasks = Lists.newArrayList();
-		Map<Integer,TaskDao> tasks = Maps.newHashMap();
+		Map<Integer,TaskDao> tasks = new HashMap<Integer, TaskDao>();
 		couchbaseClient.set(username+"Tasks",gson.toJson(tasks)).get();
 	}
 

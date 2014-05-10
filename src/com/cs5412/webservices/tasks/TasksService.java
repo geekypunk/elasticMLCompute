@@ -1,5 +1,8 @@
 package com.cs5412.webservices.tasks;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -20,12 +23,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.couchbase.client.CouchbaseClient;
-import com.cs5412.dataobjects.TaskDao;
+import com.cs5412.taskmanager.TaskDao;
 import com.cs5412.taskmanager.TaskManager;
-import com.cs5412.webservices.notifications.NotificationService;
 
 /**
- * Class for viewing and managing tasks
+ * <p>Class for viewing and managing tasks</p>
+ * @author kt466
+ * 
  */
 @Path("/tasks")
 public class TasksService {
@@ -50,14 +54,22 @@ public class TasksService {
 		HttpSession session = request.getSession(false);
 		String username = (String) session.getAttribute("user");
 		List<TaskDao> tasks = taskManager.getAllTasksForUser(username);
+		List<TaskDao> parentTasks = new ArrayList<>();
+		for(TaskDao task:tasks){
+			if(task.isParent()){
+				parentTasks.add(task);
+			}
+		}
 		JSONArray result = new JSONArray();
 		JSONObject taskObj;
-		for(TaskDao task : tasks){
+		Collections.reverse(parentTasks);
+		for(TaskDao task : parentTasks){
 			taskObj = new JSONObject();
 			taskObj.put("taskId", task.getTaskId());
 			taskObj.put("taskType", task.getTaskType());
 			taskObj.put("taskDescription", task.getTaskDescription());
 			taskObj.put("status", task.getStatus());
+			taskObj.put("lastUpdatedAt", new Date());
 			result.put(taskObj);
 		}
 		return Response.status(200).entity(result.toString()).build();

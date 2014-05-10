@@ -1,14 +1,14 @@
 
 		$(function(){
 			
-			$.getJSON("http://localhost:8080/elasticMLCompute/ml/knn/getTrainingDataSets",{id: $(this).val(), ajax: 'true'}, function(j){
+			$.getJSON("ml/knn/getTrainingDataSets",{id: $(this).val(), ajax: 'true'}, function(j){
 		 		var $subType = $("#e1");
 				$subType.empty();
 				$.each(j, function () {
 					$subType.append($('<option></option>').attr("value", this.optionValue).text(this.optionDisplay));
 				});
 			});
-			$.getJSON("http://localhost:8080/elasticMLCompute/ml/knn/getTestDataSets",{id: $(this).val(), ajax: 'true'}, function(j){
+			$.getJSON("ml/knn/getTestDataSets",{id: $(this).val(), ajax: 'true'}, function(j){
 		 		var $subType = $("#e2");
 				$subType.empty();
 				$.each(j, function () {
@@ -19,7 +19,7 @@
 		
 		})
 	
-		$("#svmForm").submit(function(event) {
+		$("#knnForm").submit(function(event) {
 
 			  /* stop form from submitting normally */
 			event.preventDefault();
@@ -34,8 +34,8 @@
 						trainingDataset: trainingDataset, 
 						testDataset: $('#e2').val() 
 					},
-					dataType: "text",
-					url: "http://localhost:8080/elasticMLCompute/ml/knn/runService",
+					dataType:"text",
+					url: "ml/knn/runDistributedService",
 					success: function (d) {
 						a.button("complete");
 					},
@@ -57,14 +57,14 @@
 		});
 			
 		$("#btn-chart").on("click",function(){
-			$('#svmChart').show();
+			$('#knnChart').show();
 			var a=$(this);
 			a.button("loading");
 			setTimeout(function() { 
 				$.ajax({
 					type: "GET",
 					dataType: "text",
-					url: "http://localhost:8080/elasticMLCompute/ml/svm/getReport/SVM.train-SVM.test.chart",
+					url: "ml/knn/getReport/KNN.train-KNN.test.chart",
 					success: function (d) {
 						a.button("complete");
 						SVMCharts.displayChart(d);

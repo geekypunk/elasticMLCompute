@@ -7,6 +7,11 @@ import org.slf4j.LoggerFactory;
 
 import com.cs5412.filesystem.IFileSystem;
 
+/**
+ * Deprecated Class
+ * @author pms255
+ *
+ */
 public class ModelCreationJob implements Runnable{
 	static final Logger LOG = LoggerFactory.getLogger(ModelCreationJob.class);
 	private int fileNum;
