@@ -25,3 +25,7 @@ JPEG images of charts.
 4. The user interface delivered both as a web application and as an Android app.
 5. The system  auto scales based on load .
 
+
+Support
+------------------
+For more details on the project, look into the support folder
