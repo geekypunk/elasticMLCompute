@@ -18,9 +18,10 @@ user can upload data to our servers or give the location (AWS S3 url). The users
 one  algorithm  to  another.  This  “cloud  model”  built  will  ensure  scalability,  availability,  reliability,  fault-tolerance, 
 elasticity and security
 ###Features
-⋅⋅*A variety of machine learning algorithms to choose from via a Dashboard.
-⋅⋅*Custom datasources like AWS S3 or the user can upload his data to our servers.
-⋅⋅*User can generate reports and store them. User will be able to export his results as CSV or JSON or even 
+1. A variety of machine learning algorithms to choose from via a Dashboard.
+2. Custom datasources like AWS S3 or the user can upload his data to our servers.
+3. User can generate reports and store them. User will be able to export his results as CSV or JSON or even 
 JPEG images of charts.
-⋅⋅* The user interface delivered both as a web application and as an Android app.
-⋅⋅* The system  auto scales based on load .
+4. The user interface delivered both as a web application and as an Android app.
+5. The system  auto scales based on load .
+
